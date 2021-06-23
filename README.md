@@ -1,3 +1,1 @@
-# Ansible Collection - kevingstewart.f5_sslo_ansible
-
-Documentation for the collection.
+# F5 SSL Orchestrator Ansible Automation Modules
