@@ -1,0 +1,7 @@
+docs/_build/*
+.DS_Store
+pdf/*
+.vscode
+.vscode/*
+*.sublime-*
+docs/_templates/*
