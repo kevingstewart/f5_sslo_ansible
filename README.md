@@ -6,7 +6,19 @@ Documentation for individual modules is available in the [docs](https://github.c
 
 
 ## Support
-This Ansible module collection currently  supports SSL Orchestrator versions **5.0** to **8.x**.
+This Ansible module collection currently supports SSL Orchestrator versions **5.0** to **8.x**, and the creation of the following types of objects:
+- Inline layer 2 security services
+- Inline layer 3 security services
+- Inline http security services
+- ICAP security services
+- TAP security services
+- Security service chains
+- Security policies
+- SSL configurations
+- DNS resolver configurations
+- Outbound layer 3 SSL Orchestrator topologies
+- Outbound explicit proxy SSL Orchestrator topologies
+- Inbound layer 3 SSL Orchestrator topologies
 
 Note that this a `community` project, and as such **NOT** officially supported by F5 Networks. Please raise any issues discovered through the respository's [issues](https://github.com/kevingstewart/f5_sslo_ansible/issues) site, and those will be addressed in a timely manner.
 
@@ -103,7 +115,22 @@ To use a module from this collection, add the full namespace and collection name
         name: "tap1"
         ...
 ```
-Full documentation on each module can be found in the [docs](./tree/main/docs) folder.
+#### Modules
+The following modules are currently available:
+| Module | Description |
+| ------ | ------ |
+| bigip_sslo_service_layer2         | Used to create/modify/delete an inline layer 2 security service |
+| bigip_sslo_service_layer3         | Used to create/modify/delete an inline layer 3 security service |
+| bigip_sslo_service_http           | Used to create/modify/delete an inline http (proxy) security service |
+| bigip_sslo_service_icap           | Used to create/modify/delete an icap security service |
+| bigip_sslo_service_tap            | Used to create/modify/delete a passive tap security service |
+| bigip_sslo_config_service_chain   | Used to create/modify/delete a security service chain |
+| bigip_sslo_config_policy          | Used to create/modify/delete a security policy |
+| bigip_sslo_config_ssl             | Used to create/modify/delete an ssl configuration |
+| bigip_sslo_config_resolver        | Used to create/modify/delete a DNS resolver configuration |
+| bigip_sslo_config_topology        | Used to create/modify/delete an SSL Orchestrator topology |
+
+Full documentation on each module can be found in the [docs](https://github.com/kevingstewart/f5_sslo_ansible/blob/main/docs/) folder.
 
 ## License
 GNU General Public License v3.0
