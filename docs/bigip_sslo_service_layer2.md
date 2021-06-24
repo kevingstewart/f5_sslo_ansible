@@ -49,6 +49,7 @@
 | rules | no |  |  | [list] A list of iRules to attach to this security service |
 
 \* The vlanIn and interfaceIn options are mutually exclusive
+
 \** The vlanOut and interfaceOut options are mutually exclusive
 
 **Examples**
