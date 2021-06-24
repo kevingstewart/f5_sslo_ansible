@@ -83,6 +83,17 @@
         mode: output
       register: service_http_1
       delegate_to: localhost
+    
+    - name: SSLO TAP service
+      bigip_sslo_service_tap:
+        provider: "{{ provider }}"
+        name: "tap_1"
+        devices: 
+            interface: "1.6"
+        macAddress: "12:12:12:12:12:12"
+        mode: output
+      register: service_tap_1
+      delegate_to: localhost
 
     #### ssl ######################################
     - name: SSLO SSL settings
