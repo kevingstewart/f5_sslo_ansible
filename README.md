@@ -7,7 +7,7 @@ Documentation for individual modules is available in the [docs](./tree/main/docs
 Testing:
 - [docs](./tree/main/docs)
 - [docs](/tree/main/docs)
-- [docs](./issues)
+- [docs](https://github.com/kevingstewart/f5_sslo_ansible/blob/main/docs/)
 - [docs](/issues)
 
 
