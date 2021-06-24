@@ -34,7 +34,7 @@
 | name | yes |  |  | [string] The name of the security service (ex. layer2_1) |
 | state | no | present | present:absent | [string] Value to determing create/modify (present) or delete (absent) action |
 | devices | yes |  |  | [list] The list of devices in this security service |
-| devices : name | yes |  |  | [string] The name of a specific device in the security service list (ex. FEYE1) |
+| devices<br />name | yes |  |  | [string] The name of a specific device in the security service list (ex. FEYE1) |
 | devices : ratio | no | 1 |  | [int] The load balancing ratio for this specific device |
 | devices : vlanIn | yes* |  |  | [string] The incoming (to-service) VLAN associated with this device - the vlanIn and interfaceIn options are mutually exclusive |
 | devices : interfaceIn | yes* |  |  | [string] The incoming (to-service) interface associated with this device - the vlanIn and interfaceIn options are mutually exclusing |
