@@ -8,7 +8,7 @@ Documentation for individual modules is available in the [docs](https://github.c
 ## Support
 This Ansible module collection currently  supports SSL Orchestrator versions **5.0** to **8.x**.
 
-Note that this a `community` project, and as such **NOT** officially supported by F5 Networks. Please raise any issues discovered through the respository's [issues](.https://github.com/kevingstewart/f5_sslo_ansible/blob/main/issues/) site, and those will be addressed in a timely manner.
+Note that this a `community` project, and as such **NOT** officially supported by F5 Networks. Please raise any issues discovered through the respository's [issues](https://github.com/kevingstewart/f5_sslo_ansible/blob/main/issues/) site, and those will be addressed in a timely manner.
 
 ## Requirements
 The following software package versions are required:
