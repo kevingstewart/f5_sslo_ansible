@@ -4,6 +4,13 @@
 This collection provides a set of modules for automated configuration of the F5 SSL Orchestrator.
 Documentation for individual modules is available in the [docs](./tree/main/docs) folder.
 
+Testing:
+- [docs](./tree/main/docs)
+- [docs](/tree/main/docs)
+- [docs](./issues)
+- [docs](/issues)
+
+
 ## Support
 This Ansible module collection currently  supports SSL Orchestrator versions **5.0** to **8.x**.
 
@@ -67,7 +74,9 @@ While not expressly required, the following steps utilize Python virtualenv on a
 ## Guiding Principles
 SSL Orchestrator automation with Ansible requires the following guiding principles:
 - **Object relationships**: Similar to Local Traffic Manager (LTM) components, SSL Orchestrator objects have an inherent parent-child relationship with other objects. For example, a security policy applies traffic flows to service chains, thus a defined service chain must exist before the policy is created. In an Ansible playbook this could be as simple as creating the service chain task _before_ the policy task.
+
   ![Object Relationships](/images/f5_sslo_ansible_relationships.png)
+  
   The notable exception to this rule is **Topology** creation, which can create all objects in a single process.
 
 - **Strictness**: The SSL Orchestrator guided configuration (UI) is a workflow-driven process (i.e. wizard) that creates and manages all objects required for optimal configuration of a topology. This imposes a limitation on the ability to customize a configuration in order to maintain that optimal state, and this limitation is controlled by a **strictness** mechanism. In the UI, a lock icon represents strictness. Disabling strictness (unlocking the lock) allows for free customization of the different objects, but also moves the burden of configuration state to the administrator. In this Ansible collection, strictness is intentionally disabled for all objects to allow for advanced customization. This will in some instances prevent management of SSL Orchestrator objects from the UI (which in theory should not be necessary if one is relying on automation tools).
