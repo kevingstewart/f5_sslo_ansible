@@ -171,4 +171,14 @@
         monitor: "/Common/gw2"
       delegate_to: localhost
 ```
+**Best Practice Considerations**
+- It is generally better to create the VLANs outside of the service definition and reference within (third example).
+- iRules applied in the service definition are applied at the incoming (to-service) side of the service. If the specific use case for adding an iRule is to inject an HTTP header, where that header should be stripped on the other side, it would be better to customize the service after its created using the native F5 BIG-IP iRule module. For an inline layer 2 service, and TCP traffic, SSL Orchestrator creates: 
+    - A sending to-service virtual server (**/Common/ssloS_<name>.app/ssloS_<name>-t-4**)
+    - A receiving from-server virtual server (**/Common/ssloS_<name>.app/ssloS_<name>-D-0-t-4**).
+ 
+
+
+
+
 
