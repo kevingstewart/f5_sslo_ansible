@@ -2,19 +2,13 @@
 ## _DRAFT - STILL IN TESTING PHASE_
 
 This collection provides a set of modules for automated configuration of the F5 SSL Orchestrator.
-Documentation for individual modules is available in the [docs](./tree/main/docs) folder.
-
-Testing:
-- [docs](./tree/main/docs)
-- [docs](/tree/main/docs)
-- [docs](https://github.com/kevingstewart/f5_sslo_ansible/blob/main/docs/)
-- [docs](/issues)
+Documentation for individual modules is available in the [docs](https://github.com/kevingstewart/f5_sslo_ansible/blob/main/docs/) folder.
 
 
 ## Support
 This Ansible module collection currently  supports SSL Orchestrator versions **5.0** to **8.x**.
 
-Note that this a `community` project, and as such **NOT** officially supported by F5 Networks. Please raise any issues discovered through the respository's [issues](./issues) site, and those will be addressed in a timely manner.
+Note that this a `community` project, and as such **NOT** officially supported by F5 Networks. Please raise any issues discovered through the respository's [issues](.https://github.com/kevingstewart/f5_sslo_ansible/blob/main/issues/) site, and those will be addressed in a timely manner.
 
 ## Requirements
 The following software package versions are required:
