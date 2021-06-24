@@ -1,0 +1,33 @@
+---
+
+- name: Create SSLO Topology
+  hosts: localhost
+  gather_facts: False
+  connection: local
+
+  collections:
+    - kevingstewart.f5_sslo_ansible
+
+  vars: 
+    provider:
+      server: 10.1.1.4
+      user: admin
+      password: admin
+      validate_certs: no
+      server_port: 443
+
+  tasks:
+    - name: SSLO topology
+      bigip_sslo_config_topology:
+        provider: "{{ provider }}"
+        name: "demo_in_L3"
+        
+        configReferences:
+          sslSettings: "demo_in_ssl"
+          securityPolicy: "demo_in_policy"
+
+        topologyInboundL3:
+          vlans: 
+            - "/Common/lab-local-self-4"
+
+      delegate_to: localhost

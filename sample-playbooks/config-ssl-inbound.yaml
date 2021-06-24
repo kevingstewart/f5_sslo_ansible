@@ -1,0 +1,27 @@
+---
+
+- name: Create SSLO SSL Settings
+  hosts: localhost
+  gather_facts: False
+  connection: local
+
+  collections:
+    - kevingstewart.f5_sslo_ansible
+
+  vars: 
+    provider:
+      server: 10.1.1.4
+      user: admin
+      password: admin
+      validate_certs: no
+      server_port: 443
+
+  tasks:
+    - name: SSLO SSL settings
+      bigip_sslo_config_ssl:
+        provider: "{{ provider }}"
+        name: "demo_in_ssl"
+        clientSettings:
+          cert: "/Common/wildcard.f5labs.com"
+          key: "/Common/wildcard.f5labs.com"
+      delegate_to: localhost

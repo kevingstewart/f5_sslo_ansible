@@ -1,0 +1,25 @@
+---
+
+- name: Create SSLO DNS resolver
+  hosts: localhost
+  gather_facts: False
+  connection: local
+
+  collections:
+    - kevingstewart.f5_sslo_ansible
+
+  vars: 
+    provider:
+      server: 10.1.1.4
+      user: admin
+      password: admin
+      validate_certs: no
+      server_port: 443
+
+  tasks:
+    - name: SSLO dns resolver
+      bigip_sslo_config_resolver:
+        provider: "{{ provider }}"
+        forwardingNameservers:
+          - "10.1.20.1"
+      delegate_to: localhost

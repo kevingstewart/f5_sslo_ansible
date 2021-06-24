@@ -1,0 +1,213 @@
+---
+
+- name: Create SSLO Topology
+  hosts: localhost
+  gather_facts: False
+  connection: local
+
+  collections:
+    - kevingstewart.f5_sslo_ansible
+
+  vars: 
+    provider:
+      server: 10.1.1.4
+      user: admin
+      password: admin
+      validate_certs: no
+      server_port: 443
+
+  tasks:
+    #### services #################################
+    - name: SSLO LAYER2 service
+      bigip_sslo_service_layer2:
+        provider: "{{ provider }}"
+        name: "layer2_1"
+        devices:
+          - name: "FEYE1"
+            interfaceIn: "1.4"
+            interfaceOut: "1.5"
+        portRemap: 8080
+        mode: output
+      register: service_layer2_1
+      delegate_to: localhost
+
+    - name: SSLO ICAP service
+      bigip_sslo_service_icap:
+        provider: "{{ provider }}"
+        name: "icap_1"
+        devices: 
+          - ip: "198.19.97.50"
+            port: 1344
+        mode: output
+      register: service_icap_1
+      delegate_to: localhost
+
+    - name: SSLO LAYER3 service
+      bigip_sslo_service_layer3:
+        provider: "{{ provider }}"
+        name: "layer3_1"
+        devicesTo:
+          interface: "1.3"
+          tag: 60
+          selfIp: "198.19.64.7"
+          netmask: "255.255.255.128"
+        devicesFrom:
+          interface: "1.3"
+          tag: 70
+          selfIp: "198.19.64.245"
+          netmask: "255.255.255.128"
+        devices: 
+          - ip: "198.19.64.30"
+        portRemap: 8181
+        mode: output
+      register: service_layer3_1
+      delegate_to: localhost
+
+    - name: SSLO HTTP service
+      bigip_sslo_service_http:
+        provider: "{{ provider }}"
+        name: "http_1"
+        devicesTo:
+          interface: "1.3"
+          tag: 30
+          selfIp: "198.19.96.7"
+          netmask: "255.255.255.128"
+        devicesFrom:
+          interface: "1.3"
+          tag: 40
+          selfIp: "198.19.96.245"
+          netmask: "255.255.255.128"
+        devices: 
+          - ip: "198.19.96.30"
+            port: 3128
+        mode: output
+      register: service_http_1
+      delegate_to: localhost
+
+    #### ssl ######################################
+    - name: SSLO SSL settings
+      bigip_sslo_config_ssl:
+        provider: "{{ provider }}"
+        name: "demo_out_ssl"
+        clientSettings:
+          caCert: "/Common/subrsa.f5labs.com"
+          caKey: "/Common/subrsa.f5labs.com"
+        mode: output
+      register: sslsettings
+      delegate_to: localhost
+    
+    #### resolver #################################
+    - name: SSLO dns resolver
+      bigip_sslo_config_resolver:
+        provider: "{{ provider }}"
+        forwardingNameservers:
+          - "10.1.20.1"
+        mode: output
+      register: resolver
+      delegate_to: localhost
+
+    #### service chains ###########################
+    - name: SSLO service chain
+      bigip_sslo_config_service_chain:
+        provider: "{{ provider }}"
+        name: "service_chain_1"
+        services:
+          - name: "layer2_1"
+            serviceType: "L2"
+            ipFamily: "ipv4"
+          
+          - name: "layer3_1"
+            serviceType: "L3"
+            ipFamily: "ipv4"
+          
+          - name: "http_1"
+            serviceType: "http-proxy"
+            ipFamily: "ipv4"
+          
+          - name: "icap_1"
+            serviceType: "icap"
+            ipFamily: "ipv4"
+          
+          - name: "tap_1"
+            serviceType: "tap"
+            ipFamily: "ipv4"
+        mode: output
+      register: service_chain_1
+      delegate_to: localhost
+    
+    - name: SSLO service chain
+      bigip_sslo_config_service_chain:
+        provider: "{{ provider }}"
+        name: "service_chain_2"
+        services:
+          - name: layer2_1
+            serviceType: L2
+            ipFamily: ipv4
+          
+          - name: "tap_1"
+            serviceType: "tap"
+            ipFamily: "ipv4"
+        mode: output
+      register: service_chain_2
+      delegate_to: localhost
+
+    #### policy ###################################
+    - name: SSLO security policy
+      bigip_sslo_config_policy:
+        provider: "{{ provider }}"
+        name: "demo_out_policy"
+        policyType: "outbound"
+        
+        defaultRule:
+          allowBlock: "allow"
+          tlsIntercept: "intercept"
+          serviceChain: "service_chain_1"
+        
+        trafficRules:
+          - name: "pinners"
+            conditions:
+              - condition: "pinnersRule"
+          
+          - name: "bypass_Finance_Health"
+            matchType: "or"
+            allowBlock: "allow"
+            tlsIntercept: "bypass"
+            serviceChain: "service_chain_2"
+            conditions:
+              - condition: "categoryLookupAll"
+                values:
+                  - "/Common/Financial_Data_and_Services"
+                  - "/Common/Health_and_Medicine"
+        mode: output
+      register: securitypolicy
+      delegate_to: localhost
+
+    #### topology #################################
+    - name: SSLO topology
+      bigip_sslo_config_topology:
+        provider: "{{ provider }}"
+        name: "demo_out_L3"
+        
+        configReferences:
+          sslSettings: "{{ sslsettings }}"
+          securityPolicy: "{{ securitypolicy }}"
+          services:
+            - "{{ service_layer2_1 }}"
+            - "{{ service_layer3_1 }}"
+            - "{{ service_http_1 }}"
+            - "{{ service_icap_1 }}"
+            - "{{ service_tap_1 }}"                        
+          serviceChains:
+            - "{{ service_chain_1 }}"
+            - "{{ service_chain_2 }}"
+          resolver: "{{ resolver }}"
+
+        topologyOutboundL3:
+          vlans:
+            - "/Common/client-vlan"
+          snat: automap
+          gateway: "iplist"
+          gatewaylist: 
+            - ip: 10.1.20.1
+        
+      delegate_to: localhost

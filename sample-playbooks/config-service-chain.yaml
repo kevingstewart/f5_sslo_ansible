@@ -1,0 +1,58 @@
+---
+
+- name: Create SSLO Service Chain
+  hosts: localhost
+  gather_facts: False
+  connection: local
+
+  collections:
+    - kevingstewart.f5_sslo_ansible
+
+  vars: 
+    provider:
+      server: 10.1.1.4
+      user: admin
+      password: admin
+      validate_certs: no
+      server_port: 443
+
+  tasks:
+    - name: SSLO service chain
+      bigip_sslo_config_service_chain:
+        provider: "{{ provider }}"
+        name: "service_chain_1"
+        services:
+          - name: "layer2_1"
+            serviceType: "L2"
+            ipFamily: "ipv4"
+          
+          - name: "layer3_1"
+            serviceType: "L3"
+            ipFamily: "ipv4"
+          
+          - name: "http_1"
+            serviceType: "http-proxy"
+            ipFamily: "ipv4"
+          
+          - name: "icap_1"
+            serviceType: "icap"
+            ipFamily: "ipv4"
+          
+          - name: "tap_1"
+            serviceType: "tap"
+            ipFamily: "ipv4"
+          
+    - name: SSLO service chain
+      bigip_sslo_config_service_chain:
+        provider: "{{ provider }}"
+        name: "service_chain_2"
+        services:
+          - name: "layer2_1"
+            serviceType: "L2"
+            ipFamily: "ipv4"
+          
+          - name: "tap_1"
+            serviceType: "tap"
+            ipFamily: "ipv4"
+        
+      delegate_to: localhost

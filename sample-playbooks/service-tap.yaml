@@ -1,0 +1,27 @@
+---
+
+- name: Create SSLO service(s)
+  hosts: localhost
+  gather_facts: False
+  connection: local
+
+  collections:
+    - kevingstewart.f5_sslo_ansible
+  
+  vars: 
+    provider:
+      server: 10.1.1.4
+      user: admin
+      password: admin
+      validate_certs: no
+      server_port: 443
+
+  tasks:
+    - name: SSLO TAP service
+      bigip_sslo_service_tap:
+        provider: "{{ provider }}"
+        name: "tap_1"
+        devices: 
+            interface: "1.6"
+        macAddress: "12:12:12:12:12:12"
+      delegate_to: localhost

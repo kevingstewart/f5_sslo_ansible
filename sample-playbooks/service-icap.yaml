@@ -1,0 +1,32 @@
+---
+
+- name: Create SSLO service(s)
+  hosts: localhost
+  gather_facts: False
+  connection: local
+  
+  collections:
+    - kevingstewart.f5_sslo_ansible
+
+  vars: 
+    provider:
+      server: 10.1.1.4
+      user: admin
+      password: admin
+      validate_certs: no
+      server_port: 443
+
+  tasks:
+    - name: SSLO ICAP service
+      bigip_sslo_service_icap:
+        provider: "{{ provider }}"
+        name: "icap_1"
+        devices: 
+          - ip: "109.19.97.50"
+            port: 1344
+        requestURI: "/avscan"
+        responseURI: "/avscan"
+      delegate_to: localhost
+
+    - debug: 
+        msg: "{{ test_module }}"

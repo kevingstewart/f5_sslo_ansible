@@ -1,0 +1,39 @@
+---
+
+- name: Create SSLO Topology
+  hosts: localhost
+  gather_facts: False
+  connection: local
+
+  collections:
+    - kevingstewart.f5_sslo_ansible
+
+  vars: 
+    provider:
+      server: 10.1.1.4
+      user: admin
+      password: admin
+      validate_certs: no
+      server_port: 443
+
+  tasks:
+    - name: SSLO topology
+      bigip_sslo_config_topology:
+        provider: "{{ provider }}"
+        name: "demo_out_xp"
+        
+        configReferences:
+          sslSettings: "demo_out_ssl"
+          securityPolicy: "demo_out_policy"
+
+        topologyOutboundExplicit:
+          proxyIp: "10.1.10.150"
+          proxyPort: 3128
+          vlans:
+            - "/Common/client-vlan"
+          gateway: "iplist"
+          gatewaylist:
+            - ip: 10.1.20.1
+          snat: automap
+
+      delegate_to: localhost

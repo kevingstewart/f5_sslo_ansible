@@ -1,0 +1,29 @@
+---
+
+- name: Create SSLO service(s)
+  hosts: localhost
+  gather_facts: False
+  connection: local
+
+  collections:
+    - kevingstewart.f5_sslo_ansible
+    
+  vars: 
+    provider:
+      server: 10.1.1.4
+      user: admin
+      password: admin
+      validate_certs: no
+      server_port: 443
+
+  tasks:
+    - name: SSLO LAYER2 service
+      bigip_sslo_service_layer2:
+        provider: "{{ provider }}"
+        name: "layer2_1"
+        devices:
+          - name: "FEYE1"
+            interfaceIn: "1.4"
+            interfaceOut: "1.5"
+        portRemap: 8080
+      delegate_to: localhost
