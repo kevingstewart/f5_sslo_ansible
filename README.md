@@ -81,7 +81,7 @@ While not expressly required, the following steps utilize Python virtualenv on a
 SSL Orchestrator automation with Ansible requires the following guiding principles:
 - **Object relationships**: Similar to Local Traffic Manager (LTM) components, SSL Orchestrator objects have an inherent parent-child relationship with other objects. For example, a security policy applies traffic flows to service chains, thus a defined service chain must exist before the policy is created. In an Ansible playbook this could be as simple as creating the service chain task _before_ the policy task.
 
-  ![Object Relationships](/images/f5_sslo_ansible_relationships.png |width=800)
+  ![Object Relationships](/images/f5_sslo_ansible_relationships.png | width=800)
   
   The notable exception to this rule is **Topology** creation, which can create all objects in a single process.
 
