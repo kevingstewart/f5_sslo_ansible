@@ -31,22 +31,22 @@
 | Key | Required | Default | Options | Description |
 | ------ | ------ | ------ | ------ |------ |
 | provider | yes |  |  | The BIG-IP connection provider information |
-| name | yes |  |  | [string] The name of the security service (ex. layer2_1) |
-| state | no | present | present:absent | [string] Value to determing create/modify (present) or delete (absent) action |
-| devices | yes |  |  | [list] The list of devices in this security service |
-| devices<br />name | yes |  |  | [string] The name of a specific device in the security service list (ex. FEYE1) |
-| devices : ratio | no | 1 |  | [int] The load balancing ratio for this specific device |
-| devices : vlanIn | yes* |  |  | [string] The incoming (to-service) VLAN associated with this device - the vlanIn and interfaceIn options are mutually exclusive |
-| devices : interfaceIn | yes* |  |  | [string] The incoming (to-service) interface associated with this device - the vlanIn and interfaceIn options are mutually exclusing |
-| devices : tagIn | no | 0 |  | [int] The VLAN tag (if any) for the to-service interface associated with this device |
-| devices : vlanOut | yes** |  |  | [string] The outgoing (from-service) VLAN associated with this device - the vlanIn and interfaceIn options are mutually exclusive |
-| devices : interfaceOut | yes** |  |  | [string] The outgoing (from-service) interface associated with this device - the vlanIn and interfaceIn options are mutually exclusing |
-| devices : tagOut | no | 0 |  | [int] The VLAN tag (if any) for the from-service interface associated with this device |
-| monitor | no | /Common/gateway_icmp |  | [string] The load balancing health monitor to assign to this security service |
-| serviceDownAction | no | ignore | ignore:reset:drop | [string] The action to take if all service pool members are marked down. The reset and drop options reset and drop the connection, respectively, while the ignore option causes traffic to bypass this service |
-| ipOffset | no | 0 |  | [int] When deployed in an external tiered architecture, the ipOffset increments the internal VLAn self-IPs for this service to avoid conflict with other standalone SSL Orchestrator devices in the tiered architecture |
-| portRemap | no |  |  | [int] The port to remap decrypted http traffic to (if required) |
-| rules | no |  |  | [list] A list of iRules to attach to this security service |
+| name | yes |  |  | [string]<br />The name of the security service (ex. layer2_1) |
+| state | no | present | present:absent | [string]<br />Value to determing create/modify (present) or delete (absent) action |
+| devices | yes |  |  | [list]<br />The list of devices in this security service |
+| devices:<br />name | yes |  |  | [string]<br />The name of a specific device in the security service list (ex. FEYE1) |
+| devices:<br />ratio | no | 1 |  | [int]<br />The load balancing ratio for this specific device |
+| devices:<br />vlanIn | yes* |  |  | [string]<br />The incoming (to-service) VLAN associated with this device - the vlanIn and interfaceIn options are mutually exclusive |
+| devices:<br />interfaceIn | yes* |  |  | [string]<br />The incoming (to-service) interface associated with this device - the vlanIn and interfaceIn options are mutually exclusing |
+| devices:<br />tagIn | no | 0 |  | [int]<br />The VLAN tag (if any) for the to-service interface associated with this device |
+| devices:<br />vlanOut | yes** |  |  | [string]<br />The outgoing (from-service) VLAN associated with this device - the vlanIn and interfaceIn options are mutually exclusive |
+| devices:<br />interfaceOut | yes** |  |  | [string]<br />The outgoing (from-service) interface associated with this device - the vlanIn and interfaceIn options are mutually exclusing |
+| devices:<br />tagOut | no | 0 |  | [int]<br />The VLAN tag (if any) for the from-service interface associated with this device |
+| monitor | no | /Common/gateway_icmp |  | [string]<br />The load balancing health monitor to assign to this security service |
+| serviceDownAction | no | ignore | ignore:reset:drop | [string]<br />The action to take if all service pool members are marked down. The reset and drop options reset and drop the connection, respectively, while the ignore option causes traffic to bypass this service |
+| ipOffset | no | 0 |  | [int]<br />When deployed in an external tiered architecture, the ipOffset increments the internal VLAn self-IPs for this service to avoid conflict with other standalone SSL Orchestrator devices in the tiered architecture |
+| portRemap | no |  |  | [int]<br />The port to remap decrypted http traffic to (if required) |
+| rules | no |  |  | [list]<br />A list of iRules to attach to this security service |
 
 \* The vlanIn and interfaceIn options are mutually exclusive
 
