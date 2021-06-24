@@ -134,6 +134,7 @@ Full documentation on each module can be found in the [docs](https://github.com/
 
 ## License
 GNU General Public License v3.0
+
 See LICENSE to see the full text.
 
 
