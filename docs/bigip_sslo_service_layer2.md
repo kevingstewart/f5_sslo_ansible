@@ -2,6 +2,7 @@
 ## Documentation - Inline Layer 2 Service
 
 **Desciption**
+
 An inline layer 2 security service is generally defined as any security device that possesses separate inbound and outbound interfaces, and does not participate in layer 3 (routing) of traffic. In many cases the inbound and outbound interfaces are connected by an internal bridge. Under the hood, SSL Orchestrator creates a set of private networks (a pair of VLANs, internal self-IPs, a route domain, virtual servers and a pool) to effectively route traffic *across* a layer 2 device. This allows layers 2 devices to be actively load balanced and monitored.
 
 From a configuration and automation perspective, SSL Orchestrator only requires that you define the interfaces that connect to a layer 2 device, the respective to-service "in" and from-service "out" interfaces. Each physical device in a layer 2 service requires a separate set of interfaces, and SSL Orchestrator handles the internal network plumbing. The to-service and from-service connectivity can be defined as an interface or existing VLAN (but not both). If the layer 2 device supports 802.1Q, tags can also be defined, but must be different on each side.
