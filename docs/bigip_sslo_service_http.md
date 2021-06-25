@@ -70,7 +70,7 @@ From a configuration and automation perspective, SSL Orchestrator requires that 
 | devices:<br />ip | yes |  |  | [string]<br />The to-service IP address of a specific security device |
 | devices:<br />port | no |  |  | [int]<br />The to-service explicit proxy listening port |
 | proxyType | no | explicit | explicit<br />transparent | [string]<br />The type of HTTP proxy device, explicit or transparent |
-| authOffload | no | False | True<br /> | [bool]<br />This option defines a mechanism that sends authenticated user information to the proxy device in a X-Authenticated-User HTTP header. This option requires APM authentication |
+| authOffload | no | False | True<br />False | [bool]<br />This option defines a mechanism that sends authenticated user information to the proxy device in a X-Authenticated-User HTTP header. This option requires APM authentication |
 | ipFamily | no | ipv4 | ipv4<br />ipv6 | [string]<br />The IP family expected for this security device |
 | monitor | no | /Common/gateway_icmp |  | [string]<br />The load balancing health monitor to assign to this security service |
 | serviceDownAction | no | ignore | ignore<br />reset<br />drop | [string]<br />The action to take if all service pool members are marked down. The reset and drop options reset and drop the connection, respectively, while the ignore option causes traffic to bypass this service |
