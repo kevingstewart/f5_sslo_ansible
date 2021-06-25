@@ -1,7 +1,12 @@
 # F5 SSL Orchestrator Ansible Automation Collection
 ## Documentation - Inline Layer 2 Service
 
-**Sample wth all options**
+**Desciption**
+An inline layer 2 security service is generally defined as any security device that possesses separate inbound and outbound interfaces, and does not participate in layer 3 (routing) of traffic. In many cases the inbound and outbound interfaces are connected by an internal bridge. Under the hood, SSL Orchestrator creates a set of private networks (a pair of VLANs, internal self-IPs, a route domain, virtual servers and a pool) to effectively route traffic *across* a layer 2 device. This allows layers 2 devices to be actively load balanced and monitored.
+
+From a configuration and automation perspective, SSL Orchestrator only requires that you define the interfaces that connect to a layer 2 device, the respective to-service "in" and from-service "out" interfaces. Each physical device in a layer 2 service requires a separate set of interfaces, and SSL Orchestrator handles the internal network plumbing. The to-service and from-service connectivity can be defined as an interface or existing VLAN (but not both). If the layer 2 device supports 802.1Q, tags can also be defined, but must be different on each side.
+
+**Sample wth all options defined**
 ```yaml
 - name: SSLO LAYER2 service
   bigip_sslo_service_layer2:
@@ -13,7 +18,7 @@
         ratio: 1
         vlanIn:	"/Common/L2service1_in"
         interfaceIn: "1.4"
-        tagIn: "100"
+        tagIn: 100
         vlanOut: "/Common/L2service1_out"
         interfaceOut: "1.5"
         tagOut:	101
@@ -22,8 +27,8 @@
     ipOffset: 1
     portRemap: 8080
     rules: 
-      - rule1
-      - rule2
+      - "/Common/rule1"
+      - "/Common/rule2"
   delegate_to: localhost
 ```
 
@@ -32,7 +37,7 @@
 | ------ | ------ | ------ | ------ |------ |
 | provider | yes |  |  | The BIG-IP connection provider information |
 | name | yes |  |  | [string]<br />The name of the security service (ex. layer2_1) |
-| state | no | present | present:absent | [string]<br />Value to determing create/modify (present) or delete (absent) action |
+| state | no | present | present<br />absent | [string]<br />Value to determine create/modify (present) or delete (absent) action |
 | devices | yes |  |  | [list]<br />The list of devices in this security service |
 | devices:<br />name | yes |  |  | [string]<br />The name of a specific device in the security service list (ex. FEYE1) |
 | devices:<br />ratio | no | 1 |  | [int]<br />The load balancing ratio for this specific device |
@@ -43,14 +48,14 @@
 | devices:<br />interfaceOut | yes** |  |  | [string]<br />The outgoing (from-service) interface associated with this device - the vlanIn and interfaceIn options are mutually exclusing |
 | devices:<br />tagOut | no | 0 |  | [int]<br />The VLAN tag (if any) for the from-service interface associated with this device |
 | monitor | no | /Common/gateway_icmp |  | [string]<br />The load balancing health monitor to assign to this security service |
-| serviceDownAction | no | ignore | ignore:reset:drop | [string]<br />The action to take if all service pool members are marked down. The reset and drop options reset and drop the connection, respectively, while the ignore option causes traffic to bypass this service |
+| serviceDownAction | no | ignore | ignore<br />reset<br />drop | [string]<br />The action to take if all service pool members are marked down. The reset and drop options reset and drop the connection, respectively, while the ignore option causes traffic to bypass this service |
 | ipOffset | no | 0 |  | [int]<br />When deployed in an external tiered architecture, the ipOffset increments the internal VLAn self-IPs for this service to avoid conflict with other standalone SSL Orchestrator devices in the tiered architecture |
 | portRemap | no |  |  | [int]<br />The port to remap decrypted http traffic to (if required) |
 | rules | no |  |  | [list]<br />A list of iRules to attach to this security service |
 
-\* The vlanIn and interfaceIn options are mutually exclusive
-
-\** The vlanOut and interfaceOut options are mutually exclusive
+*Footnotes:*
+- \* The vlanIn and interfaceIn options are mutually exclusive
+- \** The vlanOut and interfaceOut options are mutually exclusive
 
 **Examples**
 ```YAML
