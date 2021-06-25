@@ -5,7 +5,7 @@
 
 An inline layer 3 device is generally defined as any security device that possesses separate inbound and outbound interfaces, and participates in layer 3 (routing) of traffic. A layer 3 device will have separate to-service "in" and from-service "out" interfaces on different IP subnets. These could also be *logically* separated using 802.1Q VLAN tags attached to a single interface.
 
-From a configuration and automation perspective, SSL Orchestrator requires that you define...
+From a configuration and automation perspective, SSL Orchestrator requires that you define the to-service and from-service networking attributes.
 
 **Sample wth all options defined**
 ```yaml
