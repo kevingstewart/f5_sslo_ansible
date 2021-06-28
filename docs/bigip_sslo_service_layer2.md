@@ -1,7 +1,8 @@
 # F5 SSL Orchestrator Ansible Automation Collection
 ## Documentation - Inline Layer 2 Service
+#### Module: bigip_sslo_service_layer2
 
-**Desciption**
+**Description**
 
 An inline layer 2 security service is generally defined as any security device that possesses separate inbound and outbound interfaces, and does not participate in layer 3 (routing) of traffic. In many cases the inbound and outbound interfaces are connected by an internal bridge. Under the hood, SSL Orchestrator creates a set of private networks (a pair of VLANs, internal self-IPs, a route domain, virtual servers and a pool) to effectively route traffic *across* a layer 2 device. This allows layers 2 devices to be actively load balanced and monitored.
 
@@ -14,6 +15,7 @@ From a configuration and automation perspective, SSL Orchestrator only requires 
   provider: "{{ provider }}"
     name: layer2_1
     state: present
+    
     devices: 
       - name: FEYE1
         ratio: 1
@@ -23,6 +25,7 @@ From a configuration and automation perspective, SSL Orchestrator only requires 
         vlanOut: "/Common/L2service1_out"
         interfaceOut: "1.5"
         tagOut:	101
+    
     monitor: "/Common/gateway_icmp"
     serviceDownAction: "ignore"
     ipOffset: 1
@@ -34,25 +37,25 @@ From a configuration and automation perspective, SSL Orchestrator only requires 
 ```
 
 **Options**
-| Key | Required | Default | Options | Description |
-| ------ | ------ | ------ | ------ |------ |
-| provider | yes |  |  | The BIG-IP connection provider information |
-| name | yes |  |  | [string]<br />The name of the security service (ex. layer2_1) |
-| state | no | present | present<br />absent | [string]<br />Value to determine create/modify (present) or delete (absent) action |
-| devices | yes |  |  | [list]<br />The list of devices in this security service |
-| devices:<br />name | yes |  |  | [string]<br />The name of a specific device in the security service list (ex. FEYE1) |
-| devices:<br />ratio | no | 1 |  | [int]<br />The load balancing ratio for this specific device |
-| devices:<br />vlanIn | yes* |  |  | [string]<br />The incoming (to-service) VLAN associated with this device - the vlanIn and interfaceIn options are mutually exclusive |
-| devices:<br />interfaceIn | yes* |  |  | [string]<br />The incoming (to-service) interface associated with this device - the vlanIn and interfaceIn options are mutually exclusing |
-| devices:<br />tagIn | no | 0 |  | [int]<br />The VLAN tag (if any) for the to-service interface associated with this device |
-| devices:<br />vlanOut | yes** |  |  | [string]<br />The outgoing (from-service) VLAN associated with this device - the vlanIn and interfaceIn options are mutually exclusive |
-| devices:<br />interfaceOut | yes** |  |  | [string]<br />The outgoing (from-service) interface associated with this device - the vlanIn and interfaceIn options are mutually exclusing |
-| devices:<br />tagOut | no | 0 |  | [int]<br />The VLAN tag (if any) for the from-service interface associated with this device |
-| monitor | no | /Common/gateway_icmp |  | [string]<br />The load balancing health monitor to assign to this security service |
-| serviceDownAction | no | ignore | ignore<br />reset<br />drop | [string]<br />The action to take if all service pool members are marked down. The reset and drop options reset and drop the connection, respectively, while the ignore option causes traffic to bypass this service |
-| ipOffset | no | 0 |  | [int]<br />When deployed in an external tiered architecture, the ipOffset increments the internal VLAn self-IPs for this service to avoid conflict with other standalone SSL Orchestrator devices in the tiered architecture |
-| portRemap | no |  |  | [int]<br />The port to remap decrypted http traffic to (if required) |
-| rules | no |  |  | [list]<br />A list of iRules to attach to this security service |
+| Key | Required | Default | Options | Support | Description |
+| ------ | ------ | ------ | ------ | ------ | ------ |
+| provider | yes |  |  | all | The BIG-IP connection provider information |
+| name | yes |  |  | all | [string]<br />The name of the security service (ex. layer2_1) |
+| state | no | present | present<br />absent | all | [string]<br />Value to determine create/modify (present) or delete (absent) action |
+| devices | yes |  |  | all | [list]<br />The list of devices in this security service |
+| devices:<br />name | yes |  |  | all | [string]<br />The name of a specific device in the security service list (ex. FEYE1) |
+| devices:<br />ratio | no | 1 |  | all | [int]<br />The load balancing ratio for this specific device |
+| devices:<br />vlanIn | yes* |  |  | all | [string]<br />The incoming (to-service) VLAN associated with this device - the vlanIn and interfaceIn options are mutually exclusive |
+| devices:<br />interfaceIn | yes* |  |  | all | [string]<br />The incoming (to-service) interface associated with this device - the vlanIn and interfaceIn options are mutually exclusing |
+| devices:<br />tagIn | no | 0 |  | all | [int]<br />The VLAN tag (if any) for the to-service interface associated with this device |
+| devices:<br />vlanOut | yes** |  |  | all | [string]<br />The outgoing (from-service) VLAN associated with this device - the vlanIn and interfaceIn options are mutually exclusive |
+| devices:<br />interfaceOut | yes** |  |  | all | [string]<br />The outgoing (from-service) interface associated with this device - the vlanIn and interfaceIn options are mutually exclusing |
+| devices:<br />tagOut | no | 0 |  | all | [int]<br />The VLAN tag (if any) for the from-service interface associated with this device |
+| monitor | no | /Common/gateway_icmp |  | all | [string]<br />The load balancing health monitor to assign to this security service |
+| serviceDownAction | no | ignore | ignore<br />reset<br />drop | all | [string]<br />The action to take if all service pool members are marked down. The reset and drop options reset and drop the connection, respectively, while the ignore option causes traffic to bypass this service |
+| ipOffset | no | 0 |  | 7.0+ | [int]<br />When deployed in an external tiered architecture, the ipOffset increments the internal VLAn self-IPs for this service to avoid conflict with other standalone SSL Orchestrator devices in the tiered architecture |
+| portRemap | no |  |  | all | [int]<br />The port to remap decrypted http traffic to (if required) |
+| rules | no |  |  | all | [list]<br />A list of iRules to attach to this security service |
 
 *Footnotes:*
 - \* The vlanIn and interfaceIn options are mutually exclusive
@@ -177,8 +180,9 @@ From a configuration and automation perspective, SSL Orchestrator only requires 
         monitor: "/Common/gw2"
       delegate_to: localhost
 ```
-**Best Practice Considerations**
+**Best Practices and Considerations**
 - It is generally better to create the VLANs outside of the service definition and reference within (third example).
+<br />
 - iRules applied in the service definition are applied at the incoming (to-service) side of the service. If the specific use case for adding an iRule is to inject an HTTP header, where that header should be stripped on the other side, it would be better to customize the service after its created using the native F5 BIG-IP iRule module. For an inline layer 2 service, and TCP traffic, SSL Orchestrator creates: 
     - A sending to-service virtual server (**/Common/ssloS_[name].app/ssloS_[name]-t-4**)
     - A receiving from-server virtual server (**/Common/ssloS_[name].app/ssloS_[name]-D-0-t-4**).

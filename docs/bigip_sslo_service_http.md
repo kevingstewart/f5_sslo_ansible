@@ -1,5 +1,6 @@
 # F5 SSL Orchestrator Ansible Automation Collection
 ## Documentation - Inline HTTP Service
+#### Module: bigip_sslo_service_http
 
 **Description**
 
@@ -14,71 +15,78 @@ From a configuration and automation perspective, SSL Orchestrator requires that 
     provider: "{{ provider }}"
     name: http_1
     state: present
+    
     devicesTo:
         vlan: "/Common/HTTPservice1_in"
         interface: "1.3"
         tag: 50
         selfIp:	"198.19.96.7"
         netmask: "255.255.255.128"
+    
     devicesFrom:
         vlan: "/Common/HTTPservice1_out"
         interface: "1.3"
         tag: 60
         selfIp:	"198.19.96.245"
         netmask: "255.255.255.128"
+    
     devices:
         - ip: "198.19.96.30"
           port: 3128
         - ip: "198.19.96.31"
           port: 3128
+    
     proxyType: "explicit"
     authOffload: True
     ipFamily: "ipv4"
     monitor: "/Common/gateway_icmp"
     serviceDownAction: "ignore"
     portRemap: 8080
+
     snat: "automap"
     snatlist: 
         - "198.19.64.140"
         - "198.19.64.141"
     snatpool: "/Common/my-L3service-snatpool"
+    
     rules: 
         - "/Common/rule1"
+        - "/Common/rule2"
     delegate_to: localhost
 
 ```
 
 **Options**
-| Key | Required | Default | Options | Description |
-| ------ | ------ | ------ | ------ |------ |
-| provider | yes |  |  | The BIG-IP connection provider information |
-| name | yes |  |  | [string]<br />The name of the security service (ex. http_1) |
-| state | no | present | present<br />absent | [string]<br />Value to determine create/modify (present) or delete (absent) action |
-| devicesTo | yes |  |  | [dict]<br />The set of networking properties associated with traffic flowing to the security service from the F5 |
-| devicesTo:<br />vlan | yes* |  |  | [string]<br />The name of a VLAN connected to the to-service side of the security device - the vlan and interface options are mutually exclusive |
-| devicesTo:<br />interface | yes* |  |  | [string]<br />The interface connected to the to-service side of the security device - the vlan and interface options are mutually exclusive |
-| devicesTo:<br />tag | no |  |  | [string]<br />The VLAN tag associated with the to-service side of the security service, and only if requried, and using the interface option |
-| devicesTo:<br />selfIp | yes |  |  | [string]<br />The BIG-IP self-IP address on the to-service side of the security service |
-| devicesTo:<br />netmask | yes |  |  | [string]<br />The respective netmask for the to-service self-IP |
-| devicesFrom | yes |  |  | [dict]<br />The set of networking properties associated with traffic flowing from the security service back to the F5 |
-| devicesFrom:<br />vlan | yes** |  |  | [string]<br />The name of a VLAN connected to the from-service side of the security device - the vlan and interface options are mutually exclusive |
-| devicesFrom:<br />interface | yes** |  |  | [string]<br />The interface connected to the from-service side of the security device - the vlan and interface options are mutually exclusive |
-| devicesFrom:<br />tag | no |  |  | [string]<br />The VLAN tag associated with the from-service side of the security service, and only if requried, and using the interface option |
-| devicesFrom:<br />selfIp | yes |  |  | [string]<br />The BIG-IP self-IP address on the from-service side of the security service |
-| devicesFrom:<br />netmask | yes |  |  | [string]<br />The respective netmask for the from-service self-IP |
-| devices | yes |  |  | [list]<br />A list of device IP addresses. These will be addresses in the to-service IP subnet. For a transparent proxy, define an IP address only. For an explicit proxy, define the IP:PORT |
-| devices:<br />ip | yes |  |  | [string]<br />The to-service IP address of a specific security device |
-| devices:<br />port | no |  |  | [int]<br />The to-service explicit proxy listening port |
-| proxyType | no | explicit | explicit<br />transparent | [string]<br />The type of HTTP proxy device, explicit or transparent |
-| authOffload | no | False | True<br />False | [bool]<br />This option defines a mechanism that sends authenticated user information to the proxy device in a X-Authenticated-User HTTP header. This option requires APM authentication |
-| ipFamily | no | ipv4 | ipv4<br />ipv6 | [string]<br />The IP family expected for this security device |
-| monitor | no | /Common/gateway_icmp |  | [string]<br />The load balancing health monitor to assign to this security service |
-| serviceDownAction | no | ignore | ignore<br />reset<br />drop | [string]<br />The action to take if all service pool members are marked down. The reset and drop options reset and drop the connection, respectively, while the ignore option causes traffic to bypass this service |
-| portRemap | no |  |  | [int]<br />The port to remap decrypted http traffic to (if required) |
-| snat | no |  | automap<br />snatpool<br />snatlist | [string]<br />The option to use if source NAT is required to the security device |
-| snatlist | no |  |  | [list]<br />A list of source NAT addresses to use if the snat option is 'snatlist' |
-| snatpool | no |  |  | [string]<br />The name of an existing SNAT pool if the snat option is 'snatpool' |
-| rules | no |  |  |[list]<br />A list of iRules to attach to this security service  |
+| Key | Required | Default | Options | Support | Description |
+| ------ | ------ | ------ | ------ | ------ | ------ |
+| provider | yes |  |  | all | The BIG-IP connection provider information |
+| name | yes |  |  | all | [string]<br />The name of the security service (ex. http_1) |
+| state | no | present | present<br />absent | all | [string]<br />Value to determine create/modify (present) or delete (absent) action |
+| devicesTo | yes |  |  | all | [dict]<br />The set of networking properties associated with traffic flowing to the security service from the F5 |
+| devicesTo:<br />vlan | yes* |  |  | all | [string]<br />The name of a VLAN connected to the to-service side of the security device - the vlan and interface options are mutually exclusive |
+| devicesTo:<br />interface | yes* |  |  | all | [string]<br />The interface connected to the to-service side of the security device - the vlan and interface options are mutually exclusive |
+| devicesTo:<br />tag | no |  |  | all | [string]<br />The VLAN tag associated with the to-service side of the security service, and only if requried, and using the interface option |
+| devicesTo:<br />selfIp | yes |  |  | all | [string]<br />The BIG-IP self-IP address on the to-service side of the security service |
+| devicesTo:<br />netmask | yes |  |  | all | [string]<br />The respective netmask for the to-service self-IP |
+| devicesFrom | yes |  |  | all | [dict]<br />The set of networking properties associated with traffic flowing from the security service back to the F5 |
+| devicesFrom:<br />vlan | yes** |  |  | all | [string]<br />The name of a VLAN connected to the from-service side of the security device - the vlan and interface options are mutually exclusive |
+| devicesFrom:<br />interface | yes** |  |  | all | [string]<br />The interface connected to the from-service side of the security device - the vlan and interface options are mutually exclusive |
+| devicesFrom:<br />tag | no |  |  | all | [string]<br />The VLAN tag associated with the from-service side of the security service, and only if requried, and using the interface option |
+| devicesFrom:<br />selfIp | yes |  |  | all | [string]<br />The BIG-IP self-IP address on the from-service side of the security service |
+| devicesFrom:<br />netmask | yes |  |  | all | [string]<br />The respective netmask for the from-service self-IP |
+| devices | yes |  |  | all | [list]<br />A list of device IP addresses. These will be addresses in the to-service IP subnet. For a transparent proxy, define an IP address only. For an explicit proxy, define the IP:PORT |
+| devices:<br />ip | yes |  |  | all | [string]<br />The to-service IP address of a specific security device |
+| devices:<br />port | no |  |  | all | [int]<br />The to-service explicit proxy listening port |
+| proxyType | no | explicit | explicit<br />transparent | all | [string]<br />The type of HTTP proxy device, explicit or transparent |
+| authOffload | no | False | True<br />False | all | [bool]<br />This option defines a mechanism that sends authenticated user information to the proxy device in a X-Authenticated-User HTTP header. This option requires APM authentication |
+| ipFamily | no | ipv4 | ipv4<br />ipv6 | all | [string]<br />The IP family expected for this security device |
+| monitor | no | /Common/gateway_icmp |  | all | [string]<br />The load balancing health monitor to assign to this security service |
+| serviceDownAction | no | ignore | ignore<br />reset<br />drop | all | [string]<br />The action to take if all service pool members are marked down. The reset and drop options reset and drop the connection, respectively, while the ignore option causes traffic to bypass this service |
+| portRemap | no |  |  | all | [int]<br />The port to remap decrypted http traffic to (if required) |
+| snat | no |  | automap<br />snatpool<br />snatlist | all | [string]<br />The option to use if source NAT is required to the security device |
+| snatlist | no |  |  | all | [list]<br />A list of source NAT addresses to use if the snat option is 'snatlist' |
+| snatpool | no |  |  | all | [string]<br />The name of an existing SNAT pool if the snat option is 'snatpool' |
+| rules | no |  |  | all | [list]<br />A list of iRules to attach to this security service  |
 
 *Footnotes:*
 - \* The devicesTo vlan and devicesTo interface options are mutually exclusive
@@ -273,8 +281,9 @@ From a configuration and automation perspective, SSL Orchestrator requires that 
           - "/Common/proxy1a-rule-2"
       delegate_to: localhost
 ```
-**Best Practice Considerations**
+**Best Practices and Considerations**
 - It is generally better to create the VLANs outside of the service definition and reference within (third example).
+<br />
 - iRules applied in the service definition are applied at the incoming (to-service) side of the service. If the specific use case for adding an iRule is to inject an HTTP header, where that header should be stripped on the other side, it would be better to customize the service after its created using the native F5 BIG-IP iRule module. For an inline layer 3 service, and TCP traffic, SSL Orchestrator creates: 
     - A sending to-service virtual server (**/Common/ssloS_[name].app/ssloS_[name]-t-4**)
     - A receiving from-server virtual server (**/Common/ssloS_[name].app/ssloS_[name]-D-0-t-4**).
