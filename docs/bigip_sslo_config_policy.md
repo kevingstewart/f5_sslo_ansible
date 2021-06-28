@@ -416,13 +416,13 @@ Description: defines a traffic match based on the unencrypted HTTP Host and URI 
 
 **Best Practices and Considerations**
 - As security policy rules are nested, it is generally best practice to place the traffic rules in OSI order. IP and port based conditions should be placed first, above URL category and sslCheck conditions, and then TLS bypass conditions should be above TLS intercept conditions. Layer 7 (TCP/UDP) protocol matches, and the urlMatch condition should be placed last in the set of rules.
-<br />
+
 - The names of the URL categories can be found using this command in the BIG-IP console: 
     ```
     tmsh list sys url-db url-category one-line | awk -F" " '{ print $4 }'
     ```
 - The list of IP reputation categories can be found here: https://techdocs.f5.com/en-us/bigip-14-0-0/big-ip-local-traffic-manager-implementations-14-0-0/enabling-ip-address-intelligence.html
-<br />
+
 
 
 
