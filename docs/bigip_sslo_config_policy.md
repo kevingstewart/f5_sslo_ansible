@@ -2,8 +2,7 @@
 ## Documentation - Security Policy
 #### Module: bigip_sslo_config_policy
 
-**Description**
-
+**Description**<br />
 An SSL Orchestrator security policy is a set of traffic rules that define a set of actions: allow/block, TLS intercept/bypass, and service chain assignment. The traffic rules within a security policy are the set of traffic matching conditions. From a configuration and automation perspective, a security policy minimally requires the defaultRule settings to define what happens when no traffic rules are matched. There is multiple types of traffic conditions to choose from, as documented below.*
 
 **Sample wth all options defined**
@@ -64,12 +63,12 @@ An SSL Orchestrator security policy is a set of traffic rules that define a set 
 
 <br />
 
-**Condition: pinnersRule**
+**Condition: pinnersRule**<br />
 Description: when defined, no additional settings are required, and no other conditions can be included in the traffic rule. This condition sets up a custom URL category match based on the built-in "pinners" custom URL category.
 
 <br />
 
-**Condition: categoryLookupAll**
+**Condition: categoryLookupAll**<br />
 Description: defines a URL category lookup for all HTTP and HTTPS traffic (SNI and HTTP Host) information.
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -77,7 +76,7 @@ Description: defines a URL category lookup for all HTTP and HTTPS traffic (SNI a
 
 <br />
 
-**Condition: categoryLookupConnect**
+**Condition: categoryLookupConnect**<br />
 Description: defines a URL category lookup based on explicit forward proxy HTTP Connect information.
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -85,7 +84,7 @@ Description: defines a URL category lookup based on explicit forward proxy HTTP 
 
 <br />
 
-**Condition: categoryLookupSNI**
+**Condition: categoryLookupSNI**<br />
 Description: defines a category lookup based on TLS handshake server name indication (SNI) information only.
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -93,7 +92,7 @@ Description: defines a category lookup based on TLS handshake server name indica
 
 <br />
 
-**Condition: clientIpGeolocation**
+**Condition: clientIpGeolocation**<br />
 Description: defines an IP Geolocation lookup based on client IP address information.
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -103,7 +102,7 @@ Description: defines an IP Geolocation lookup based on client IP address informa
 
 <br />
 
-**Condition: serverIpGeolocation**
+**Condition: serverIpGeolocation**<br />
 Description: defines an IP Geolocation lookup based on server IP address information. 
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -113,7 +112,7 @@ Description: defines an IP Geolocation lookup based on server IP address informa
 
 <br />
 
-**Condition: clientIpReputation**
+**Condition: clientIpReputation**<br />
 Description: defines an IP Reputation service lookup based on client IP address information. 
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -122,7 +121,7 @@ Description: defines an IP Reputation service lookup based on client IP address 
 
 <br />
 
-**Condition: serverIpReputation**
+**Condition: serverIpReputation**<br />
 Description: defines an IP Reputation service lookup based on server IP address information. 
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -131,7 +130,7 @@ Description: defines an IP Reputation service lookup based on server IP address 
 
 <br />
 
-**Condition: clientIpSubnet**
+**Condition: clientIpSubnet**<br />
 Description: defines a traffic match based on client IP subnet information. 
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -139,7 +138,7 @@ Description: defines a traffic match based on client IP subnet information.
 
 <br />
 
-**Condition: serverIpSubnet**
+**Condition: serverIpSubnet**<br />
 Description: defines a traffic match based on server IP subnet information.
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -147,7 +146,7 @@ Description: defines a traffic match based on server IP subnet information.
 
 <br />
 
-**Condition: clientPort**
+**Condition: clientPort**<br />
 Description: defines a traffic match based on client port information.
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -158,7 +157,7 @@ Description: defines a traffic match based on client port information.
 
 <br />
 
-**Condition: serverPort**
+**Condition: serverPort**<br />
 Description: defines a traffic match based on server port information.
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -169,7 +168,7 @@ Description: defines a traffic match based on server port information.
 
 <br />
 
-**Condition: sslCheck**
+**Condition: sslCheck**<br />
 Description: defines a traffic match based on the existence of a TLS handshake.
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -177,7 +176,7 @@ Description: defines a traffic match based on the existence of a TLS handshake.
 
 <br />
 
-**Condition: L7ProtocolCheckTcp**
+**Condition: L7ProtocolCheckTcp**<br />
 Description: defines a traffic match based on the layer 7 TCP protocol.
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -185,7 +184,7 @@ Description: defines a traffic match based on the layer 7 TCP protocol.
 
 <br />
 
-**Condition: L7ProtocolCheckUdp**
+**Condition: L7ProtocolCheckUdp**<br />
 Description: defines a traffic match based on the layer 7 UDP protocol.
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -193,7 +192,7 @@ Description: defines a traffic match based on the layer 7 UDP protocol.
 
 <br />
 
-**Condition: urlMatch**
+**Condition: urlMatch**<br />
 Description: defines a traffic match based on the unencrypted HTTP Host and URI information.
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
