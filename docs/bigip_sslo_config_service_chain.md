@@ -2,10 +2,12 @@
 ## Documentation - Security Service Chain
 #### Module: bigip_sslo_config_service_chain
 
-**Description**
+<br />
 
+**Description**<br />
 A security service chain is a container object for an ordered set of security services. Service chains are then applied to SSL Orchestrator security policies. From a configuration and automation perspective, a service chain minimally contains a list of services (by service name), and the respective service type.
 
+<br />
 
 **Sample wth all options defined**
 ```yaml
@@ -18,20 +20,26 @@ A security service chain is a container object for an ordered set of security se
       - name: "layer2_1"
         serviceType: "L2"
         ipFamily: "ipv4"
+      
       - name: "layer3_1"
         serviceType: "L3"
         ipFamily: "ipv4"
+      
       - name: "http_1"
         serviceType: "http-proxy"
         ipFamily: "ipv4"
+      
       - name: "icap_1"
         serviceType: "icap"
         ipFamily: "ipv4"
+      
       - name: "tap_1"
         serviceType: "tap"
         ipFamily: "ipv4"
 delegate_to: localhost
 ```
+
+<br />
 
 **Options**
 | Key | Required | Default | Options | Support | Description |
@@ -43,6 +51,8 @@ delegate_to: localhost
 | services:<br />name | yes |  |  | all | [string]<br />The name of specific service (ex. layer2_1) |
 | services:<br />serviceType | yes |  | L2<br />L3<br /><nobr>http-proxy</nobr><br />icap<br />tap | all | [string]<br />The service type |
 | services:<br />ipFamily | no | ipv4 | ipv4<br />ipv6 | all | [string]<br />The ipFamily supported |
+
+<br />
 
 **Examples**
 ```YAML

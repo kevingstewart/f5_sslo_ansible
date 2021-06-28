@@ -2,11 +2,14 @@
 ## Documentation - Inline Layer 3 Service
 #### Module: bigip_sslo_service_layer3
 
-**Description**
+<br />
 
+**Description**<br />
 An inline layer 3 device is generally defined as any security device that possesses separate inbound and outbound interfaces, and participates in layer 3 (routing) of traffic. A layer 3 device will have separate to-service "in" and from-service "out" interfaces on different IP subnets. These could also be *logically* separated using 802.1Q VLAN tags attached to a single interface.
 
 From a configuration and automation perspective, SSL Orchestrator requires that you define the to-service and from-service networking attributes.
+
+<br />
 
 **Sample wth all options defined**
 ```yaml
@@ -51,6 +54,8 @@ From a configuration and automation perspective, SSL Orchestrator requires that 
 
 ```
 
+<br />
+
 **Options**
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -83,6 +88,8 @@ From a configuration and automation perspective, SSL Orchestrator requires that 
 *Footnotes:*
 - \* The devicesTo vlan and devicesTo interface options are mutually exclusive
 - \** The devicesFrom vlan and devicesFrom interface options are mutually exclusive
+
+<br />
 
 **Examples**
 ```YAML
@@ -234,9 +241,11 @@ From a configuration and automation perspective, SSL Orchestrator requires that 
           - "/Common/layer3-rule-2"
       delegate_to: localhost
 ```
+
+<br />
+
 **Best Practices and Considerations**
 - It is generally better to create the VLANs outside of the service definition and reference within (third example).
-<br />
 - iRules applied in the service definition are applied at the incoming (to-service) side of the service. If the specific use case for adding an iRule is to inject an HTTP header, where that header should be stripped on the other side, it would be better to customize the service after its created using the native F5 BIG-IP iRule module. For an inline layer 3 service, and TCP traffic, SSL Orchestrator creates: 
     - A sending to-service virtual server (**/Common/ssloS_[name].app/ssloS_[name]-t-4**)
     - A receiving from-server virtual server (**/Common/ssloS_[name].app/ssloS_[name]-D-0-t-4**).

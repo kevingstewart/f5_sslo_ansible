@@ -2,8 +2,12 @@
 ## Documentation - Security Policy
 #### Module: bigip_sslo_config_policy
 
+<br />
+
 **Description**<br />
 An SSL Orchestrator security policy is a set of traffic rules that define a set of actions: allow/block, TLS intercept/bypass, and service chain assignment. The traffic rules within a security policy are the set of traffic matching conditions. From a configuration and automation perspective, a security policy minimally requires the defaultRule settings to define what happens when no traffic rules are matched. There is multiple types of traffic conditions to choose from, as documented below.*
+
+<br />
 
 **Sample wth all options defined**
 ```yaml
@@ -37,6 +41,8 @@ An SSL Orchestrator security policy is a set of traffic rules that define a set 
 
   delegate_to: localhost
 ```
+
+<br />
 
 **Options**
 | Key | Required | Default | Options | Support | Description |
@@ -199,6 +205,8 @@ Description: defines a traffic match based on the unencrypted HTTP Host and URI 
 | values | yes |  |  | all | [list]<br />A list of URL string matches |
 | values:<br />type | yes |  | equals<br />substring<br />prefix<br />suffix<br />glob | all | [string]<br />The type of URL match to make |
 | values:<br />value | yes |  |  | all | [string]<br />The corresponding URL value |
+
+<br />
 
 **Examples**
 ```YAML
@@ -413,6 +421,7 @@ Description: defines a traffic match based on the unencrypted HTTP Host and URI 
           pool: "/Common/upstream-proxy-pool"
       delegate_to: localhost
 ```
+<br />
 
 **Best Practices and Considerations**
 - As security policy rules are nested, it is generally best practice to place the traffic rules in OSI order. IP and port based conditions should be placed first, above URL category and sslCheck conditions, and then TLS bypass conditions should be above TLS intercept conditions. Layer 7 (TCP/UDP) protocol matches, and the urlMatch condition should be placed last in the set of rules.

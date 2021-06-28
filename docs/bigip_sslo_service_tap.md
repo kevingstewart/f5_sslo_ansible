@@ -2,9 +2,12 @@
 ## Documentation - TAP Service
 #### Module: bigip_sslo_service_tap
 
-**Description**
+<br />
 
+**Description**<br />
 A TAP service is generally defined as a device that receives a passive copy of traffic. From a configuration and automation perspective, a TAP service minimally requires connectivity information.
+
+<br />
 
 **Sample wth all options defined**
 ```yaml
@@ -22,6 +25,8 @@ A TAP service is generally defined as a device that receives a passive copy of t
   delegate_to: localhost
 ```
 
+<br />
+
 **Options**
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -37,6 +42,8 @@ A TAP service is generally defined as a device that receives a passive copy of t
 
 *Footnotes:*
 - \* The vlan and interface options are mutually exclusive
+
+<br />
 
 **Examples**
 ```YAML
@@ -96,7 +103,10 @@ A TAP service is generally defined as a device that receives a passive copy of t
         portRemap: 8080
       delegate_to: localhost
 ```
+
+<br />
+
 **Best Practices and Considerations**
 - It is generally better to create the VLANs outside of the service definition and reference within (first example).
-<br />
+
  

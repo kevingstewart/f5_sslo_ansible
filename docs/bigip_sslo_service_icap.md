@@ -2,12 +2,14 @@
 ## Documentation - ICAP Service
 #### Module: bigip_sslo_service_icap
 
-**Description**
+<br />
 
+**Description**<br />
 An ICAP service is generally defined as any service that is controlled using the Internet Content Adaptation Protocol (ICAP) process. ICAP is essentially an encapsulation protocol for multiple types of services, but is often used in anti-virus, anti-malware, and data loss prevention (DLP) solutions.
 
 From a configuration and automation persepective, an SSL Orchestrator ICAP security service an ICAP client that targets an external ICAP service (AV, DLP). This minimally requires knowledge of the service's listening IP address and port, and request/response URLs. You may also activate additional headers, a custom preview length, and apply a policy to control when and how the ICAP client engages the ICAP server.
 
+<br />
 
 **Sample wth all options defined**
 ```yaml
@@ -38,6 +40,8 @@ From a configuration and automation persepective, an SSL Orchestrator ICAP secur
   delegate_to: localhost
 ```
 
+<br />
+
 **Options**
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -62,6 +66,7 @@ From a configuration and automation persepective, an SSL Orchestrator ICAP secur
 | allowHttp10 | no | True | True<br />False | all | [bool]<br />Switch to enable or disable HTTP/1.0 processing. When enabled (True), the ICAP client accepts HTTP/1.1 and HTTP/1.0 responses |
 | cpmPolicies | no |  |  | all | [string]<br />The name of an LTM CPM policy used to control ICAP processing |
 
+<br />
 
 **Examples**
 ```YAML

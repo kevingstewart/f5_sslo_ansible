@@ -2,11 +2,14 @@
 ## Documentation - SSL Settings
 #### Module: bigip_sslo_config_ssl
 
-**Description**
+<br />
 
+**Description**<br />
 The SSL configuration encompasses all decryption and re-encryption properties of an SSL Orchestrator topology (client and server SSL settings).
 
 From a configuration and automation perspective, a forward proxy is minimally identified by the presence of a signing CA certificate and key. A reverse proxy minimally requires the (server) certificate and private key to be defined. Most other settings can be left as default.
+
+<br />
 
 **Sample wth all options defined**
 ```yaml
@@ -42,6 +45,8 @@ From a configuration and automation perspective, a forward proxy is minimally id
 delegate_to: localhost
 ```
 
+<br />
+
 **Options**
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -74,6 +79,8 @@ delegate_to: localhost
 - \* The presence of the caCert and caKey options defines a forward proxy SSL configuration
 - \** blockExpired defaults to True for forward proxy, and defaults to False for reverse proxy
 - \*** blockUntrusted defaults to True for forward proxy, and defaults to False for reverse proxy
+
+<br />
 
 **Examples**
 ```YAML

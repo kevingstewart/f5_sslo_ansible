@@ -7,6 +7,7 @@
 **Description**<br />
 The resolver configuration is the set of system-wide DNS resolution settings. From a configuration and automation perspective, a resolver minimally requires a list of forwardingNameserver IP addresses, or a list of forwardingZones zone:nameservers properties.
 
+<br />
 
 **Sample wth all options defined**
 ```yaml
@@ -32,6 +33,7 @@ The resolver configuration is the set of system-wide DNS resolution settings. Fr
     enableDNSsec: False
 delegate_to: localhost
 ```
+<br />
 
 **Options**
 | Key | Required | Default | Options | Support | Description |
@@ -47,6 +49,8 @@ delegate_to: localhost
 *Footnotes:*
 - \* The forwardingNameServers and forwardingZones options mutually exclusive, but at least one must be defined
 - \** If forwardingZones is defined, at least one zone:nameserver property pair must also be defined
+
+<br />
 
 **Examples**
 ```YAML

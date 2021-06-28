@@ -2,11 +2,14 @@
 ## Documentation - Inline Layer 2 Service
 #### Module: bigip_sslo_service_layer2
 
-**Description**
+<br />
 
+**Description**<br />
 An inline layer 2 security service is generally defined as any security device that possesses separate inbound and outbound interfaces, and does not participate in layer 3 (routing) of traffic. In many cases the inbound and outbound interfaces are connected by an internal bridge. Under the hood, SSL Orchestrator creates a set of private networks (a pair of VLANs, internal self-IPs, a route domain, virtual servers and a pool) to effectively route traffic *across* a layer 2 device. This allows layers 2 devices to be actively load balanced and monitored.
 
 From a configuration and automation perspective, SSL Orchestrator only requires that you define the interfaces that connect to a layer 2 device, the respective to-service "in" and from-service "out" interfaces. Each physical device in a layer 2 service requires a separate set of interfaces, and SSL Orchestrator handles the internal network plumbing. The to-service and from-service connectivity can be defined as an interface or existing VLAN (but not both). If the layer 2 device supports 802.1Q, tags can also be defined, but must be different on each side.
+
+<br />
 
 **Sample wth all options defined**
 ```yaml
@@ -36,6 +39,8 @@ From a configuration and automation perspective, SSL Orchestrator only requires 
   delegate_to: localhost
 ```
 
+<br />
+
 **Options**
 | Key | Required | Default | Options | Support | Description |
 | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -60,6 +65,8 @@ From a configuration and automation perspective, SSL Orchestrator only requires 
 *Footnotes:*
 - \* The vlanIn and interfaceIn options are mutually exclusive
 - \** The vlanOut and interfaceOut options are mutually exclusive
+
+<br />
 
 **Examples**
 ```YAML
@@ -180,9 +187,11 @@ From a configuration and automation perspective, SSL Orchestrator only requires 
         monitor: "/Common/gw2"
       delegate_to: localhost
 ```
+
+<br />
+
 **Best Practices and Considerations**
 - It is generally better to create the VLANs outside of the service definition and reference within (third example).
-<br />
 - iRules applied in the service definition are applied at the incoming (to-service) side of the service. If the specific use case for adding an iRule is to inject an HTTP header, where that header should be stripped on the other side, it would be better to customize the service after its created using the native F5 BIG-IP iRule module. For an inline layer 2 service, and TCP traffic, SSL Orchestrator creates: 
     - A sending to-service virtual server (**/Common/ssloS_[name].app/ssloS_[name]-t-4**)
     - A receiving from-server virtual server (**/Common/ssloS_[name].app/ssloS_[name]-D-0-t-4**).
