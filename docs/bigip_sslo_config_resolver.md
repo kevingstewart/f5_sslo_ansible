@@ -2,8 +2,7 @@
 ## Documentation - DNS Resolver Configuration
 #### Module: bigip_sslo_config_resolver
 
-**Description**
-
+**Description**<br />
 The resolver configuration is the set of system-wide DNS resolution settings. From a configuration and automation perspective, a resolver minimally requires a list of forwardingNameserver IP addresses, or a list of forwardingZones zone:nameservers properties.
 
 
