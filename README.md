@@ -54,17 +54,22 @@ These modules depend on the following third party libraries:
 - deepdiff
 
 ## Setting up a simple lab environment
-While not expressly required, the following steps utilize Python virtualenv on an Ubuntu 18.0+ box to build a simple development environment for this collection:
+While not expressly required, the following steps utilize Python virtualenv on an Ubuntu 20.0+ box to build a simple development environment for this collection:
 - Initial system configuration (install Python 3.8 and Virtualenv)
   ```bash
   sudo apt update
   sudo apt upgrade
+  
+  ** Test for Python3.8+. If less than, use following commands to install:
+  python3 --version
   sudo apt install software-properties-common
   sudo add-apt-repository ppa:deadsnakes/ppa
-  sudo apt install python3.8 python3.8-venv python3-venv
+  sudo apt install python3.8
   ```
-- Virtualenv setup (activate Virtualenv, install Ansible, and install third party libraries)
+- Virtualenv setup (install/activate Virtualenv, install Ansible, and install third party libraries)
   ```bash
+  mkdir build && cd build
+  sudo apt install python3.8-venv python3-venv
   python3 -m venv ansible_venv
   source ansible_venv/bin/activate
   pip3 install --upgrade pip
@@ -74,12 +79,16 @@ While not expressly required, the following steps utilize Python virtualenv on a
   ```
 - Module environment setup (install Ansible collections)
   ```bash
-  mkdir ansible
-  cd ansible
+  mkdir ansible && cd ansible
   mkdir {inventory,playbooks}
   echo -e "[all]\nlocalhost" >> inventory/hosts
   echo -e "[defaults]\nhost_key_checking = False\nretry_files_enabled = False" >> ansible.cfg
   ansible-galaxy collection install git+https://github.com/kevingstewart/f5_sslo_ansible.git
+  ```
+- Grab a local copy of the sample playbooks (optional)
+  ```Bash
+  sudo apt install subversion
+  svn export https://github.com/kevingstewart/f5_sslo_ansible/trunk/sample-playbooks
   ```
 
 ## Guiding Principles

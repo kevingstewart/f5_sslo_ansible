@@ -9,8 +9,22 @@ An SSL Orchestrator topology is generally defined as the set of the properties t
 
 From a configuration and automation perspective, topologies can be further categorized by two deployment methods:
 
+<br />
+
+**Deployment Methods**<br />
+There are generally two options for automated SSL Orchestrator topology deployment:
+
 - **Atomic**: where the topology configuration minimally defines itelf, and references to SSL and security policy settings. In this mode, the other dependent objects (i.e. security services, service chains, security policy, and SSL settings) must all be created first. In an Ansible playbook these could simply be separate tasks that are created in parent-child dependent order, or they could be created in separate playbooks at different times. Creating all of the SSL Orchestrator objects as atomic tasks in a playbook will take a while to complete, as each object creation task must finish before the next is started.
+  
+  <br />
+  <img src="../images/f5_sslo_ansible_deployment_atomic.png" width="500">
+  <br />
+  <br />
+
 - **Aggregate**: where dependent object creation is deferred and its configuration block referenced inside a single topology creation task. This method uses a special "mode" option in the dependent objects to defer sending the configuration to the target host. When the mode is set to "output", the object task bypasses creation, and simply returns the JSON configuration block in a registered variable. The topology declaration can then reference this JSON block as a Jinja2 variable, and combine all of the JSON blocks into a single all-encompassing creation task. The advantage of this approach is a much faster creation time.
+  
+  <br />
+  <img src="../images/f5_sslo_ansible_deployment_aggregate.png" width="250">
 
 A topology declaration must minimally contain SSL and security policy settings, and one (and only one) topology definition.
 
