@@ -2,6 +2,8 @@ F5 SSL Orchestrator Ansible Automation Collection
 +++++++++++++++++++++++++++++++++++++++++++++++++
 
 Documentation - TAP Service
+===========================
+
 Module: bigip_sslo_service_tap
 ------------------------------
 
