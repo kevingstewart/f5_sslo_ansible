@@ -148,3 +148,61 @@ Parameters
       </tbody>
     </table>
 
+.. code-block:: yaml
+
+    - name: Create SSLO service(s)
+      hosts: localhost
+      gather_facts: False
+      connection: local
+      collections:
+        - kevingstewart.f5_sslo_ansible
+      vars: 
+        provider:
+          server: 10.1.1.4
+          user: admin
+          password: admin
+          validate_certs: no
+          server_port: 443
+      tasks:
+        - name: create TAP service VLAN
+          bigip_vlan:
+            provider: "{{ provider }}"
+            name: TAPservice_vlan
+            tagged_interface: 1.7
+          delegate_to: localhost
+
+        - name: SSLO TAP service
+          bigip_sslo_service_tap:
+            provider: "{{ provider }}"
+            name: "tap_1"
+            devices: 
+              vlan: "/Common/TAPservice_vlan"
+          delegate_to: localhost
+
+.. code-block:: yaml
+
+    - name: Create SSLO service(s)
+      hosts: localhost
+      gather_facts: False
+      connection: local
+      collections:
+        - kevingstewart.f5_sslo_ansible
+      vars: 
+        provider:
+          server: 10.1.1.4
+          user: admin
+          password: admin
+          validate_certs: no
+          server_port: 443
+      tasks:
+        - name: SSLO TAP service
+          bigip_sslo_service_tap:
+            provider: "{{ provider }}"
+            name: "tap_1"
+            state: "present"
+            devices: 
+              interface: "1.7"
+              port: 1000
+            macAddress: "12:12:12:12:12:12"
+            portRemap: 8080
+          delegate_to: localhost
