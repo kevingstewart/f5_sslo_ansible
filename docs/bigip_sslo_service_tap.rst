@@ -7,7 +7,7 @@ A TAP service is generally defined as a device that receives a passive copy of t
 
 Sample with all options defined
 -------------------------------
-.. raw:: yaml
+.. code-block:: yaml
     - name: SSLO TAP service
       bigip_sslo_service_tap:
         provider: "{{ provider }}"
@@ -82,7 +82,19 @@ Parameters
         </tr>
         <tr>
           <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
-          <td>vlan</td>
+          <td>interface</td>
+          <td>yes*</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[string]</p>
+
+          <p>An existing VLAN connected to the TAP service</p>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+          <td>tag</td>
           <td>yes*</td>
           <td>&nbsp;</td>
           <td>&nbsp;</td>
