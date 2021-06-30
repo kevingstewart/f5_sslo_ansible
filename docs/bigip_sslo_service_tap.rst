@@ -1,6 +1,10 @@
 F5 SSL Orchestrator Ansible Automation Collection
 +++++++++++++++++++++++++++++++++++++++++++++++++
 
+Documentation - TAP Service
+Module: bigip_sslo_service_tap
+------------------------------
+
 Description
 -----------
 A TAP service is generally defined as a device that receives a passive copy of traffic. From a configuration and automation perspective, a TAP service minimally requires connectivity information.
