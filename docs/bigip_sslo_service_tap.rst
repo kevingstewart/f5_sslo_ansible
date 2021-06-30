@@ -1,3 +1,26 @@
+F5 SSL Orchestrator Ansible Automation Collection
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Description
+-----------
+A TAP service is generally defined as a device that receives a passive copy of traffic. From a configuration and automation perspective, a TAP service minimally requires connectivity information.
+
+Sample with all options defined
+-------------------------------
+.. raw:: yaml
+    - name: SSLO TAP service
+      bigip_sslo_service_tap:
+        provider: "{{ provider }}"
+        name: tap_1
+        state: present
+        devices:
+          vlan: "/Common/my-tap-vlan"
+          interface: "1.6"
+          tag: 400
+        macAddress: "12:12:12:12:12:12"
+        portRemap: 8080
+        delegate_to: localhost
+
 Parameters
 ----------
 
