@@ -43,7 +43,8 @@ A TAP service is generally defined as a device that receives a passive copy of t
 *Footnotes:*
 - \* The vlan and interface options are mutually exclusive
 
-..raw:: html
+.. raw:: html
+
 <table border="1" cellpadding="1" cellspacing="1" style="width:50%;background-color:#ffffcc;border-collapse:collapse;border:1px solid #ffcc00">
 	<tbody>
 		<tr>
