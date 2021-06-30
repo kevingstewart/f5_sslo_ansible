@@ -9,7 +9,7 @@ Module: bigip_sslo_service_tap
 
 Description
 -----------
-A TAP service is generally defined as a device that receives a passive copy of traffic. From a configuration and automation perspective, a TAP service minimally requires connectivity information.
+A TAP [2]_ service is generally defined as a device that receives a passive copy of traffic. From a configuration and automation perspective, a TAP service minimally requires connectivity information.
 
 Sample with all options defined
 -------------------------------
@@ -149,6 +149,7 @@ Parameters
     </table>
 
 .. [1] The vlan and interface options are mutually exclusive
+.. [2] The vlan and interface options are mutually exclusive
     
 Examples
 --------
