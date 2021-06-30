@@ -89,7 +89,7 @@ Parameters
         </tr>
         <tr>
           <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
-          <td>interface</td>
+          <td>vlan</td>
           <td>yes*</td>
           <td>&nbsp;</td>
           <td>&nbsp;</td>
@@ -101,7 +101,7 @@ Parameters
         </tr>
         <tr>
           <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
-          <td>tag</td>
+          <td>interface</td>
           <td>yes*</td>
           <td>&nbsp;</td>
           <td>&nbsp;</td>
@@ -113,7 +113,7 @@ Parameters
         </tr>
         <tr>
           <td>&nbsp;</td>
-          <td>interface</td>
+          <td>tag</td>
           <td>yes*</td>
           <td>&nbsp;</td>
           <td>&nbsp;</td>
@@ -147,6 +147,9 @@ Parameters
         </tr>
       </tbody>
     </table>
+
+Examples
+--------
 
 .. code-block:: yaml
 
