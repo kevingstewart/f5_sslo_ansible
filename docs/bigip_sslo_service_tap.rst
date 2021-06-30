@@ -215,6 +215,6 @@ Examples
             portRemap: 8080
           delegate_to: localhost
 
-          Best Practices and Considerations
-          ---------------------------------
-          - It is generally better to create the VLANs outside of the service definition and reference within (first example).
+Best Practices and Considerations
+---------------------------------
+- It is generally better to create the VLANs outside of the service definition and reference within (first example).
