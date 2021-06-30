@@ -8,6 +8,7 @@ A TAP service is generally defined as a device that receives a passive copy of t
 Sample with all options defined
 -------------------------------
 .. code-block:: yaml
+
     - name: SSLO TAP service
       bigip_sslo_service_tap:
         provider: "{{ provider }}"
