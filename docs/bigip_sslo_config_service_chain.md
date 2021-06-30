@@ -43,7 +43,7 @@ delegate_to: localhost
 
 **Options**
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | provider | yes |  |  | all | The BIG-IP connection provider information |
 | name | yes |  |  | all | [string]<br />The name of the service chain (ex. service_chain_1) |
 | state | no | present | present<br />absent | all | [string]<br />Value to determine create/modify (present) or delete (absent) action |

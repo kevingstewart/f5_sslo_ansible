@@ -140,7 +140,7 @@ delegate_to: localhost
 
 **Options**
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | provider | yes |  |  | all | The BIG-IP connection provider information |
 | name | yes |  |  | all | [string]<br />The name of the topology (ex. topology_1) |
 | state | no | present | present<br />absent | all | [string]<br />Value to determine create/modify (present) or delete (absent) action |
@@ -150,7 +150,7 @@ delegate_to: localhost
 **Options: configReferences**<br />
 Description: defines a set of external configuration references
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | sslSettings | yes |  |  | all | [string]<br />The name of an SSL configuration, or Jinja2 reference to a local SSL configuration task |
 | securityPolicy | yes |  |  | all | [string]<br />The name of a security policy, or Jinja2 reference to a local security policy task |
 | services | no |  |  | all | [list]<br />A list of Jinja2 references for local service creation tasks |
@@ -162,7 +162,7 @@ Description: defines a set of external configuration references
 **Options: topologyOutboundL3**<br />
 Description: defines the properties of an outbound layer 3 (transparent forward proxy) topology
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | ipFamily | no | ipv4 | ipv4<br />ipv6 | all | [string]<br />The IP family expected for this security device |
 | protocol | no | tcp | tcp<br />udp<br />other | all | [string]<br />The matching layer 4 protocol |
 | source | no | 0.0.0.0%0/0 |  | all | [string]<br />A source IP address filter |
@@ -190,7 +190,7 @@ Description: defines the properties of an outbound layer 3 (transparent forward 
 **Options: topologyOutboundExplicit**<br />
 Description: defines the properties of an outbound explicit forward proxy topology
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | ipFamily | no | ipv4 | ipv4<br />ipv6 | all | [string]<br />The IP family expected for this security device |
 | source | no | 0.0.0.0%0/0 |  | all | [string]<br />A source IP address filter |
 | proxyIp | yes |  |  | all | [string]<br />The explicit proxy listening IP address |
@@ -209,7 +209,7 @@ Description: defines the properties of an outbound explicit forward proxy topolo
 **Options: topologyInboundL3**<br />
 Description: defines the properties of an inbound layer 3 (reverse proxy) topology
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | ipFamily | no | ipv4 | ipv4<br />ipv6 | all | [string]<br />The IP family expected for this security device |
 | protocol | no | tcp | tcp<br />udp<br />other | all | [string]<br />The matching layer 4 protocol |
 | source | no | 0.0.0.0%0/0 |  | all | [string]<br />A source IP address filter |
@@ -233,7 +233,7 @@ Description: defines the properties of an inbound layer 3 (reverse proxy) topolo
 **Options: logging**<br />
 Description: defines the logging properties of the topology
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | sslo | no | error | emergency<br />alert<br />critical<br />warning<br />error<br />notice<br />information<br />debug | all | [string]<br />Logging level for SSL Orchestrator summary information |
 | perRequestPolicy | no | error | &lt;same&gt; | all | [string]<br />Logging level for SSL Orchestrator security policy information |
 | ftp | no | error | &lt;same&gt; | all | [string]<br />Logging level for FTP information |

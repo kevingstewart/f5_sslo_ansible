@@ -44,7 +44,7 @@ From a configuration and automation persepective, an SSL Orchestrator ICAP secur
 
 **Options**
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | provider | yes |  |  | all | The BIG-IP connection provider information |
 | name | yes |  |  | all | [string]<br />The name of the security service (ex. icap_1) |
 | state | no | present | present<br />absent | all | [string]<br />Value to determine create/modify (present) or delete (absent) action |

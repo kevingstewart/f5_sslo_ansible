@@ -46,7 +46,7 @@ An SSL Orchestrator security policy is a set of traffic rules that define a set 
 
 **Options**
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | provider | yes |  |  | all | The BIG-IP connection provider information |
 | name | yes |  |  | all | [string]<br />The name of the security policy (ex. securitypolicy_1) |
 | state | no | present | present<br />absent | all | [string]<br />Value to determine create/modify (present) or delete (absent) action |
@@ -77,7 +77,7 @@ Description: when defined, no additional settings are required, and no other con
 **Condition: categoryLookupAll**<br />
 Description: defines a URL category lookup for all HTTP and HTTPS traffic (SNI and HTTP Host) information.
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | values | yes |  |  | all | [list]<br />A list of URL category names** |
 
 <br />
@@ -85,7 +85,7 @@ Description: defines a URL category lookup for all HTTP and HTTPS traffic (SNI a
 **Condition: categoryLookupConnect**<br />
 Description: defines a URL category lookup based on explicit forward proxy HTTP Connect information.
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | values | yes |  |  | all | [list]<br />A list of URL category names** |
 
 <br />
@@ -93,7 +93,7 @@ Description: defines a URL category lookup based on explicit forward proxy HTTP 
 **Condition: categoryLookupSNI**<br />
 Description: defines a category lookup based on TLS handshake server name indication (SNI) information only.
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | values | yes |  |  | all | [list]<br />A list of URL category names** |
 
 <br />
@@ -101,7 +101,7 @@ Description: defines a category lookup based on TLS handshake server name indica
 **Condition: clientIpGeolocation**<br />
 Description: defines an IP Geolocation lookup based on client IP address information.
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | values | yes |  |  | all | [list]<br />A list of geolocation type:value properties |
 | values:<br />type | yes |  | countryCode<br />countryName<br />continent<br />state | all | [string]<br />The type of geolocation information to match on |
 | values:<br />value | yes |  |  | all | [string]<br />The corresponding geolocation value to match |
@@ -111,7 +111,7 @@ Description: defines an IP Geolocation lookup based on client IP address informa
 **Condition: serverIpGeolocation**<br />
 Description: defines an IP Geolocation lookup based on server IP address information. 
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | values | yes |  |  | all | [list]<br />A list of geolocation type:value properties |
 | values:<br />type | yes |  | countryCode<br />countryName<br />continent<br />state | all | [string]<br />The type of geolocation information to match on |
 | values:<br />value | yes |  |  | all | [string]<br />The corresponding geolocation value to match |
@@ -121,7 +121,7 @@ Description: defines an IP Geolocation lookup based on server IP address informa
 **Condition: clientIpReputation**<br />
 Description: defines an IP Reputation service lookup based on client IP address information. 
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | value | yes |  | good<br />bad<br />category | category(7.0+) | [string]<br />The type of IP reputation match |
 | values | yes |  |  | category(7.0+) | [list]<br />The list of IP reputation values to match if category is defined |
 
@@ -130,7 +130,7 @@ Description: defines an IP Reputation service lookup based on client IP address 
 **Condition: serverIpReputation**<br />
 Description: defines an IP Reputation service lookup based on server IP address information. 
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | value | yes |  | good<br />bad<br />category | category(7.0+) | [string]<br />The type of IP reputation match |
 | values | yes |  |  | category(7.0+) | [list]<br />The list of IP reputation values to match if category is defined |
 
@@ -139,7 +139,7 @@ Description: defines an IP Reputation service lookup based on server IP address 
 **Condition: clientIpSubnet**<br />
 Description: defines a traffic match based on client IP subnet information. 
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | values | yes |  |  | datagroups(8.0+) | [list]<br />The list of IP addresses, IP subnets, or address-type datagroups(8.0+) |
 
 <br />
@@ -147,7 +147,7 @@ Description: defines a traffic match based on client IP subnet information.
 **Condition: serverIpSubnet**<br />
 Description: defines a traffic match based on server IP subnet information.
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | values | yes |  |  | datagroups(8.0+) | [list]<br />The list of IP addresses, IP subnets, or address-type datagroups(8.0+) |
 
 <br />
@@ -155,7 +155,7 @@ Description: defines a traffic match based on server IP subnet information.
 **Condition: clientPort**<br />
 Description: defines a traffic match based on client port information.
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | type | yes | value | value<br />range | range(8.0+) | [string]<br />The type of value to match on, either a single "value", or "range" of ports |
 | values | no |  |  | all | [list]<br />A list of ports |
 | fromPort | no |  |  | 8.0+ | [int]<br />For a port range, the starting port |
@@ -166,7 +166,7 @@ Description: defines a traffic match based on client port information.
 **Condition: serverPort**<br />
 Description: defines a traffic match based on server port information.
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | type | yes | value | value<br />range | range(8.0+) | [string]<br />The type of value to match on, either a single "value", or "range" of ports |
 | values | no |  |  | all | [list]<br />A list of ports |
 | fromPort | no |  |  | 8.0+ | [int]<br />For a port range, the starting port |
@@ -177,7 +177,7 @@ Description: defines a traffic match based on server port information.
 **Condition: sslCheck**<br />
 Description: defines a traffic match based on the existence of a TLS handshake.
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | value | yes |  | True<br />False | all | [bool]<br />Switch to enable or disable an SSL check condition (presence of TLS handshake) |
 
 <br />
@@ -185,7 +185,7 @@ Description: defines a traffic match based on the existence of a TLS handshake.
 **Condition: L7ProtocolCheckTcp**<br />
 Description: defines a traffic match based on the layer 7 TCP protocol.
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | values | yes |  | dns<br />ftp<br />http<br />https<br />httpConnect<br />imap<br />pop3<br />smtps<br />telnet | all | [list]<br />The list of layer 7 TCP protocols to match |
 
 <br />
@@ -193,7 +193,7 @@ Description: defines a traffic match based on the layer 7 TCP protocol.
 **Condition: L7ProtocolCheckUdp**<br />
 Description: defines a traffic match based on the layer 7 UDP protocol.
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | values | yes |  | dns<br />quic | all | [list]<br />The list of layer 7 UDP protocols to match |
 
 <br />
@@ -201,7 +201,7 @@ Description: defines a traffic match based on the layer 7 UDP protocol.
 **Condition: urlMatch**<br />
 Description: defines a traffic match based on the unencrypted HTTP Host and URI information.
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | values | yes |  |  | all | [list]<br />A list of URL string matches |
 | values:<br />type | yes |  | equals<br />substring<br />prefix<br />suffix<br />glob | all | [string]<br />The type of URL match to make |
 | values:<br />value | yes |  |  | all | [string]<br />The corresponding URL value |

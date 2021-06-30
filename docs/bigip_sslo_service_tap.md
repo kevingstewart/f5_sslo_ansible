@@ -29,7 +29,7 @@ A TAP service is generally defined as a device that receives a passive copy of t
 
 **Options**
 | Key | Required | Default | Options | Support | Description |
-| ------ | ------ | ------ | ------ | ------ | ------ |
+| ------ | :----: | ------ | ------ | :----: | ------ |
 | provider | yes |  |  | all | The BIG-IP connection provider information |
 | name | yes |  |  | all | [string]<br />The name of the security service (ex. tap_1) |
 | state | no | present | present<br />absent | all | [string]<br />Value to determine create/modify (present) or delete (absent) action |
