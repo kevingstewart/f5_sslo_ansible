@@ -90,7 +90,7 @@ Parameters
         <tr>
           <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
           <td>vlan</td>
-          <td>yes*</td>
+          <td>yes [1]_</td>
           <td>&nbsp;</td>
           <td>&nbsp;</td>
           <td>all</td>
@@ -102,7 +102,7 @@ Parameters
         <tr>
           <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
           <td>interface</td>
-          <td>yes*</td>
+          <td>yes [1]_</td>
           <td>&nbsp;</td>
           <td>&nbsp;</td>
           <td>all</td>
@@ -114,7 +114,7 @@ Parameters
         <tr>
           <td>&nbsp;</td>
           <td>tag</td>
-          <td>yes*</td>
+          <td>yes [1]_</td>
           <td>&nbsp;</td>
           <td>&nbsp;</td>
           <td>all</td>
@@ -148,6 +148,8 @@ Parameters
       </tbody>
     </table>
 
+.. [1] The vlan and interface options are mutually exclusive
+    
 Examples
 --------
 
@@ -209,3 +211,7 @@ Examples
             macAddress: "12:12:12:12:12:12"
             portRemap: 8080
           delegate_to: localhost
+
+          Best Practices and Considerations
+          ---------------------------------
+          - It is generally better to create the VLANs outside of the service definition and reference within (first example).
