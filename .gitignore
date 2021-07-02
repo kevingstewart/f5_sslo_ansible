@@ -6,5 +6,5 @@ pdf/*
 *.sublime-*
 docs/_templates/*
 .Trash*
-conf.py
-index.rst
+docs/conf.py
+docs/index.rst
