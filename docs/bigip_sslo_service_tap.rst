@@ -66,10 +66,7 @@ Parameters
           <td colspan="2" rowspan="1">state</td>
           <td>no</td>
           <td>present</td>
-          <td><p>present</p>
-
-          <p>absent</p>
-          </td>
+          <td>present<br />absent</p></td>
           <td>all</td>
           <td><p>[string]</p>
 
@@ -151,7 +148,7 @@ Parameters
 Footnotes
 ---------
 
-* The vlan and interface options are mutually exclusive
+* \* The vlan and interface options are mutually exclusive
     
 Examples
 --------
