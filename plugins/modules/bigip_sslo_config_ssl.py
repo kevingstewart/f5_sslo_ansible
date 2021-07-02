@@ -487,8 +487,8 @@ json_template = {
                    "cipherGroup":"/Common/f5-default"
                 },
                 "caBundle":"/Common/ca-bundle.crt",
-                "expiredCertificates":True,
-                "untrustedCertificates":True,
+                "expiredCertificates":False,
+                "untrustedCertificates":False,
                 "ocsp":"",
                 "crl":"",
                 "enabledSSLProcessingOptions":[]
@@ -801,7 +801,7 @@ class ModuleManager(object):
 
 
     def update_json(self, operation):
-
+        
         ## use this to method to create and return a modified copy of the JSON template
         self.config = json_template
 
@@ -870,13 +870,18 @@ class ModuleManager(object):
             ## client settings
             self.config["inputProperties"][1]["value"]["clientSettings"]["forwardByPass"] = True
 
-            ## server settings
+            ## server settings - set defaults if none specified
             if self.want.server_block_untrusted == None:
                 ## for forward proxy default to False unless specified
-                self.config["inputProperties"][1]["value"]["serverSettings"]["untrustedCertificates"] = False
+                self.config["inputProperties"][1]["value"]["serverSettings"]["untrustedCertificates"] = True
+            else:
+                self.config["inputProperties"][1]["value"]["serverSettings"]["untrustedCertificates"] = self.want.server_block_untrusted
+
             if self.want.server_block_expired == None:
                 ## for forward proxy default to False unless specified
-                self.config["inputProperties"][1]["value"]["serverSettings"]["expiredCertificates"] = False
+                self.config["inputProperties"][1]["value"]["serverSettings"]["expiredCertificates"] = True
+            else:
+                self.config["inputProperties"][1]["value"]["serverSettings"]["expiredCertificates"] = self.want.server_block_expired
 
         else:
             ## assume this is a reverse proxy
@@ -885,13 +890,18 @@ class ModuleManager(object):
             ## client settings
             self.config["inputProperties"][1]["value"]["clientSettings"]["forwardByPass"] = False
 
-            ## server settings
+            ## server settings - set defaults if none specified
             if self.want.server_block_untrusted == None:
-                ## for reverse proxy default to True unless specified
-                self.config["inputProperties"][1]["value"]["serverSettings"]["untrustedCertificates"] = True
+                ## for forward proxy default to False unless specified
+                self.config["inputProperties"][1]["value"]["serverSettings"]["untrustedCertificates"] = False
+            else:
+                self.config["inputProperties"][1]["value"]["serverSettings"]["untrustedCertificates"] = self.want.server_block_untrusted
+
             if self.want.server_block_expired == None:
-                ## for reverse proxy default to True unless specified
-                self.config["inputProperties"][1]["value"]["serverSettings"]["expiredCertificates"] = True
+                ## for forward proxy default to False unless specified
+                self.config["inputProperties"][1]["value"]["serverSettings"]["expiredCertificates"] = False
+            else:
+                self.config["inputProperties"][1]["value"]["serverSettings"]["expiredCertificates"] = self.want.server_block_expired
 
 
         ## create operation
