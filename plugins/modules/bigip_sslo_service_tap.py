@@ -227,7 +227,6 @@ json_template = {
                         "create": True,
                         "path": "TEMPLATE_NET_NAME_APP_PATH",
                         "tag": "1322",
-                        "name": "TEMPLATE_NET_NAME",
                         "interface": [
                             "TEMPLATE_INTERFACE"
                         ]
@@ -260,7 +259,8 @@ json_template = {
                     "description": "Type: tap",
                     "createNewNetworkObj": {
                         "name": "TEMPLATE_NET_NAME",
-                        "networkTag": 1000,
+                        "networkTag": 0,
+                        "networkError":False,
                         "networkInterface": "TEMPLATE_INTERFACE"
                     },
                     "useExistingNetworkObj": {
@@ -270,11 +270,8 @@ json_template = {
                     "customService": {
                         "name": "TEMPLATE_NAME",
                         "serviceType": "tap",
-                        "connectionInformation": [{}],
-                        "loadBalancing": {"devices": [],"monitor": {}},
                         "portRemap": False,
                         "serviceDownAction": "ignore",
-                        "iRuleReference": "",
                         "httpPortRemapValue": 80,
                         "serviceSpecific": {
                             "description": "",
@@ -283,10 +280,10 @@ json_template = {
                             "vlan": {
                                 "create": True,
                                 "path": "/Common/ssloN_TAP_VLAN.app/ssloN_TAP_VLAN",
-                                "interfacesList": [],
+                                "networkInterface": "1.1",
                                 "interface": "",
                                 "name": "TEMPLATE_NET_NAME",
-                                "networkTag": 'null',
+                                "networkTag": 4093,
                                 "tag": 'null'
                             },
                             "vendorConfig": {
@@ -520,7 +517,6 @@ class ModuleManager(object):
             ## build for an SSLO-created network
             self.config["inputProperties"][1]["value"][0]["name"] = "ssloN_" + self.local_name
             self.config["inputProperties"][1]["value"][0]["vlan"]["path"] = "/Common/ssloN_" + self.local_name + ".app/ssloN_" + self.local_name
-            self.config["inputProperties"][1]["value"][0]["vlan"]["name"] = "ssloN_" + self.local_name
             self.config["inputProperties"][1]["value"][0]["vlan"]["interface"][0] = self.want.device_interface
 
             self.config["inputProperties"][2]["value"][0]["createNewNetworkObj"]["name"] = "ssloN_" + self.local_name            
@@ -536,8 +532,13 @@ class ModuleManager(object):
                 self.config["inputProperties"][1]["value"][0]["vlan"]["tag"] = self.want.device_tag
 
                 self.config["inputProperties"][2]["value"][0]["createNewNetworkObj"]["networkTag"] = self.want.device_tag
-                self.config["inputProperties"][2]["value"][0]["customService"]["serviceSpecific"]["vlan"]["networkTag"] = self.want.device_tag
+                #self.config["inputProperties"][2]["value"][0]["customService"]["serviceSpecific"]["vlan"]["networkTag"] = self.want.device_tag
                 self.config["inputProperties"][2]["value"][0]["customService"]["serviceSpecific"]["vlan"]["tag"] = self.want.device_tag
+            else:
+                del self.config["inputProperties"][1]["value"][0]["vlan"]["tag"]
+                del self.config["inputProperties"][2]["value"][0]["createNewNetworkObj"]["networkTag"]
+                del self.config["inputProperties"][2]["value"][0]["customService"]["serviceSpecific"]["vlan"]["tag"]
+
         
         ## configure portremap
         if self.want.portRemap is None:
