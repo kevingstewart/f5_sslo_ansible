@@ -87,7 +87,7 @@ Parameters
           <td>all</td>
           <td><p>[string]</p>
 
-          <p>The name of the security service (ex. tap_1)</p>
+          <p>The name of the security service (ex. layer3_1)</p>
           </td>
         </tr>
         <tr>
