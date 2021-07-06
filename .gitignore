@@ -1,10 +1,14 @@
 docs/_build/*
+docs/_static/*
+docs/_templates/*
+docs/index.rst
+docs/make.bat
+docs/Makefile
 .DS_Store
 pdf/*
 .vscode
 .vscode/*
 *.sublime-*
-docs/_templates/*
 .Trash*
 docs/conf.py
 docs/index.rst

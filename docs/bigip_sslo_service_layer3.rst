@@ -1,8 +1,8 @@
 F5 SSL Orchestrator Ansible Automation Collection
 +++++++++++++++++++++++++++++++++++++++++++++++++
 
-Inline Layer 3 Service
-======================
+Documentation - Inline Layer 3 Service
+======================================
 
 Module: bigip_sslo_service_layer3
 ---------------------------------
