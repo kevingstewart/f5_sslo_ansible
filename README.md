@@ -4,7 +4,7 @@
 [![Releases](https://img.shields.io/github/v/release/kevingstewart/f5_sslo_ansible.svg)](https://github.com/kevingstewart/f5_sslo_ansible/releases)
 
 This collection provides a set of modules for automated configuration of the F5 SSL Orchestrator.
-Documentation for individual modules is available in the [docs](https://github.com/kevingstewart/f5_sslo_ansible/blob/main/docs/) folder.
+Documentation for individual modules is available in the [docs](docs/) folder.
 
 
 ## Support
