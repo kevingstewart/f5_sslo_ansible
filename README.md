@@ -25,7 +25,7 @@ This Ansible module collection currently supports SSL Orchestrator versions **5.
   - Outbound explicit proxy SSL Orchestrator topologies
   - Inbound layer 3 SSL Orchestrator topologies
 
-Note that this a `community` project, and as such **NOT** officially supported by F5 Networks. Please raise any issues discovered through the respository's [issues](https://github.com/kevingstewart/f5_sslo_ansible/issues) site, and those will be addressed in a timely manner.
+Note that this a `community` project, and as such **NOT** officially supported by F5 Networks. Please raise any issues discovered through the respository's [issues](issues/) site, and those will be addressed in a timely manner.
 
 ## Requirements
 The following software package versions are required:
