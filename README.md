@@ -144,7 +144,7 @@ The following modules are currently available:
 | bigip_sslo_config_resolver        | Used to create/modify/delete a DNS resolver configuration |
 | bigip_sslo_config_topology        | Used to create/modify/delete an SSL Orchestrator topology |
 
-Full documentation on each module can be found in the [docs](https://github.com/kevingstewart/f5_sslo_ansible/blob/main/docs/) folder.
+Full documentation on each module can be found in the [docs](docs/) folder.
 
 ## License
 GNU General Public License v3.0
