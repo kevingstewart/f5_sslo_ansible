@@ -27,6 +27,3 @@
         requestURI: "/avscan"
         responseURI: "/avscan"
       delegate_to: localhost
-
-    - debug: 
-        msg: "{{ test_module }}"
