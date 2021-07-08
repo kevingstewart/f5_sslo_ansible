@@ -272,11 +272,13 @@ Parameters
       </tbody>
     </table>
 
+|
 
 Condition: pinnersRule
 ----------------------
 Description: when defined, no additional settings are required, and no other conditions can be included in the traffic rule. This condition sets up a custom URL category match based on the built-in "pinners" custom URL category.
 
+|
 
 Condition: categoryLookupAll
 ----------------------------
@@ -306,6 +308,7 @@ Description: defines a URL category lookup for all HTTP and HTTPS traffic (SNI a
       </tbody>
     </table>
 
+|
 
 Condition: categoryLookupConnect
 --------------------------------
@@ -336,6 +339,7 @@ Description: defines a URL category lookup based on explicit forward proxy HTTP 
       </tbody>
     </table>
 
+|
 
 Condition: categoryLookupSNI
 ----------------------------
@@ -366,6 +370,7 @@ Description: defines a category lookup based on TLS handshake server name indica
       </tbody>
     </table>
 
+|
 
 Condition: clientIpGeolocation
 ------------------------------
@@ -418,6 +423,7 @@ Description: defines an IP Geolocation lookup based on client IP address informa
       </tbody>
     </table>
 
+|
 
 Condition: serverIpGeolocation
 ------------------------------
@@ -470,6 +476,7 @@ Description: defines an IP Geolocation lookup based on server IP address informa
       </tbody>
     </table>
 
+|
 
 Condition: clientIpReputation
 -----------------------------
@@ -510,6 +517,7 @@ Description: defines an IP Reputation service lookup based on client IP address 
       </tbody>
     </table>
 
+|
 
 Condition: serverIpReputation
 -----------------------------
@@ -550,6 +558,7 @@ Description: defines an IP Reputation service lookup based on server IP address 
       </tbody>
     </table>
 
+|
 
 Condition: clientIpSubnet
 -------------------------
@@ -580,6 +589,7 @@ Description: defines a traffic match based on client IP subnet information.
       </tbody>
     </table>
 
+|
 
 Condition: serverIpSubnet
 -------------------------
@@ -610,6 +620,7 @@ Description: defines a traffic match based on server IP subnet information.
       </tbody>
     </table>
 
+|
 
 Condition: clientPort
 ---------------------
@@ -670,6 +681,7 @@ Description: defines a traffic match based on client port information.
       </tbody>
     </table>
 
+|
 
 Condition: serverPort
 ---------------------
@@ -730,6 +742,7 @@ Description: defines a traffic match based on server port information.
       </tbody>
     </table>
 
+|
 
 Condition: sslCheck
 -------------------
@@ -760,6 +773,7 @@ Description: defines a traffic match based on the existence of a TLS handshake.
       </tbody>
     </table>
 
+|
 
 Condition: L7ProtocolCheckTcp
 -----------------------------
@@ -790,6 +804,7 @@ Description: defines a traffic match based on the layer 7 TCP protocol.
       </tbody>
     </table>
 
+|
 
 Condition: L7ProtocolCheckUdp
 -----------------------------
@@ -820,6 +835,7 @@ Description: defines a traffic match based on the layer 7 UDP protocol.
       </tbody>
     </table>
 
+|
 
 Condition: urlMatch
 -------------------
