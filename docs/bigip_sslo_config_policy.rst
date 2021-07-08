@@ -103,7 +103,7 @@ Parameters
 
         <tr>
           <td colspan="2" rowspan="1">trafficRules</td>
-          <td>yes</td>
+          <td>no</td>
           <td>&nbsp;</td>
           <td>&nbsp;</td>
           <td>all</td>
