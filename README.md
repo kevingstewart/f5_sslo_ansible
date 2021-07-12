@@ -88,7 +88,7 @@ While not expressly required, the following steps utilize Python virtualenv on a
 - Grab a local copy of the sample playbooks (optional)
   ```Bash
   sudo apt install subversion
-  svn export https://github.com/kevingstewart/f5_sslo_ansible/trunk/sample-playbooks
+  svn export https://github.com/kevingstewart/f5_sslo_ansible/trunk/sample-playbooks --force
   ```
 - Updates and fixes are getting posted regularly. To make sure you have the latest release:
   ```Bash
