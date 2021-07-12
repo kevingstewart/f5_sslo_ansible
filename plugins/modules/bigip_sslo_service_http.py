@@ -803,7 +803,7 @@ json_template = {
                 }
              },
              "vendorInfo":{
-                "name":"Generic Inline HTTP"
+                "name":"Generic HTTP Service"
              },
              "name":"TEMPLATE_NAME",
              "partition":"Common",

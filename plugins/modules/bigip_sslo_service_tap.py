@@ -319,7 +319,7 @@ json_template = {
                         }
                     },
                     "vendorInfo": {
-                        "name": "TAP Service",
+                        "name": "Generic TAP",
                         "model": "",
                         "product": "",
                         "version": ""

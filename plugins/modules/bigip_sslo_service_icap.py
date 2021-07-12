@@ -350,7 +350,7 @@ json_template = {
                     "partition": "Common",
                     "strictness": False,
                     "vendorInfo": {
-                        "name": "ICAP Service"
+                        "name": "Generic ICAP Service"
                     },
                     "customService": {
                         "name": "TEMPLATE_NAME",

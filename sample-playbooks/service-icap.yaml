@@ -22,8 +22,9 @@
         provider: "{{ provider }}"
         name: "icap_1"
         devices: 
-          - ip: "109.19.97.50"
+          - ip: "198.19.97.50"
             port: 1344
         requestURI: "/avscan"
         responseURI: "/avscan"
+        previewLength: 524288
       delegate_to: localhost

@@ -38,6 +38,9 @@
         devices: 
           - ip: "198.19.97.50"
             port: 1344
+        requestURI: "/avscan"
+        responseURI: "/avscan"
+        previewLength: 524288
         mode: output
       register: service_icap_1
       delegate_to: localhost

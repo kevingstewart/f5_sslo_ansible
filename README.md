@@ -90,6 +90,10 @@ While not expressly required, the following steps utilize Python virtualenv on a
   sudo apt install subversion
   svn export https://github.com/kevingstewart/f5_sslo_ansible/trunk/sample-playbooks
   ```
+- Updates and fixes are getting posted regularly. To make sure you have the latest release:
+  ```Bash
+  ansible-galaxy collection install git+https://github.com/kevingstewart/f5_sslo_ansible.git -f
+  ```
 
 ## Guiding Principles
 SSL Orchestrator automation with Ansible requires the following guiding principles:
