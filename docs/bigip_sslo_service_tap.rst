@@ -207,7 +207,7 @@ Examples
             state: "present"
             devices: 
               interface: "1.7"
-              port: 1000
+              tag: 1000
             macAddress: "12:12:12:12:12:12"
             portRemap: 8080
           delegate_to: localhost
