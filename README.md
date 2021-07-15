@@ -6,8 +6,6 @@
 This collection provides a set of modules for automated configuration of the F5 SSL Orchestrator.
 Documentation for individual modules is available in the [docs](docs/) folder.
 
-[git+https://github.com/<username>/<epository>/<repository>.git](git+https://github.com/<username>/<epository>/<repository>.git)
-
 ## Support
 This Ansible module collection currently supports SSL Orchestrator versions **5.0** to **8.x**, and the creation of the following types of objects:
 - Security Services
