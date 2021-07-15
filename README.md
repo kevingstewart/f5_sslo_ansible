@@ -1,5 +1,5 @@
 # F5 SSL Orchestrator Ansible Automation Collection
-## _DRAFT - STILL IN TESTING PHASE_
+## _PREVIEW - Still in testing_
 
 [![Releases](https://img.shields.io/github/v/release/kevingstewart/f5_sslo_ansible.svg)](https://github.com/kevingstewart/f5_sslo_ansible/releases)
 
