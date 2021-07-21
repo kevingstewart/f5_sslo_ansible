@@ -15,7 +15,7 @@ In this folder, find a separate markdown document for detailed instructions on e
 | [bigip_sslo_config_ssl](bigip_sslo_config_ssl.rst)             | Used to create/modify/delete an ssl configuration |
 | [bigip_sslo_config_resolver](bigip_sslo_config_resolver.rst)        | Used to create/modify/delete a DNS resolver configuration |
 | [bigip_sslo_config_topology](bigip_sslo_config_topology.rst)        | Used to create/modify/delete an SSL Orchestrator topology |
-
+| [bigip_sslo_config_utility](bigip_sslo_config_utility.rst)        | Used to perform various SSL Orchestrator utility functions |
 <br />
 
 SSL Orchestrator objects follow a similar hierarchical relationship as other F5 BIG-IP objects.
