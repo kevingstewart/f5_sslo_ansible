@@ -146,6 +146,7 @@ The following modules are currently available:
 | bigip_sslo_config_ssl             | Used to create/modify/delete an ssl configuration |
 | bigip_sslo_config_resolver        | Used to create/modify/delete a DNS resolver configuration |
 | bigip_sslo_config_topology        | Used to create/modify/delete an SSL Orchestrator topology |
+| bigip_sslo_config_utility         | Used to perform various SSL Orchestrator utility functions |
 
 Full documentation on each module can be found in the [docs](docs/) folder.
 
