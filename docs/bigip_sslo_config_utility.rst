@@ -2,10 +2,10 @@ F5 SSL Orchestrator Ansible Automation Collection
 +++++++++++++++++++++++++++++++++++++++++++++++++
 
 Documentation - Utility Functions
-==========================================
+=================================
 
 Module: bigip_sslo_config_utility
-----------------------------------
+---------------------------------
 
 Description
 -----------

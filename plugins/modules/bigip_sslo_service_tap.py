@@ -3,10 +3,15 @@
 # 
 # Copyright: (c) 2021, kevin-dot-g-dot-stewart-at-gmail-dot-com
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-# Version: 1.0
+# Version: 1.0.1
 
 #### To Do:
 #### Test what happens when interface, tag or subnet in use
+
+#### Updates:
+#### 1.0.1 - added 9.0 support (same as 8.3 so just changed max version)
+#          - updated version and previousVersion keys to match target SSLO version
+
 
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
@@ -197,7 +202,7 @@ obj_attempts = 20
 min_version = 5.0
 
 ## define maximum supported tmos version - max(SSLO 8.x)
-max_version = 8.9
+max_version = 9.0
 
 json_template = {
     "name": "sslo_ob_SERVICE_TEMPLATE_OPERATION_TEMPLATE_NAME",
@@ -560,7 +565,15 @@ class ModuleManager(object):
         self.config["inputProperties"][2]["value"][0]["customService"]["managedNetwork"]["ipv6"]["serviceSelfIp"] = "2001:200:0:" + str(ipv6_random_octet) + "::9"
         self.config["inputProperties"][2]["value"][0]["customService"]["managedNetwork"]["ipv6"]["serviceHASelfIp"] = "2001:200:0:" + str(ipv6_random_octet) + "::9"
         self.config["inputProperties"][2]["value"][0]["customService"]["managedNetwork"]["ipv6"]["deviceIp"] = "2001:200:0:" + str(ipv6_random_octet) + "::a"
-      
+
+        
+        ## =================================
+        ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+        ## =================================
+        self.config["inputProperties"][0]["value"]["version"] = self.ssloVersion
+        self.config["inputProperties"][2]["value"][0]["version"] = self.ssloVersion
+        self.config["inputProperties"][2]["value"][0]["previousVersion"] = self.ssloVersion
+
 
         if operation == "CREATE":
             ## set these to empty for CREATE
@@ -802,12 +815,6 @@ class ModuleManager(object):
 
     def exists(self):
         ## use this method to see if the objects already exists - queries for the respective application service object
-        #uri = "https://{0}:{1}/mgmt/tm/sys/application/service/~Common~{2}.app~{2}".format(
-        #    self.client.provider['server'],
-        #    self.client.provider['server_port'],
-        #    self.want.name,
-        #)
-        #resp = self.client.api.get(uri)
         uri = "https://{0}:{1}/mgmt/shared/iapp/blocks/".format(
             self.client.provider['server'],
             self.client.provider['server_port']

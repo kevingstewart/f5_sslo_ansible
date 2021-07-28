@@ -33,6 +33,8 @@ Sample with all options defined
           caCert: "/Common/ca.crt"
           caKey: "/Common/ca.key"
           caChain: "/Common/ca-chain.crt"
+          alpn: True
+          logPublisher: "/Common/my-ssl-publisher"
         
         serverSettings:
           cipherType: "string"
@@ -43,6 +45,7 @@ Sample with all options defined
           blockUntrusted: False
           ocsp: "/Common/my-ocsp"
           crl: "/Common/my-crl"
+          logPublisher: "/Common/my-ssl-publisher"
 
         bypassHandshakeFailure: False
         bypassClientCertFailure: False
@@ -191,6 +194,28 @@ Parameters
           <p>The corresponding signing CA private key</p>
           </td>
         </tr>
+        <tr>
+          <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+          <td>alpn</td>
+          <td>no</td>
+          <td>False</td>
+          <td>True<br />False</td>
+          <td>9.0+</td>
+          <td><p>[bool]</p>
+          <p>Enabled ALPN HTTP/2 full proxy through a forward proxy topology</p>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+          <td>logPublisher</td>
+          <td>no</td>
+          <td><nobr>/Common/sys-ssl-publisher</nobr></td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[string]</p>
+          <p>Defines a client-side log publisher for SSL-related events</p>
+          </td>
+        </tr>
 
 
         <tr>
@@ -289,6 +314,17 @@ Parameters
           <td>all</td>
           <td><p>[string]</p>
           <p>The name of a CRL (certificate revocation) configuration</p>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+          <td>logPublisher</td>
+          <td>no</td>
+          <td><nobr>/Common/sys-ssl-publisher</nobr></td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[string]</p>
+          <p>Defines a server-side log publisher for SSL-related events</p>
           </td>
         </tr>
 

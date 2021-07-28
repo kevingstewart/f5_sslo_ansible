@@ -51,7 +51,6 @@ Sample with all options defined
             - "{{ servicechain_1 }}"
           resolver: "{{ resolversettings }}"
 
-
         topologyOutboundL3:
           ipFamily: "ipv4"
           protocol: "tcp"
@@ -82,7 +81,8 @@ Sample with all options defined
           profileScope: "named"
           profileScopeValue: "SSLO"
           primaryAuthUri: "https://auth.f5labs.com"
-
+          verifyAccept: True
+          ocspAuth: "ssloA_my_ocsp"
 
         topologyOutboundExplicit:
           ipFamily: "ipv4"
@@ -101,7 +101,9 @@ Sample with all options defined
             - 10.1.20.2
           gatewaypool: "/Common/my-gateway-pool"
           authProfile: "/Common/my-swgexplicit-auth"
-
+          verifyAccept: True
+          ocspAuth: "ssloA_my_ocsp"
+          dnsResolver: "/Common/my_dns_resolver"
 
         topologyInboundL3:
           ipFamily: "ipv4"
@@ -126,6 +128,36 @@ Sample with all options defined
           L7ProfileType: "http"
           L7Profile: "/Common/http"
 
+        topologyOutboundL2:
+          ipFamily: "ipv4"
+          protocol: "tcp"
+          source: "0.0.0.0/0"
+          dest: "0.0.0.0/0"
+          port: 0
+          vlans:
+            - "/Common/vwire_vlan_4096_1_631"
+          tcpSettingsClient: "/Common/f5-tcp-lan"
+          tcpSettingsServer: "/Common/f5-tcp-wan"
+          L7ProfileType: "http"
+          L7Profile: "/Common/http"
+          accessProfile: "/Common/foo-policy"
+          profileScope: "named"
+          profileScopeValue: "SSLO"
+          primaryAuthUri: "https://login.f5labs.com/"
+      
+        topologyInboundL2:
+          ipFamily: "ipv4"
+          protocol: "tcp"
+          source: "0.0.0.0/0"
+          dest: "0.0.0.0/0"
+          port: 0
+          vlans: 
+          - "/Common/vwire_vlan_4096_2_631"
+          tcpSettingsClient: "/Common/f5-tcp-lan"
+          tcpSettingsServer: "/Common/f5-tcp-wan"
+          L7ProfileType: "http"
+          L7Profile: "/Common/http"
+          accessProfile: "/Common/foo-policy"
 
         logging: 
           sslo: error
@@ -246,7 +278,7 @@ Description: defines a set of external configuration references
           <td>no</td>
           <td>&nbsp;</td>
           <td>&nbsp;</td>
-          <td>all</td>
+          <td>5.x-8.x</td>
           <td><p>[string]</p>
           <p>A Jinja2 reference to a local resolver configuration task</p>
           </td>
@@ -483,6 +515,26 @@ Description: defines the properties of an outbound layer 3 (transparent forward 
           <p>When profileScope is named, this setting is required and defines the fully-qualified domain name of the captive portal authentication site</p>
           </td>
         </tr>
+        <tr>
+          <td colspan="2" rowspan="1">verifyAccept</td>
+          <td>no</td>
+          <td>False</td>
+          <td>True<br />False</td>
+          <td>9.0+</td>
+          <td><p>[bool]</p>
+          <p>Enables or disables TCP Verify Accept</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">ocspAuth</td>
+          <td>no</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[string]</p>
+          <p>Defines an OCSP Authentication object to apply to the topology. This can be a static configuration reference string, or a jinja2 reference for inline OCSP Auth creation.</p>
+          </td>
+        </tr>
 
       </tbody>
     </table>
@@ -622,6 +674,36 @@ Description: defines the properties of an outbound explicit forward proxy topolo
           <td>all</td>
           <td><p>[string]</p>
           <p>The name of a custom SWG-Explicit authentication access profile</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">verifyAccept</td>
+          <td>no</td>
+          <td>False</td>
+          <td>True<br />False</td>
+          <td>9.0+</td>
+          <td><p>[bool]</p>
+          <p>Enables or disables TCP Verify Accept</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">ocspAuth</td>
+          <td>no</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[string]</p>
+          <p>Defines an OCSP Authentication object to apply to the topology. This can be a static configuration reference string, or a jinja2 reference for inline OCSP Auth creation.</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">dnsResolver</td>
+          <td>no</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[string]</p>
+          <p>Defines a per-topology DNS resolver configuration. If no resolver is provided here, the system will select te built-in ssloGS-net-resolver. In 9.0+ the inline resolver configuration is ignored in the topology declaration, so to use the ssloGS-net-resolver, a separate direct resolver declaration must be defined.</p>
           </td>
         </tr>
 
@@ -813,6 +895,327 @@ Description: defines the properties of an inbound layer 3 (reverse proxy) topolo
           <td>all</td>
           <td><p>[string]</p>
           <p>If L7ProfileType is http, this is the name of a specific HTTP profile</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">accessProfile</td>
+          <td>no</td>
+          <td>(generated profile)</td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>The name of a custom SSL Orchestrator access profile</p>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+|
+
+Parameters: topologyOutboundL2
+------------------------------
+Description: defines the properties of an outbound layer 2 (bump-in-the-wire) topology
+
+.. raw:: html
+
+    <table border="1" cellpadding="1" cellspacing="1" style="width:50%;background-color:#ffffcc;border-collapse:collapse;border:1px solid #ffcc00">
+      <tbody>
+        <tr>
+          <td colspan="2" rowspan="1" style="text-align: center;">Key</td>
+          <td style="text-align: center;">Required</td>
+          <td style="text-align: center;">Default</td>
+          <td style="text-align: center;">Options</td>
+          <td style="text-align: center;">Support</td>
+          <td style="text-align: center;">Description</td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">ipFamily</td>
+          <td>no</td>
+          <td>ipv4</td>
+          <td>ipv4<br />ipv6</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>The IP family expected for this security device</p>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">protocol</td>
+          <td>no</td>
+          <td>tcp</td>
+          <td>tcp<br />udp<br />other</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>The matching layer 4 protocol</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">source</td>
+          <td>no</td>
+          <td>0.0.0.0%0/0</td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>A source IP address filter</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">dest</td>
+          <td>no</td>
+          <td>0.0.0.0%0/0</td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>A destination IP address filter</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">port</td>
+          <td>no</td>
+          <td>0</td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[int]</p>
+          <p>A destination port filter</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">vlans</td>
+          <td>no</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[list]</p>
+          <p>A list of client-facing VLANs</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">tcpSettingsClient</td>
+          <td>no</td>
+          <td><nobr>/Common/f5-tcp-lan</nobr></td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>The name of a custom client side TCP profile</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">tcpSettingsServer</td>
+          <td>no</td>
+          <td><nobr>/Common/f5-tcp-wan</nobr></td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>The name of a custom server side TCP profile</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">L7ProfileType</td>
+          <td>no</td>
+          <td>none</td>
+          <td>none<br />http</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>If required, this selects a specific L7 profile type</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">L7Profile</td>
+          <td>no</td>
+          <td>none</td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>If L7ProfileType is http, this is the name of a specific HTTP profile</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">accessProfile</td>
+          <td>no</td>
+          <td>(generated profile)</td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>The name of a custom SSL Orchestrator access profile</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">profileScope</td>
+          <td>no</td>
+          <td>public</td>
+          <td>public<br />named</td>
+          <td>8.2+</td>
+          <td><p>[string]</p>
+          <p>When performing transparent forward proxy captive portal authentication, the "named" profileScope allows authenticated identity information from the authentication profile to be shared with the proxy.</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">profileScopeValue</td>
+          <td>no</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>8.2+</td>
+          <td><p>[string]</p>
+          <p>When profileScope is named, this setting is required and defines a unique name value that is shared between then captive portal and security policy profiles</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">primaryAuthUri</td>
+          <td>no</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>8.2+</td>
+          <td><p>[string]</p>
+          <p>When profileScope is named, this setting is required and defines the fully-qualified domain name of the captive portal authentication site</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">verifyAccept</td>
+          <td>no</td>
+          <td>False</td>
+          <td>True<br />False</td>
+          <td>9.0+</td>
+          <td><p>[bool]</p>
+          <p>Enables or disables TCP Verify Accept</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">ocspAuth</td>
+          <td>no</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[string]</p>
+          <p>Defines an OCSP Authentication object to apply to the topology. This can be a static configuration reference string, or a jinja2 reference for inline OCSP Auth creation.</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+|
+
+Parameters: topologyInboundL2
+-----------------------------
+Description: defines the properties of an inbound layer 2 (bump-in-the-wire) topology
+
+.. raw:: html
+
+    <table border="1" cellpadding="1" cellspacing="1" style="width:50%;background-color:#ffffcc;border-collapse:collapse;border:1px solid #ffcc00">
+      <tbody>
+        <tr>
+          <td colspan="2" rowspan="1" style="text-align: center;">Key</td>
+          <td style="text-align: center;">Required</td>
+          <td style="text-align: center;">Default</td>
+          <td style="text-align: center;">Options</td>
+          <td style="text-align: center;">Support</td>
+          <td style="text-align: center;">Description</td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">ipFamily</td>
+          <td>no</td>
+          <td>ipv4</td>
+          <td>ipv4<br />ipv6</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>The IP family expected for this security device</p>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">protocol</td>
+          <td>no</td>
+          <td>tcp</td>
+          <td>tcp<br />udp<br />other</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>The matching layer 4 protocol</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">source</td>
+          <td>no</td>
+          <td>0.0.0.0%0/0</td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>A source IP address filter</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">dest</td>
+          <td>no</td>
+          <td>0.0.0.0%0/0</td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>A destination IP address filter</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">port</td>
+          <td>no</td>
+          <td>0</td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[int]</p>
+          <p>A destination port filter</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">vlans</td>
+          <td>no</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[list]</p>
+          <p>A list of client-facing VLANs</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">tcpSettingsClient</td>
+          <td>no</td>
+          <td><nobr>/Common/f5-tcp-wan</nobr></td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>The name of a custom client side TCP profile</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">tcpSettingsServer</td>
+          <td>no</td>
+          <td><nobr>/Common/f5-tcp-lan</nobr></td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>The name of a custom server side TCP profile</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">L7ProfileType</td>
+          <td>no</td>
+          <td>http</td>
+          <td>none<br />http</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>If required, this selects a specific L7 profile type</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">L7Profile</td>
+          <td>no</td>
+          <td>/Common/http</td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>If L7ProfileType is http, this is the name of a specific HTTP profile</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">accessProfile</td>
+          <td>no</td>
+          <td>(generated profile)</td>
+          <td>&nbsp;</td>
+          <td>all</td>
+          <td><p>[string]</p>
+          <p>The name of a custom SSL Orchestrator access profile</p>
           </td>
         </tr>
 
@@ -1187,4 +1590,229 @@ Examples
               gateway: "iplist"
               gatewaylist: 
                 - ip: 10.1.20.1        
+          delegate_to: localhost
+
+.. code-block:: yaml
+
+    - name: Create SSLO Topology (explicit proxy - atomic 9.0 with external resolver)
+      hosts: localhost
+      gather_facts: False
+      connection: local
+      collections:
+        - kevingstewart.f5_sslo_ansible
+      vars: 
+        provider:
+          server: 10.1.1.4
+          user: admin
+          password: admin
+          validate_certs: no
+          server_port: 443
+      tasks:
+        #### external resolver ######################
+        - name: LTM dns resolver
+          bigip_dns_resolver:
+            provider: "{{ provider }}"
+            name: "my-dns-resolver"
+          delegate_to: localhost
+      
+        #### external resolver forward zone #########
+        - name: LTM dns resolver forward zone
+          bigip_command:
+            provider: "{{ provider }}"
+            commands: 
+            - modify net dns-resolver my-dns-resolver forward-zones replace-all-with { . { nameservers replace-all-with { 10.1.20.1:53 } } }
+          delegate_to: localhost
+        
+        #### explicit proxy topology ################
+        - name: SSLO topology
+          bigip_sslo_config_topology:
+            provider: "{{ provider }}"
+            name: "demoxp1"
+            configReferences:
+              sslSettings: "demossl"
+              securityPolicy: "demopolicy"
+            topologyOutboundExplicit:
+              proxyIp: "10.1.10.150"
+              proxyPort: 3128
+              vlans:
+                - "/Common/client-vlan"
+              gateway: "iplist"
+              gatewaylist:
+                - ip: 10.1.20.1
+              snat: automap
+              dnsResolver: "/Common/my-dns-resolver"
+          delegate_to: localhost
+
+.. code-block:: yaml
+
+    - name: Create SSLO Topology (explicit proxy - atomic 9.0 with ssloGS resolver)
+      hosts: localhost
+      gather_facts: False
+      connection: local
+      collections:
+        - kevingstewart.f5_sslo_ansible
+      vars: 
+        provider:
+          server: 10.1.1.4
+          user: admin
+          password: admin
+          validate_certs: no
+          server_port: 443
+      tasks:
+        #### ssloGS resolver (direct declaration) ###
+        - name: SSLO dns resolver
+          bigip_sslo_config_resolver:
+            provider: "{{ provider }}"
+            forwardingNameservers:
+              - "10.1.20.1"
+          delegate_to: localhost
+        
+        #### explicit proxy topology ################
+        - name: SSLO topology
+          bigip_sslo_config_topology:
+            provider: "{{ provider }}"
+            name: "demoxp1"
+            configReferences:
+              sslSettings: "demossl"
+              securityPolicy: "demopolicy"
+            topologyOutboundExplicit:
+              proxyIp: "10.1.10.150"
+              proxyPort: 3128
+              vlans:
+                - "/Common/client-vlan"
+              gateway: "iplist"
+              gatewaylist:
+                - ip: 10.1.20.1
+              snat: automap
+          delegate_to: localhost
+
+.. code-block:: yaml
+
+    - name: Create SSLO Topology (explicit proxy - atomic 9.0 with inline OCSP Auth)
+      hosts: localhost
+      gather_facts: False
+      connection: local
+      collections:
+        - kevingstewart.f5_sslo_ansible
+      vars: 
+        provider:
+          server: 10.1.1.4
+          user: admin
+          password: admin
+          validate_certs: no
+          server_port: 443
+      tasks:
+        #### ocsp authentication ####################
+        - name: SSLO authentication
+          bigip_sslo_config_authentication:
+            provider: "{{ provider }}"
+            name: "ocsp2"
+            ocsp:
+              fqdn: "ocsp2.f5labs.com"
+              dest: "10.1.10.133/32"
+              sslProfile: "demossl"
+              vlans: 
+                - "/Common/client-vlan"
+            mode: output
+          register: auth_ocsp
+          delegate_to: localhost
+        
+        #### explicit proxy topology ################
+        - name: SSLO topology
+          bigip_sslo_config_topology:
+            provider: "{{ provider }}"
+            name: "demoxp1"
+            configReferences:
+              sslSettings: "demossl"
+              securityPolicy: "demopolicy"
+            topologyOutboundExplicit:
+              proxyIp: "10.1.10.150"
+              proxyPort: 3128
+              vlans:
+                - "/Common/client-vlan"
+              gateway: "iplist"
+              gatewaylist:
+                - ip: 10.1.20.1
+              snat: automap
+              ocspAuth: "{{ auth_ocsp }}"
+          delegate_to: localhost
+
+.. code-block:: yaml
+
+    - name: Create SSLO Topology (outbound Layer 2 - aggregate)
+      hosts: localhost
+      gather_facts: False
+      connection: local
+      collections:
+        - kevingstewart.f5_sslo_ansible
+      vars: 
+        provider:
+          server: 10.1.1.4
+          user: admin
+          password: admin
+          validate_certs: no
+          server_port: 443
+      tasks:
+        #### ssl ######################################
+        - name: SSLO SSL settings
+          bigip_sslo_config_ssl:
+            provider: "{{ provider }}"
+            name: "demossl"
+            clientSettings:
+              caCert: "/Common/subrsa.f5labs.com"
+              caKey: "/Common/subrsa.f5labs.com"
+            mode: output
+          register: sslsettings
+          delegate_to: localhost
+
+        #### resolver #################################
+        - name: SSLO dns resolver
+          bigip_sslo_config_resolver:
+            provider: "{{ provider }}"
+            forwardingNameservers:
+              - "10.1.20.1"
+            mode: output
+          register: myresolver
+          delegate_to: localhost
+
+        #### policy ###################################
+        - name: SSLO security policy
+          bigip_sslo_config_policy:
+            provider: "{{ provider }}"
+            name: "demopolicy"
+            policyType: "outbound"
+            defaultRule:
+              allowBlock: "allow"
+              tlsIntercept: "intercept"
+              serviceChain: ""
+            trafficRules:
+              - name: "pinners"
+                conditions:
+                  - condition: "pinnersRule"
+              - name: "bypass_Finance_Health"
+                matchType: "or"
+                allowBlock: "allow"
+                tlsIntercept: "bypass"
+                serviceChain: ""
+                conditions:
+                  - condition: "categoryLookupAll"
+                    values:
+                      - "/Common/Financial_Data_and_Services"
+                      - "/Common/Health_and_Medicine"
+            mode: output
+          register: securitypolicy
+          delegate_to: localhost
+
+        #### topology #################################
+        - name: SSLO topology
+          bigip_sslo_config_topology:
+            provider: "{{ provider }}"
+            name: "demoOutL2"  
+            configReferences:
+              sslSettings: "{{ sslsettings }}"
+              securityPolicy: "{{ securitypolicy }}"
+              resolver: "{{ myresolver }}"
+            topologyOutboundL2:
+              vlans:
+                - "/Common/vwire_vlan_4096_1_631"
           delegate_to: localhost

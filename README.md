@@ -7,13 +7,14 @@ This collection provides a set of modules for automated configuration of the F5 
 Documentation for individual modules is available in the [docs](docs/) folder.
 
 ## Support
-This Ansible module collection currently supports SSL Orchestrator versions **5.0** to **8.x**, and the creation of the following types of objects:
+This Ansible module collection currently supports SSL Orchestrator versions **5.0** to **9.0**, and the creation of the following types of objects:
 - Security Services
   - Inline layer 2 security services
   - Inline layer 3 security services
   - Inline http security services
   - ICAP security services
   - TAP security services
+  - SWG security services (9.0+)
 - Configurations
   - Security service chains
   - Security policies
@@ -23,6 +24,8 @@ This Ansible module collection currently supports SSL Orchestrator versions **5.
   - Outbound layer 3 SSL Orchestrator topologies
   - Outbound explicit proxy SSL Orchestrator topologies
   - Inbound layer 3 SSL Orchestrator topologies
+  - Outbound layer 2 SSL Orchestrator topologies
+  - Inbound layer 2 SSL Orchestrator topologies
 
 Note that this a `community` project, and as such **NOT** officially supported by F5 Networks. Please raise any issues discovered through the respository's [issues](https://github.com/kevingstewart/f5_sslo_ansible/issues) site, and those will be addressed in a timely manner.
 

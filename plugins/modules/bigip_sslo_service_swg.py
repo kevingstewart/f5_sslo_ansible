@@ -6,7 +6,7 @@
 # Version: 1.0.1
 
 #### Updates:
-#### 1.0.1 - added 9.0 support (same as 8.3 so just changed max version)
+#### 1.0.1 - swg module added in 9.0
 #          - updated version and previousVersion keys to match target SSLO version
 
 
@@ -15,38 +15,57 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: bigip_sslo_config_resolver
-short_description: Manage the SSL Orchestrator DNS resolver config
+module: bigip_sslo_service_swg
+short_description: Manage an SSL Orchestrator SWG service
 description:
-  - Manage the SSL Orchestrator DNS resolver config
+  - Manage an SSL Orchestrator SWG service
 version_added: "1.0.0"
 options:
-  forwardingNameservers:
+  name:
     description:
-      - Specifies the list of IP addresses for forwarding nameservers. Declaration can contain a forwardingNameservers key, or forwardingZones key, but not both.
-    type: list
-    elements: str
-  forwardingZones:
+      - Specifies the name of the service. Configuration auto-prepends "ssloS_" to the object. Names should be less than 14 characters and not contain dashes "-".
+    type: str
+    required: True
+  swgPolicy:
     description:
-      - Specifies the list of zone:nameservers key pairs.
-    type: list
-    elements: dict
-    suboptions:
-      zone:
-        description: 
-            - Defines the zone pattern.
-        type: str
-      nameservers:
-        description: 
-            - Defines the list of nameservers for this zone.
-        type: list
-        elements: str
-  enableDNSsec: 
-    description: 
-        - Enables or disables DNS security.
-    type: bool
-    default: False
-  
+      - Specifies the name of the SWG per-request policy to attach to the service configuration.
+    type: str
+    required: True
+  profileScope:
+    description:
+      - Blah.
+    type: Specifies the level of information sharing (scope). When using named scope, an authentication access profile attached to the topology can share its user identity information with the SWG policy.
+    choices:
+      - profile
+      - named
+    default: profile
+  namedScope:
+    description:
+      - Used when profileScope is 'named' and specifies a name string that the authentication and SWG policies share to allow access to identity information.
+    type: str
+  accessProfile:
+    description:
+      - Specifies a custom SWG-Transparent access profile to apply to the SWG service. In the absence of a value here, the configuration auto-generates the access profile.
+    type: str
+  serviceDownAction:
+    description:
+      - Blah.
+    type: Specifies the action taken if the SWG service fails.
+    choices:
+      - ignore
+      - reset
+      - drop
+    default: reset
+  logSettings:
+    description:
+      - Specifies a custom log setting for the SWG service.
+    type: str
+    default: /Common/default-log-setting
+  rules:
+    description:
+      - Specifies custom iRules to apply to the SWG service.
+    type: str
+
   mode:
     description:
       - Defines how this task is handled. With the default setting of 'update', the module performs the tasks required to update the target resource. With the 'output' setting, the resulting JSON object blocks are returned without updating the target resource. This option is useful for debugging, and when subordinate objects (ex. SSL, services, service chains, policy, resolver) are created in the same playbook, and their respectice output JSON referenced in a single Topology create task.
@@ -55,7 +74,7 @@ options:
       - update
       - output
     default: update
-  
+    
   state:
     description:
         - Specifies the present/absent state required.
@@ -71,100 +90,110 @@ author:
 '''
 
 EXAMPLES = r'''
-- name: Create SSLO DNS resolver (forwarding nameservers)
+- name: SSLO SWG service
   hosts: localhost
   gather_facts: False
   connection: local
 
   collections:
     - kevingstewart.f5_sslo_ansible
-
+  
   vars: 
     provider:
-      server: 172.16.1.77
+      server: 10.1.1.4
       user: admin
       password: admin
       validate_certs: no
       server_port: 443
 
   tasks:
-    - name: SSLO dns resolver
-      bigip_sslo_config_resolver:
+    - name: SSLO SWG service
+      bigip_sslo_service_swg:
         provider: "{{ provider }}"
-
-        forwardingNameservers:
-          - "10.1.20.1"
-          - "10.1.20.2"
-          - "fd66:2735:1533:46c1:68c8:0:0:7110"
-          - "fd66:2735:1533:46c1:68c8:0:0:7111"
+        name: "swg2"
+        swgPolicy: "/Common/test-swg"
       delegate_to: localhost
 
-- name: Create SSLO DNS resolver (forwarding zones)
+- name: SSLO SWG service
   hosts: localhost
   gather_facts: False
   connection: local
 
   collections:
     - kevingstewart.f5_sslo_ansible
-
+  
   vars: 
     provider:
-      server: 172.16.1.77
+      server: 10.1.1.4
       user: admin
       password: admin
       validate_certs: no
       server_port: 443
 
   tasks:
-    - name: SSLO dns resolver
-      bigip_sslo_config_resolver:
+    - name: SSLO SWG service
+      bigip_sslo_service_swg:
         provider: "{{ provider }}"
-
-        forwardingZones:
-          - zone: "."
-            nameservers:
-              - "10.1.20.1"
-              - "10.1.20.5"
-          - zone: "foo."
-            nameservers:
-              - "8.8.8.8"
-              - "8.8.4.4"
-              - "fd66:2735:1533:46c1:68c8:0:0:7113"
-
-        enableDNSsec: True
+        name: "swg2"
+        swgPolicy: "/Common/test-swg"
+        profileScope: "named"
+        namedScope: "SSLO"
+        accessProfile: "/Common/test-access"
+        logSettings:
+          - "/Common/default-log-setting1"
+          - "/Common/default-log-setting2"
+        rules:
+          - "/Common/test-rule"
       delegate_to: localhost
 '''
 
 RETURN = r'''
-forwardingNameservers:
+name:
   description:
-    - Changed list of nameserver IP addresses.
+    - Changed name of service chain.
   type: str
-  sample: 8.8.8.8
-forwardingZones:
-  description: 
-    - Changed list of zone:nameserver key pairs.
-  type: complex
-  contains:
-    zone:
-       description: defines the zone name.
-       type: str
-       sample: "."
-    nameservers:
-       description: defines the list of nameserver IP addresses for this zone.
-       type: str
-       sample: 8.8.8.8
-enableDNSsec:
-    description: 
-        - Changed the DNS security option.
-    type: bool
-    sample: True
+  sample: swg1
+swgPolicy:
+  description:
+    - Changed the name of the SWG per-request policy.
+  type: str
+  sample: /Common/my-swg-policy
+profileScope:
+  description:
+    - Changed the profile scope.
+  type: str
+  sample: named
+namedScope:
+  description:
+    - Changes the named scope value.
+  type: str
+  sample: SSLO
+accessProfile:
+  description:
+    - Changed to a custom SWG-Transparent access profile.
+  type: str
+  sample: /Common/my-access-profile
+serviceDownAction:
+  description:
+    - Changed the service down action.
+  type: str
+  sample: reset
+logSettings:
+  description:
+    - Changed to a custom log settings configuration.
+  type: str
+  sample: /Common/my-log-settings
+rules:
+  description:
+    - Added custom iRules to the SWG service configuration.
+  type: str
+  sample: /Common/my-swg-rule1
 
 mode:
   description: describes the action to take on the task.
   type: str
   sample: update
-  
+
 state:
   description:
     - Changed state.
@@ -181,7 +210,7 @@ from ansible_collections.f5networks.f5_modules.plugins.module_utils.common impor
     F5ModuleError, AnsibleF5Parameters, transform_name, f5_argument_spec
 )
 from ansible_collections.f5networks.f5_modules.plugins.module_utils.icontrol import tmos_version
-import json, time, re, hashlib, ipaddress
+import json, time, re, hashlib
 
 global print_output
 global json_template
@@ -194,81 +223,77 @@ print_output = []
 ## define object creation attempts count (with 1 seconds pause between each attempt)
 obj_attempts = 20
 
-## define minimum supported tmos version - min(SSLO 5.x)
-min_version = 5.0
+## define minimum supported tmos version - min(SSLO 9.0)
+min_version = 9.0
 
-## define maximum supported tmos version - max(SSLO 8.x)
-max_version = 9.0
+## define maximum supported tmos version - max(SSLO 9.9)
+max_version = 9.9
 
 json_template = {
-   "name":"f5-ssl-orchestrator-gc",
-   "inputProperties":[
-      {
-         "id":"f5-ssl-orchestrator-operation-context",
-         "type":"JSON",
-         "value":{
-            "operationType":"TEMPLATE_OPERATION",
-            "deploymentType":"GENERAL_SETTINGS",
-            "deploymentName":"ssloGS_Global",
-            "deploymentReference":"",
-            "partition":"Common",
-            "strictness":False
-         }
-      },
-      {
-         "id":"f5-ssl-orchestrator-general-settings",
-         "type":"JSON",
-         "value": {
-               "name":"ssloGS_global",
-                "previousVersion":"7.2",
-                "version":"7.2",
-                "configModified":True,
-                "ipFamily":"ipv4",
-                "dns":{
-                    "enableDnsSecurity":False,
-                    "enableLocalDnsQueryResolution":False,
-                    "enableLocalDnsZones":False,
-                    "localDnsZones":[],
-                    "localDnsNameservers":[]
-                },
-                "egressNetwork":{
-                    "gatewayOptions":"useDefault",
-                    "outboundGateways":{
-                        "referredObj":"",
-                        "ipv4OutboundGateways":[{"ip":"","ratio":1}],
-                        "ipv6NonPublicGateways":[{"ip":""}],
-                        "ipv6OutboundGateways":[{"ip":"","ratio":1}]
+    "name": "sslo_ob_SERVICE_CREATE_",
+    "inputProperties": [
+        {
+            "id": "f5-ssl-orchestrator-operation-context",
+            "type": "JSON",
+            "value": {
+                "version": "9.0",
+                "partition": "Common",
+                "strictness": False,
+                "operationType": "CREATE",
+                "deploymentName": "TEMPLATE_NAME",
+                "deploymentReference": "",
+                "deploymentType": "SERVICE"
+            }
+        },
+        {
+            "id":"f5-ssl-orchestrator-service",
+            "type":"JSON",
+            "value":{
+                "name":"TEMPLATE_NAME",
+                "strictness":False,
+                "customService":{
+                   "name":"TEMPLATE_NAME",
+                   "serviceDownAction":"reset",
+                   "serviceType":"swg",
+                   "serviceSpecific":{
+                      "name":"TEMPLATE_NAME",
+                      "description":"",
+                      "accessProfile":"TEMPLATE_ACCESS_PROFILE",
+                      "accessProfileScope":"TEMPLATE_NAMED_SCOPE",
+                      "logSettings":[],
+                      "accessProfileNameScopeValue":"TEMPLATE_SCOPE_VALUE",
+                      "accessProfileScopeCustSource":"/Common/modern",
+                      "perReqPolicy":"TEMPLATE_SWG_POLICY",
+                      "iRuleList":[]
                     }
                 },
+                "vendorInfo":{
+                   "name":"F5 Secure Web Gateway"
+                },
+                "description":"Type: swg",
+                "useTemplate":False,
+                "serviceTemplate":"",
                 "partition":"Common",
-                "strictness":False,
-                "existingBlockId":""
-           }
-      }
-   ],
-   "configurationProcessorReference":{
-      "link":"https://localhost/mgmt/shared/iapp/processors/f5-iappslx-ssl-orchestrator-gc"
-   },
-   "configProcessorTimeoutSeconds": 120,
-   "statsProcessorTimeoutSeconds": 60,
-   "configProcessorAffinity": {
-        "processorPolicy": "LOCAL",
-        "affinityProcessorReference": {
-            "link": "https://localhost/mgmt/shared/iapp/affinity/local"
+                "previousVersion":"9.0",
+                "version":"9.0"
+            }
+        },
+        {
+            "id":"f5-ssl-orchestrator-network",
+            "type":"JSON",
+            "value":[]
         }
-   },
-   "state":"BINDING",
-   "presentationHtmlReference":{
-      "link":"https://localhost/iapps/f5-iappslx-ssl-orchestrator/sgc/sgcIndex.html"
-   },
-   "operation":"CREATE"
+    ],
+    "configurationProcessorReference": {
+        "link": "https://localhost/mgmt/shared/iapp/processors/f5-iappslx-ssl-orchestrator-gc"
+    },
+    "state": "BINDING",
+    "presentationHtmlReference": {
+        "link": "https://localhost/iapps/f5-iappslx-ssl-orchestrator/sgc/sgcIndex.html"
+    },
+    "operation": "CREATE"
 }
 
-json_logging_config = {
-    "logLevel":0,
-    "logPublisher":"none",
-    "statsToRecord":0
-}
 
 class Parameters(AnsibleF5Parameters):
     api_map = {}
@@ -283,29 +308,81 @@ class ModuleParameters(Parameters):
     global print_output
 
     @property
-    def forwarding_nameservers(self):
-        forwarding_nameservers = self._values['forwardingNameservers']
-        if forwarding_nameservers == None:
-            return None
-        return forwarding_nameservers
+    def name(self):
+        name = self._values['name']
+        name = "ssloS_" + name
+        return name
 
     @property
-    def forwarding_zones(self):
-        forwarding_zones = self._values['forwardingZones']
-        if forwarding_zones == None:
-            return None
-        return forwarding_zones
-
-    @property
-    def enable_dnssec(self):
-        try: 
-            enable_dnssec = self._values['enableDNSsec']
-            if enable_dnssec == None:
-                return False
-            return enable_dnssec
+    def swg_policy(self):
+        try:
+            swg_policy = self._values["swgPolicy"]
+            if swg_policy == None:
+                return None
+            return swg_policy
         except:
-            return False
+            return None
+    
+    @property
+    def profile_scope(self):
+        try:
+            profile_scope = self._values["profileScope"]
+            if profile_scope == None:
+                return "profile"
+            return profile_scope
+        except:
+            return "profile"
+    
+    @property
+    def named_scope(self):
+        try:
+            named_scope = self._values["namedScope"]
+            if named_scope == None:
+                return None
+            return named_scope
+        except:
+            return None
+            
+    @property
+    def access_profile(self):
+        try:
+            access_profile = self._values["accessProfile"]
+            if access_profile == None:
+                return None
+            return access_profile
+        except:
+            return None
 
+    @property
+    def service_down_action(self):
+        try:
+            service_down_action = self._values["serviceDownAction"]
+            if service_down_action == None:
+                return "reset"
+            return service_down_action
+        except:
+            return "reset"
+
+    @property
+    def log_settings(self):
+        try:
+            log_settings = self._values["logSettings"]
+            if log_settings == None:
+                return None
+            return log_settings
+        except:
+            return None
+    
+    @property
+    def rules(self):
+        try:
+            rules = self._values["rules"]
+            if rules == None:
+                return None
+            return rules
+        except:
+            return None
+    
     @property
     def mode(self):
         mode = self._values['mode']
@@ -324,23 +401,6 @@ class ModuleManager(object):
         self.module = kwargs.pop('module', None)
         self.client = F5RestClient(**self.module.params)
         self.want = ModuleParameters(params=self.module.params)
-
-
-    def validIPAddress(self, IP):    
-        def isIPv4(s):
-            try: return str(int(s)) == s and 0 <= int(s) <= 255
-            except: return False
-        def isIPv6(s):
-            if len(s) > 4:
-                return False
-            try : return int(s, 16) >= 0 and s[0] != '-'
-            except:
-                return False
-        if IP.count(".") == 3 and all(isIPv4(i) for i in IP.split(".")):
-            return "ipv4"
-        if IP.count(":") == 7 and all(isIPv6(i) for i in IP.split(":")):
-            return "ipv6"
-        return "None"
 
 
     def getSsloVersion(self):
@@ -386,15 +446,83 @@ class ModuleManager(object):
         ## use this to method to create and return a modified copy of the JSON template
         self.config = json_template
 
+        ## get base name
+        self.local_name = re.sub('ssloS_', '', self.want.name)
 
         ## perform some input validation
-        ## input validation: forwardingNameservers and forwardingZones cannot both be None
-        if self.want.forwarding_nameservers == None and self.want.forwarding_zones == None:
-            raise F5ModuleError("one of the following is required: forwardingNameservers, forwardingZones.")
 
 
         ## process general json settings for all operations
+        self.config["inputProperties"][0]["value"]["deploymentName"] = self.want.name
         self.config["inputProperties"][0]["value"]["operationType"] = operation
+        self.config["inputProperties"][1]["value"]["name"] = self.want.name
+        self.config["inputProperties"][1]["value"]["customService"]["name"] = self.want.name
+        self.config["inputProperties"][1]["value"]["customService"]["serviceSpecific"]["name"] = self.want.name
+
+
+        ## process swgPolicy
+        if self.want.swg_policy == "":
+            raise F5ModuleError("swgProfile is defined but empty. The SWG service minimally requires the 'swgProfile' key set and referencing an existing SWG per-request policy.")
+        else:
+            self.config["inputProperties"][1]["value"]["customService"]["serviceSpecific"]["perReqPolicy"] = self.want.swg_policy
+
+
+        ## process profileScope
+        self.config["inputProperties"][1]["value"]["customService"]["serviceSpecific"]["accessProfileScope"] = self.want.profile_scope
+
+
+        ## process namedScope (must exist if profileScope == named)
+        if self.want.profile_scope == "named" and (self.want.named_scope == None or self.want.named_scope == ""):
+            raise F5ModuleError("A profileScope of 'named' requires a namedScope string value.")
+        if self.want.profile_scope == "named":
+            self.config["inputProperties"][1]["value"]["customService"]["serviceSpecific"]["accessProfileNameScopeValue"] = self.want.named_scope
+        else:
+            self.config["inputProperties"][1]["value"]["customService"]["serviceSpecific"]["accessProfileNameScopeValue"] = ""
+
+
+        ## process accessProfile (auto-generate value if not specified)
+        if self.want.access_profile == None or self.want.access_profile == "":
+            ## set auto-generated access profile name value
+            self.config["inputProperties"][1]["value"]["customService"]["serviceSpecific"]["accessProfile"] = "/Common/" + self.want.name + ".app/" + self.want.name + "_M_accessProfile"
+        else:
+            self.config["inputProperties"][1]["value"]["customService"]["serviceSpecific"]["accessProfile"] = self.want.access_profile
+
+
+        ## process serviceDownAction
+        self.config["inputProperties"][1]["value"]["customService"]["serviceDownAction"] = self.want.service_down_action
+
+
+        ## process logSettings
+        if self.want.log_settings == None:
+            logs = {}
+            logs["name"] = "/Common/default-log-setting"
+            logs["value"] = "/Common/default-log-setting"
+            self.config["inputProperties"][1]["value"]["customService"]["serviceSpecific"]["logSettings"].append(logs)
+        else:
+            for log in self.want.log_settings:
+                logs = {}
+                logs["name"] = log
+                logs["value"] = log
+                self.config["inputProperties"][1]["value"]["customService"]["serviceSpecific"]["logSettings"].append(logs)
+
+
+        ## process rules (auto-generate the SWG iRule)
+        if self.want.rules == None:
+            rules = {}
+            rules["name"] = "/Common/" + self.want.name + ".app/" + self.want.name + "-swg"
+            rules["value"] = "/Common/" + self.want.name + ".app/" + self.want.name + "-swg"
+            self.config["inputProperties"][1]["value"]["customService"]["serviceSpecific"]["iRuleList"].append(rules)
+        else:
+            rules = {}
+            rules["name"] = "/Common/" + self.want.name + ".app/" + self.want.name + "-swg"
+            rules["value"] = "/Common/" + self.want.name + ".app/" + self.want.name + "-swg"
+            self.config["inputProperties"][1]["value"]["customService"]["serviceSpecific"]["iRuleList"].append(rules)
+
+            for rule in self.want.rules:
+                rules = {}
+                rules["name"] = rule
+                rules["value"] = rule
+                self.config["inputProperties"][1]["value"]["customService"]["serviceSpecific"]["iRuleList"].append(rules)
 
 
         ## =================================
@@ -405,108 +533,23 @@ class ModuleManager(object):
         self.config["inputProperties"][1]["value"]["previousVersion"] = self.ssloVersion
 
 
-        ## version difference: for SSLO 5.x, JSON also requires a loggingConfig block        
-        if self.ssloVersion < 6.0:
-            self.config["inputProperties"][1]["value"]["loggingConfig"] = json_logging_config
-
-
-        if self.want.forwarding_nameservers != None:
-            ## process JSON for forwarding nameservers
-            self.config["inputProperties"][1]["value"]["dns"]["enableLocalDnsQueryResolution"] = True
-            
-            ## loop through list of IP addresses, add to JSON block and determine IP family
-            ipFamily = ""
-            for ipaddr in self.want.forwarding_nameservers:
-                try:
-                    ip = ipaddress.ip_address(ipaddr)
-                    if ipFamily != "" and ip.version != ipFamily:
-                        ipFamily = "both"
-                    else:
-                        ipFamily = ip.version
-                except ValueError:
-                    raise F5ModuleError("A submitted IP address does not conform to standard notation: " + str(ipaddr) + ".")
-                except:
-                    raise F5ModuleError("A submitted IP address does not conform to standard notation: " + str(ipaddr) + ".")
-
-                self.config["inputProperties"][1]["value"]["dns"]["localDnsNameservers"].append(ipaddr)
-
-            if ipFamily == 4:
-                ipf = "ipv4"                
-            elif ipFamily == 6:
-                ipf = "ipv6"
-            elif ipFamily == "both":
-                ipf = "both"
-            
-            self.config["inputProperties"][1]["value"]["ipFamily"] = ipf
-                
-
-        elif self.want.forwarding_zones != None:
-            ## process JSON for forwarding zones
-            self.config["inputProperties"][1]["value"]["dns"]["enableLocalDnsZones"] = True
-
-            ## loop through list of IP addresses, add to JSON block and determine IP family
-            ipFamily = ""
-            for zone in self.want.forwarding_zones:
-                ## input validation: forwardingZones key must have a 'zone' and 'nameservers' subkey
-                if "zone" not in zone:
-                    raise F5ModuleError("A forwarding zone requires a list of at least one 'zone' and 'nameservers' key pair.")
-                if "nameservers" not in zone:
-                    raise F5ModuleError("A forwarding zone requires a list of at least one 'zone' and 'nameservers' key pair.")
-
-                ## input validation: the 'nameservers' subkey must contain at least one entry
-                if zone["nameservers"] == None:
-                    raise F5ModuleError("A forwarding zone 'nameservers' key must contain at least one IP address entry.")
-
-                this_zone = {}
-                this_zone["zone"] = zone["zone"]
-                this_zone["nameServerIps"] = []
-                for ipaddr in zone["nameservers"]:                    
-                    try:
-                        ip = ipaddress.ip_address(ipaddr)
-                        if ipFamily != "" and ip.version != ipFamily:
-                            ipFamily = "both"
-                        else:
-                            ipFamily = ip.version
-                    except ValueError:
-                        raise F5ModuleError("A submitted IP address does not conform to standard notation: " + str(ipaddr) + ".")
-                    except:
-                        raise F5ModuleError("A submitted IP address does not conform to standard notation: " + str(ipaddr) + ".")
-
-                    this_zone["nameServerIps"].append(ipaddr)
-                
-                self.config["inputProperties"][1]["value"]["dns"]["localDnsZones"].append(this_zone)
-
-            if ipFamily == 4:
-                    ipf = "ipv4"                
-            elif ipFamily == 6:
-                ipf = "ipv6"
-            elif ipFamily == "both":
-                ipf = "both"
-            
-            self.config["inputProperties"][1]["value"]["ipFamily"] = ipf
-                
-        ## dnssec
-        self.config["inputProperties"][1]["value"]["dns"]["enableDnsSecurity"] = self.want.enable_dnssec
-
-
         ## create operation
-        if operation == "CREATE":            
+        if operation == "CREATE":
             #### TO DO: update JSON code for CREATE operation
-            self.config["name"] = "sslo_obj_GENERAL_SETTINGS_CREATE_ssloGS_global"
+            self.config["name"] = "sslo_obj_SERVICE_CREATE_" + self.want.name
 
 
         ## modify/delete operations
         elif operation in ["DELETE", "MODIFY"]:
-            self.config["name"] = "sslo_obj_GENERAL_SETTINGS_MODIFY_ssloGS_global"
+            self.config["name"] = "sslo_obj_SERVICE_MODIFY_" + self.want.name  
 
             ## get object ID and add to deploymentReference and existingBlockId values
             uri = "https://{0}:{1}/mgmt/shared/iapp/blocks/".format(
                 self.client.provider['server'],
                 self.client.provider['server_port']
             )
-            query = "?$filter=name+eq+'{0}'&$select=id".format(self.name)
+            query = "?$filter=name+eq+'{0}'&$select=id".format(self.want.name)
             resp = self.client.api.get(uri + query)
-            
             try:
                 response = resp.json()
             except ValueError as ex:
@@ -522,11 +565,6 @@ class ModuleManager(object):
             except:
                 raise F5ModuleError("Failure to create/modify - unable to fetch object ID")
 
-            
-            if operation in ["MODIFY"]:
-                pass
-                #### TO DO: update JSON code for MODIFY operation
-
 
         return self.config
 
@@ -537,7 +575,6 @@ class ModuleManager(object):
         changed = False
         result = dict()
         state = self.want.state
-        self.name = "ssloGS_global"
 
         ## test for correct TMOS version
         if self.ssloVersion < min_version or self.ssloVersion > max_version:
@@ -617,7 +654,7 @@ class ModuleManager(object):
                     self.deleteOperation(self.operationId)
                     raise F5ModuleError("Creation error: " + error)
                 else:
-                    raise F5ModuleError("Object " + self.name + " create/modify operation timeout")
+                    raise F5ModuleError("Object " + self.want.name + " create/modify operation timeout")
 
         else:
             ## CREATE: object doesn't exist - perform create - get modified json first
@@ -669,7 +706,7 @@ class ModuleManager(object):
                     self.deleteOperation(self.operationId)
                     raise F5ModuleError("Creation error: " + self.operationId + ":" + error)
                 else:
-                    raise F5ModuleError("Object " + self.name + " create/modify operation timeout")
+                    raise F5ModuleError("Object " + self.want.name + " create/modify operation timeout")
 
 
     def absent(self):
@@ -726,7 +763,7 @@ class ModuleManager(object):
                     self.deleteOperation(self.operationId)
                     raise F5ModuleError("Creation error: " + self.operationId + ":" + error)
                 else:
-                    raise F5ModuleError("Object " + self.name + " create/modify operation timeout")
+                    raise F5ModuleError("Object " + self.want.name + " create/modify operation timeout")
 
         else:
             ## object doesn't exit - just exit (changed = False)
@@ -739,7 +776,7 @@ class ModuleManager(object):
             self.client.provider['server'],
             self.client.provider['server_port']
         )
-        query = "?$filter=name+eq+'{0}'".format(self.name)
+        query = "?$filter=name+eq+'{0}'".format(self.want.name)
         resp = self.client.api.get(uri + query)
 
         try:
@@ -752,7 +789,7 @@ class ModuleManager(object):
             foundit = 0
             for i in range(0, len(response["items"])):
                 try:
-                    if str(response["items"][i]["name"]) == self.name:
+                    if str(response["items"][i]["name"]) == self.want.name:
                         foundit = 1
                         self.existing_config = response["items"][i]
                         break
@@ -772,16 +809,24 @@ class ArgumentSpec(object):
     def __init__(self):
         self.supports_check_mode = True
         argument_spec = dict(
-            forwardingNameservers=dict(type='list'),
-            forwardingZones=dict(type='list'),
-            enableDNSsec=dict(
-                type='bool',
-                default=False
-            ),
+            name=dict(required=True),
             state=dict(
                 default='present',
                 choices=['absent','present']
             ),
+            swgPolicy=dict(required=True),
+            profileScope=dict(
+                choices=["profile","named"],
+                default="profile"
+            ),
+            namedScope=dict(),
+            accessProfile=dict(),
+            serviceDownAction=dict(
+                choices=["ignore","reset","drop"],
+                default="reset"
+            ),
+            logSettings=dict(type='list'),
+            rules=dict(type='list'),
             mode=dict(
                 choices=["update","output"],
                 default="update"
@@ -790,12 +835,6 @@ class ArgumentSpec(object):
         self.argument_spec = {}
         self.argument_spec.update(f5_argument_spec)
         self.argument_spec.update(argument_spec)
-        self.mutually_exclusive=[
-            ['forwardingNameservers', 'forwardingZones']
-        ]
-        self.required_one_of=[
-            ['forwardingNameservers', 'forwardingZones']
-        ]
 
 def main():
     ## start here
@@ -809,8 +848,6 @@ def main():
     module = AnsibleModule(
         argument_spec=spec.argument_spec,
         supports_check_mode=spec.supports_check_mode,
-        mutually_exclusive=spec.mutually_exclusive,
-        required_one_of=spec.required_one_of
     )
 
     ## send to exec_module, result contains output of tasks

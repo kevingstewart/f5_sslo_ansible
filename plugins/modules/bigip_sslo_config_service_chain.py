@@ -3,7 +3,11 @@
 # 
 # Copyright: (c) 2021, kevin-dot-g-dot-stewart-at-gmail-dot-com
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-# Version: 1.0
+# Version: 1.0.1
+
+#### Updates:
+#### 1.0.1 - added 9.0 support (same as 8.3 so just changed max version)
+#          - updated version and previousVersion keys to match target SSLO version
 
 
 from __future__ import absolute_import, division, print_function
@@ -172,7 +176,7 @@ obj_attempts = 20
 min_version = 5.0
 
 ## define maximum supported tmos version - max(SSLO 8.x)
-max_version = 8.9
+max_version = 9.0
 
 json_template = {
    "name":"f5-ssl-orchestrator-gc",
@@ -331,6 +335,14 @@ class ModuleManager(object):
         self.config["inputProperties"][0]["value"]["deploymentName"] = self.want.name
         self.config["inputProperties"][0]["value"]["operationType"] = operation
         self.config["inputProperties"][1]["value"]["name"] = self.want.name
+
+
+        ## =================================
+        ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+        ## =================================
+        self.config["inputProperties"][0]["value"]["version"] = self.ssloVersion
+        self.config["inputProperties"][1]["value"]["version"] = self.ssloVersion
+        self.config["inputProperties"][1]["value"]["previousVersion"] = self.ssloVersion
 
 
         ## process service chains

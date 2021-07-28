@@ -5,6 +5,9 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 # Version: 1.0
 
+#### Updates:
+#### 1.0.1 - added 9.0 support (same as 8.3 so just changed max version)
+
 
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
@@ -90,7 +93,7 @@ obj_attempts = 20
 min_version = 5.0
 
 ## define maximum supported tmos version - max(SSLO 8.x)
-max_version = 8.9
+max_version = 9.0
 
 json_template = {}
 

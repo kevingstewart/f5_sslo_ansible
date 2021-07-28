@@ -1,0 +1,40 @@
+---
+
+- name: Create SSLO Authentication
+  hosts: localhost
+  gather_facts: False
+  connection: local
+
+  collections:
+    - kevingstewart.f5_sslo_ansible
+
+  vars: 
+    provider:
+      server: 10.1.1.4
+      user: admin
+      password: admin
+      validate_certs: no
+      server_port: 443
+
+  tasks:
+    - name: SSLO authentication
+      bigip_sslo_config_authentication:
+        provider: "{{ provider }}"
+        name: "ocsp2"
+
+        ocsp:
+          fqdn: "ocsp2.f5labs.com"
+          dest: "10.1.10.133/32"
+          sslProfile: "demo"
+          vlans: 
+            - "/Common/client-vlan"
+            - "/Common/dlp-vlan"
+          #source: "0.0.0.0%0/0"
+          #port: 80
+          #httpProfile: "/Common/http"
+          #tcpSettingsClient: "/Common/f5-tcp-wan"
+          #tcpSettingsServer: "/Common/f5-tcp-lan"
+          #existingOcsp: ""
+          #ocspMaxAge: 604800
+          #ocspNonce: True
+      delegate_to: localhost

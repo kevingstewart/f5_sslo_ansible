@@ -3,10 +3,13 @@
 # 
 # Copyright: (c) 2021, kevin-dot-g-dot-stewart-at-gmail-dot-com
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-# Version: 1.0
+# Version: 1.0.1
 
-#### To Do:
-#### Test what happens when interface, tag or subnet in use
+#### Updates:
+#### 1.0.1 - added 9.0 support (same as 8.3 so just changed max version)
+####       - updated to support new self-IP names)
+#          - updated version and previousVersion keys to match target SSLO version
+
 
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
@@ -504,7 +507,7 @@ obj_attempts = 20
 min_version = 5.0
 
 ## define maximum supported tmos version - max(SSLO 8.x)
-max_version = 8.9
+max_version = 9.0
 
 json_template = {
     "name":"sslo_ob_SERVICE_CREATE_ssloS_layer3a",
@@ -1051,6 +1054,15 @@ class ModuleManager(object):
         self.config["inputProperties"][2]["value"]["fromNetworkObj"]["name"] = "ssloN_" + self.local_name+ "_in"
         self.config["inputProperties"][2]["value"]["toNetworkObj"]["name"] = "ssloN_" + self.local_name+ "_out"
 
+
+        ## =================================
+        ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+        ## =================================
+        self.config["inputProperties"][0]["value"]["version"] = self.ssloVersion
+        self.config["inputProperties"][2]["value"]["version"] = self.ssloVersion
+        self.config["inputProperties"][2]["value"]["previousVersion"] = self.ssloVersion
+
+
         ## test for create network or use existing (From BIG-IP to service)
         if self.want.device_to_vlan != None:
             ## build for an existing VLAN
@@ -1355,21 +1367,41 @@ class ModuleManager(object):
                 ## test for a self-IP change. Self-IPs are immutable, so if different must send an error
                 if self.want.ipFamily == "ipv4":
                     ## query existing entry self-IPs
-                    uri = "https://{0}:{1}/mgmt/tm/net/self/~Common~{2}.app~{2}-70-0-flt-S4".format(
-                        self.client.provider['server'],
-                        self.client.provider['server_port'],
-                        self.want.name,
-                    )
+                    ## =================================
+                    ## 9.0 Update: flt self application name changes
+                    ## =================================
+                    if self.ssloVersion >= 9.0:
+                        uri = "https://{0}:{1}/mgmt/tm/net/self/~Common~ssloN_{2}-70-0-flt-S4ForFltIP.app~ssloN_{2}-70-0-flt-S4".format(
+                            self.client.provider['server'],
+                            self.client.provider['server_port'],
+                            self.local_name
+                        )
+                    else:
+                        uri = "https://{0}:{1}/mgmt/tm/net/self/~Common~{2}.app~{2}-70-0-flt-S4".format(
+                            self.client.provider['server'],
+                            self.client.provider['server_port'],
+                            self.want.name,
+                        )
                     query = "?$select=address"
                     resp = self.client.api.get(uri + query).json()
                     resp_in = resp["address"]
 
                     ## query existing return self-IPs
-                    uri = "https://{0}:{1}/mgmt/tm/net/self/~Common~{2}.app~{2}-70-0-flt-D4".format(
-                        self.client.provider['server'],
-                        self.client.provider['server_port'],
-                        self.want.name,
-                    )
+                    ## =================================
+                    ## 9.0 Update: flt self application name changes
+                    ## =================================
+                    if self.ssloVersion >= 9.0:
+                        uri = "https://{0}:{1}/mgmt/tm/net/self/~Common~ssloN_{2}-70-0-flt-D4ForFltIP.app~ssloN_{2}-70-0-flt-D4".format(
+                            self.client.provider['server'],
+                            self.client.provider['server_port'],
+                            self.local_name
+                        )
+                    else:
+                        uri = "https://{0}:{1}/mgmt/tm/net/self/~Common~{2}.app~{2}-70-0-flt-D4".format(
+                            self.client.provider['server'],
+                            self.client.provider['server_port'],
+                            self.want.name,
+                        )
                     query = "?$select=address"
                     resp = self.client.api.get(uri + query).json()
                     resp_out = resp["address"]
@@ -1386,21 +1418,41 @@ class ModuleManager(object):
 
                 elif self.want.ipFamily == "ipv6":
                     ## query existing entry self-IPs
-                    uri = "https://{0}:{1}/mgmt/tm/net/self/~Common~{2}.app~{2}-70-0-flt-S6".format(
-                        self.client.provider['server'],
-                        self.client.provider['server_port'],
-                        self.want.name,
-                    )
+                    ## =================================
+                    ## 9.0 Update: flt self application name changes
+                    ## =================================
+                    if self.ssloVersion >= 9.0:
+                        uri = "https://{0}:{1}/mgmt/tm/net/self/~Common~ssloN_{2}-70-0-flt-S6ForFltIP.app~ssloN_{2}-70-0-flt-S6".format(
+                            self.client.provider['server'],
+                            self.client.provider['server_port'],
+                            self.local_name
+                        )
+                    else:
+                        uri = "https://{0}:{1}/mgmt/tm/net/self/~Common~{2}.app~{2}-70-0-flt-S6".format(
+                            self.client.provider['server'],
+                            self.client.provider['server_port'],
+                            self.want.name,
+                        )
                     query = "?$select=address"
                     resp = self.client.api.get(uri + query).json()
                     resp_in = resp["address"]
 
                     ## query existing return self-IPs
-                    uri = "https://{0}:{1}/mgmt/tm/net/self/~Common~{2}.app~{2}-70-0-flt-D6".format(
-                        self.client.provider['server'],
-                        self.client.provider['server_port'],
-                        self.want.name,
-                    )
+                    ## =================================
+                    ## 9.0 Update: flt self application name changes
+                    ## =================================
+                    if self.ssloVersion >= 9.0:
+                        uri = "https://{0}:{1}/mgmt/tm/net/self/~Common~ssloN_{2}-70-0-flt-D6ForFltIP.app~ssloN_{2}-70-0-flt-D6".format(
+                            self.client.provider['server'],
+                            self.client.provider['server_port'],
+                            self.local_name
+                        )
+                    else:
+                        uri = "https://{0}:{1}/mgmt/tm/net/self/~Common~{2}.app~{2}-70-0-flt-D6".format(
+                            self.client.provider['server'],
+                            self.client.provider['server_port'],
+                            self.want.name,
+                        )
                     query = "?$select=address"
                     resp = self.client.api.get(uri + query).json()
                     resp_out = resp["address"]

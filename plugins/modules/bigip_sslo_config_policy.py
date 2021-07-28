@@ -3,7 +3,18 @@
 # 
 # Copyright: (c) 2021, kevin-dot-g-dot-stewart-at-gmail-dot-com
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-# Version: 1.0
+# Version: 1.0.1
+
+#### Updates:
+#### 1.0.1 - added 9.0 support
+#          - changed max version
+#          - added "Client VLANs" traffic condition
+#          - added "Server Certificate (Issuer DN)" traffic condition
+#          - added "Server Certificate (SANs)" traffic condition
+#          - added "Server Certificate (Subject DN)" traffic condition
+#          - added "Server Name (TLS ClientHello)" traffic condition
+#          - added "http2" as option in "TCP L7 Protocol Lookup" traffic condition
+#          - updated version and previousVersion keys to match target SSLO version
 
 
 from __future__ import absolute_import, division, print_function
@@ -242,7 +253,7 @@ options:
                 description: enables the TCP L7 Protocol Check condition.
                 suboptions:
                     values: 
-                        description: a list of TCP protocols, where the options are 'dns', 'ftp', 'ftps', 'http', 'httpConnect', 'https', 'imap', 'imaps', 'smtp', 'smtps', 'pop3', 'pop3s', or 'telnet'
+                        description: a list of TCP protocols, where the options are 'dns', 'ftp', 'ftps', 'http', 'httpConnect', 'https', 'imap', 'imaps', 'smtp', 'smtps', 'pop3', 'pop3s', 'telnet', or http2 (9.0+)
                         type: str
 
             L7ProtocolCheckUdp:
@@ -254,6 +265,41 @@ options:
 
             urlMatch:
                 description: enables the URL Match condition.
+                suboptions:
+                    values:
+                        description: a list of 'type' and 'value' keys. The 'type' key can be one of 'equals', 'substring', 'prefix', 'suffix', or 'glob'. The 'value' is the corresponding string match value.
+                        type: str
+
+            clientVlans:
+                description: 9.0+. enables the Client VLANs condition.
+                suboptions:
+                    values:
+                        description: a list of VLANs (ex. "/Common/client-vlan")
+                        type: str
+
+            serverCertIssuerDn:
+                description: 9.0+. enables the Server Certificate (Issuer DN) condition.
+                suboptions:
+                    values:
+                        description: a list of 'type' and 'value' keys. The 'type' key can be one of 'equals', 'substring', 'prefix', 'suffix', or 'glob'. The 'value' is the corresponding string match value.
+                        type: str
+
+            serverCertSubjectDn:
+                description: 9.0+. enables the Server Certificate (Subject DN) condition.
+                suboptions:
+                    values:
+                        description: a list of 'type' and 'value' keys. The 'type' key can be one of 'equals', 'substring', 'prefix', 'suffix', or 'glob'. The 'value' is the corresponding string match value.
+                        type: str
+
+            serverCertSan:
+                description: 9.0+. enables the Server Certificate (SANs) condition.
+                suboptions:
+                    values:
+                        description: a list of 'type' and 'value' keys. The 'type' key can be one of 'equals', 'substring', 'prefix', 'suffix', or 'glob'. The 'value' is the corresponding string match value.
+                        type: str
+
+            serverNameTlsClientHello:
+                description: 9.0+. enables the Server Name (TLS ClientHello) condition.
                 suboptions:
                     values:
                         description: a list of 'type' and 'value' keys. The 'type' key can be one of 'equals', 'substring', 'prefix', 'suffix', or 'glob'. The 'value' is the corresponding string match value.
@@ -612,7 +658,7 @@ obj_attempts = 20
 min_version = 5.0
 
 ## define maximum supported tmos version - max(SSLO 8.x)
-max_version = 8.9
+max_version = 9.0
 
 json_template = {
     "name":"f5-ssl-orchestrator-gc",
@@ -849,6 +895,47 @@ json_rule_url_match = {
     }
 }
 
+json_rule_client_vlans = {
+    "type":"Client VLANs",
+    "options":{
+        "vlans":[],
+        "url":[],
+        "value":[]
+    }
+}
+
+json_rule_server_cert_issuer_dn = {
+    "type":"Server Certificate (Issuer DN)",
+    "options":{
+        "value":[],
+        "url":[]
+    }
+}
+
+json_rule_server_cert_subject_dn = {
+    "type":"Server Certificate (Subject DN)",
+    "options":{
+        "value":[],
+        "url":[]
+    }
+}
+
+json_rule_server_cert_san = {
+    "type":"Server Certificate (SANs)",
+    "options":{
+        "value":[],
+        "url":[]
+    }
+}
+
+json_rule_server_name_tls_clienthello = {
+    "type":"Server Name (TLS ClientHello)",
+    "options":{
+        "value":[],
+        "url":[]
+    }
+}
+
 
 class Parameters(AnsibleF5Parameters):
     api_map = {}
@@ -1009,6 +1096,15 @@ class ModuleManager(object):
                     ## remove ssloGS_global loggingConfig key for SSLO >= 6.0
                     del gs["inputProperties"][1]["value"]["loggingConfig"]
 
+
+                ## =================================
+                ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+                ## =================================
+                gs["inputProperties"][0]["value"]["version"] - self.ssloVersion
+                gs["inputProperties"][1]["value"]["version"] - self.ssloVersion
+                gs["inputProperties"][1]["value"]["previousVersion"] - self.ssloVersion
+
+
                 resp = self.client.api.post(uri, json=gs)
                 try:
                     response = resp.json()
@@ -1089,6 +1185,15 @@ class ModuleManager(object):
         self.config["inputProperties"][1]["value"]["name"] = self.want.name
         self.config["inputProperties"][1]["value"]["policyConsumer"]["type"] = self.want.policy_type.capitalize()
         self.config["inputProperties"][1]["value"]["policyConsumer"]["subType"] = self.want.policy_type.capitalize()
+
+
+        ## =================================
+        ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+        ## =================================
+        self.config["inputProperties"][0]["value"]["version"] = self.ssloVersion
+        self.config["inputProperties"][1]["value"]["version"] = self.ssloVersion
+        self.config["inputProperties"][1]["value"]["previousVersion"] = self.ssloVersion
+
         
         ## input validation: serverCertStatusCheck minimally requires SSLO 7.0
         if self.ssloVersion >= 7.0:
@@ -1173,7 +1278,10 @@ class ModuleManager(object):
                         serviceChain = ""
                     else:
                         serviceChain = rule["serviceChain"]
-                    if not serviceChain.startswith("ssloSC_"):
+                    
+                    if rule["serviceChain"] == "":
+                        serviceChain = ""
+                    elif not serviceChain.startswith("ssloSC_"):
                         serviceChain = "ssloSC_" + serviceChain
 
                     ruleset["actionOptions"]["serviceChain"] = serviceChain                    
@@ -1698,12 +1806,21 @@ class ModuleManager(object):
 
                             for proto in condition["values"]:
                                 ## input validation: TCP protocol must be one of dns, ftp, ftps, http, httpConnect, https, imap, imaps, pop3, pop3s, smtp, smtps, telnet
-                                if proto not in {"dns", "ftp", "ftps", "http", "httpConnect", "https", "imap", "imaps", "pop3", "pop3s", "smtp", "smtps", "telnet"}:
-                                    raise F5ModuleError("TCP L7 protocol must be one of: 'dns', 'ftp', 'ftps', 'http', 'httpConnect', 'https', 'imap', 'imaps', 'pop3', 'pop3s', 'smtp', 'smtps', 'telnet', but '" + str(proto) + "' was entered.")
+                                if proto not in {"dns", "ftp", "ftps", "http", "httpConnect", "https", "imap", "imaps", "pop3", "pop3s", "smtp", "smtps", "telnet", "http2"}:
+                                    raise F5ModuleError("TCP L7 protocol must be one of: 'dns', 'ftp', 'ftps', 'http', 'httpConnect', 'https', 'imap', 'imaps', 'pop3', 'pop3s', 'smtp', 'smtps', 'telnet', 'http2' (9.0), but '" + str(proto) + "' was entered.")
 
-                                cond["options"]["protocol"].append(proto)
+                                ## 9.0 Update: only allow http2 if 9.0+
+                                if self.ssloVersion < 9.0 and proto == 'http2':
+                                    pass
+                                else:
+                                    cond["options"]["protocol"].append(proto)
 
-                            ruleset["conditions"].append(cond)
+
+                            ## 9.0 Update: if len of protocol key is 0 (maybe because this is < 9.0 and only condition is http2), don't add this condition
+                            if len(cond["options"]["protocol"]) < 1:
+                                pass
+                            else:
+                                ruleset["conditions"].append(cond)
 
 
                         ## =================================
@@ -1777,6 +1894,225 @@ class ModuleManager(object):
 
                             ruleset["conditions"].append(cond)
 
+
+                        ## =================================
+                        ## 9.0 Update: Client VLANs
+                        ## =================================
+                        elif condition["condition"] == "clientVlans":
+                            if self.ssloVersion < 9.0:
+                                continue
+                            else:
+                                ## input validation: policy type requires a "values" key, and contents must be >= 1
+                                if "values" not in condition:
+                                    raise F5ModuleError("The Client VLANs condition requires a 'values' key and at least 1 VLAN (ex /Common/client-vlan).")
+                                try:
+                                    count = len(condition["values"])
+                                except:
+                                    raise F5ModuleError("The Client VLANs condition requires a 'values' key and at least 1 VLAN (ex /Common/client-vlan).")
+
+                                cond = copy.deepcopy(json_rule_client_vlans)
+                                cond["index"] = random.randint(1000000000000, 9999999999999)
+
+                                for value in condition["values"]:
+                                    cond["options"]["vlans"].append(value)
+                                ruleset["conditions"].append(cond)
+
+
+                        ## =================================
+                        ## 9.0 Update: Server Certificate (Issuer DN)
+                        ## =================================
+                        elif condition["condition"] == "serverCertIssuerDn":
+                            if self.ssloVersion < 9.0:
+                                continue
+                            else:
+                                ## input validation: policy type requires a "values" key, and contents must be >= 1
+                                if "values" not in condition:
+                                    raise F5ModuleError("The Server Certificate (Issuer DN) condition requires a 'values' key and at least 1 URL.")
+                                try:
+                                    count = len(condition["values"])
+                                except:
+                                    raise F5ModuleError("The Server Certificate (Issuer DN) condition requires a 'values' key and at least 1 URL.")
+
+                                cond = copy.deepcopy(json_rule_server_cert_issuer_dn)
+                                cond["index"] = random.randint(1000000000000, 9999999999999)
+
+                                for value in condition["values"]:
+                                    ## input validation: "type" key must exist
+                                    if "type" not in value:
+                                        raise F5ModuleError("The Server Certificate (Issuer DN) condition requires a 'type' key containing one of these values: 'equals', 'substring', 'prefix', 'suffix', 'glob'.")
+
+                                    ## input validation: "value" key must exist
+                                    if "value" not in value:
+                                        raise F5ModuleError("The Server Certificate (Issuer DN) condition requires a 'value' key containing a string matching value.")
+
+                                    ## input validation: type field must be one of "equals", "substring", "prefix", "suffix", "glob"
+                                    if value["type"] not in {"equals", "substring", "prefix", "suffix", "glob"}:
+                                        raise F5ModuleError("Server Certificate (Issuer DN) type must be one of: 'equals', 'substring', 'prefix', 'suffix', 'glob', but '" + str(value["type"]) + "' was entered.")
+
+                                    url = {}
+                                    if value["type"] == "equals":
+                                        url["matchType"] = "f5keyequalf5"
+                                    elif value["type"] == "substring":
+                                        url["matchType"] = "f5keysubstringf5"
+                                    elif value["type"] == "prefix":
+                                        url["matchType"] = "f5keyprefixf5"
+                                    elif value["type"] == "suffix":
+                                        url["matchType"] = "f5keysuffixf5"
+                                    elif value["type"] == "glob":
+                                        url["matchType"] = "f5keyglobalf5"
+
+                                    url["pattern"] = value["value"]
+                                    cond["options"]["value"].append(url)
+
+                                ruleset["conditions"].append(cond)
+
+
+                        ## =================================
+                        ## 9.0 Update: Server Certificate (Subject DN)
+                        ## =================================
+                        elif condition["condition"] == "serverCertSubjectDn":
+                            if self.ssloVersion < 9.0:
+                                continue
+                            else:
+                                ## input validation: policy type requires a "values" key, and contents must be >= 1
+                                if "values" not in condition:
+                                    raise F5ModuleError("The Server Certificate (Subject DN) condition requires a 'values' key and at least 1 URL.")
+                                try:
+                                    count = len(condition["values"])
+                                except:
+                                    raise F5ModuleError("The Server Certificate (Subject DN) condition requires a 'values' key and at least 1 URL.")
+
+                                cond = copy.deepcopy(json_rule_server_cert_subject_dn)
+                                cond["index"] = random.randint(1000000000000, 9999999999999)
+
+                                for value in condition["values"]:
+                                    ## input validation: "type" key must exist
+                                    if "type" not in value:
+                                        raise F5ModuleError("The Server Certificate (Subject DN) condition requires a 'type' key containing one of these values: 'equals', 'substring', 'prefix', 'suffix', 'glob'.")
+
+                                    ## input validation: "value" key must exist
+                                    if "value" not in value:
+                                        raise F5ModuleError("The Server Certificate (Subject DN) condition requires a 'value' key containing a string matching value.")
+
+                                    ## input validation: type field must be one of "equals", "substring", "prefix", "suffix", "glob"
+                                    if value["type"] not in {"equals", "substring", "prefix", "suffix", "glob"}:
+                                        raise F5ModuleError("Server Certificate (Subject DN) type must be one of: 'equals', 'substring', 'prefix', 'suffix', 'glob', but '" + str(value["type"]) + "' was entered.")
+
+                                    url = {}
+                                    if value["type"] == "equals":
+                                        url["matchType"] = "f5keyequalf5"
+                                    elif value["type"] == "substring":
+                                        url["matchType"] = "f5keysubstringf5"
+                                    elif value["type"] == "prefix":
+                                        url["matchType"] = "f5keyprefixf5"
+                                    elif value["type"] == "suffix":
+                                        url["matchType"] = "f5keysuffixf5"
+                                    elif value["type"] == "glob":
+                                        url["matchType"] = "f5keyglobalf5"
+
+                                    url["pattern"] = value["value"]
+                                    cond["options"]["value"].append(url)
+
+                                ruleset["conditions"].append(cond)
+
+
+                        ## =================================
+                        ## 9.0 Update: Server Certificate (SANs)
+                        ## =================================
+                        elif condition["condition"] == "serverCertSan":
+                            if self.ssloVersion < 9.0:
+                                continue
+                            else:
+                                ## input validation: policy type requires a "values" key, and contents must be >= 1
+                                if "values" not in condition:
+                                    raise F5ModuleError("The Server Certificate (SANs) condition requires a 'values' key and at least 1 URL.")
+                                try:
+                                    count = len(condition["values"])
+                                except:
+                                    raise F5ModuleError("The Server Certificate (SANs) condition requires a 'values' key and at least 1 URL.")
+
+                                cond = copy.deepcopy(json_rule_server_cert_san)
+                                cond["index"] = random.randint(1000000000000, 9999999999999)
+
+                                for value in condition["values"]:
+                                    ## input validation: "type" key must exist
+                                    if "type" not in value:
+                                        raise F5ModuleError("The Server Certificate (SANs) condition requires a 'type' key containing one of these values: 'equals', 'substring', 'prefix', 'suffix', 'glob'.")
+
+                                    ## input validation: "value" key must exist
+                                    if "value" not in value:
+                                        raise F5ModuleError("The Server Certificate (SANs) condition requires a 'value' key containing a string matching value.")
+
+                                    ## input validation: type field must be one of "equals", "substring", "prefix", "suffix", "glob"
+                                    if value["type"] not in {"equals", "substring", "prefix", "suffix", "glob"}:
+                                        raise F5ModuleError("Server Certificate (SANs) type must be one of: 'equals', 'substring', 'prefix', 'suffix', 'glob', but '" + str(value["type"]) + "' was entered.")
+
+                                    url = {}
+                                    if value["type"] == "equals":
+                                        url["matchType"] = "f5keyequalf5"
+                                    elif value["type"] == "substring":
+                                        url["matchType"] = "f5keysubstringf5"
+                                    elif value["type"] == "prefix":
+                                        url["matchType"] = "f5keyprefixf5"
+                                    elif value["type"] == "suffix":
+                                        url["matchType"] = "f5keysuffixf5"
+                                    elif value["type"] == "glob":
+                                        url["matchType"] = "f5keyglobalf5"
+
+                                    url["pattern"] = value["value"]
+                                    cond["options"]["value"].append(url)
+
+                                ruleset["conditions"].append(cond)
+
+
+                        ## =================================
+                        ## 9.0 Update: Server Name (TLS ClientHello)
+                        ## =================================
+                        elif condition["condition"] == "serverNameTlsClientHello":
+                            if self.ssloVersion < 9.0:
+                                continue
+                            else:
+                                ## input validation: policy type requires a "values" key, and contents must be >= 1
+                                if "values" not in condition:
+                                    raise F5ModuleError("The Server Name (TLS ClientHello) condition requires a 'values' key and at least 1 URL.")
+                                try:
+                                    count = len(condition["values"])
+                                except:
+                                    raise F5ModuleError("The Server Name (TLS ClientHello) condition requires a 'values' key and at least 1 URL.")
+
+                                cond = copy.deepcopy(json_rule_server_name_tls_clienthello)
+                                cond["index"] = random.randint(1000000000000, 9999999999999)
+
+                                for value in condition["values"]:
+                                    ## input validation: "type" key must exist
+                                    if "type" not in value:
+                                        raise F5ModuleError("The Server Name (TLS ClientHello) condition requires a 'type' key containing one of these values: 'equals', 'substring', 'prefix', 'suffix', 'glob'.")
+
+                                    ## input validation: "value" key must exist
+                                    if "value" not in value:
+                                        raise F5ModuleError("The Server Name (TLS ClientHello) condition requires a 'value' key containing a string matching value.")
+
+                                    ## input validation: type field must be one of "equals", "substring", "prefix", "suffix", "glob"
+                                    if value["type"] not in {"equals", "substring", "prefix", "suffix", "glob"}:
+                                        raise F5ModuleError("Server Name (TLS ClientHello) type must be one of: 'equals', 'substring', 'prefix', 'suffix', 'glob', but '" + str(value["type"]) + "' was entered.")
+
+                                    url = {}
+                                    if value["type"] == "equals":
+                                        url["matchType"] = "f5keyequalf5"
+                                    elif value["type"] == "substring":
+                                        url["matchType"] = "f5keysubstringf5"
+                                    elif value["type"] == "prefix":
+                                        url["matchType"] = "f5keyprefixf5"
+                                    elif value["type"] == "suffix":
+                                        url["matchType"] = "f5keysuffixf5"
+                                    elif value["type"] == "glob":
+                                        url["matchType"] = "f5keyglobalf5"
+
+                                    url["pattern"] = value["value"]
+                                    cond["options"]["value"].append(url)
+
+                                ruleset["conditions"].append(cond)
+                        
 
                         ## input validation: raise error if an entered condition isn't supported
                         else:

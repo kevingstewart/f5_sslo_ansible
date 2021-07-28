@@ -3,10 +3,15 @@
 # 
 # Copyright: (c) 2021, kevin-dot-g-dot-stewart-at-gmail-dot-com
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-# Version: 1.0
+# Version: 1.0.1
 
 #### To Do:
 #### Test what happens when interface, tag or subnet in use
+
+#### Updates:
+#### 1.0.1 - added 9.0 support (same as 8.3 so just changed max version)
+#          - updated version and previousVersion keys to match target SSLO version
+
 
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
@@ -358,7 +363,7 @@ obj_attempts = 20
 min_version = 5.0
 
 ## define maximum supported tmos version - max(SSLO 8.x)
-max_version = 8.9
+max_version = 9.0
 
 json_template = {
     "name":"proxy-f5-ssl-orchestrator-service-CREATE",
@@ -767,6 +772,15 @@ class ModuleManager(object):
         self.config["inputProperties"][2]["value"]["customService"]["name"] = self.want.name
         self.config["inputProperties"][2]["value"]["customService"]["serviceSpecific"]["name"] = self.want.name
 
+
+        ## =================================
+        ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+        ## =================================
+        self.config["inputProperties"][0]["value"]["version"] = self.ssloVersion
+        self.config["inputProperties"][2]["value"]["version"] = self.ssloVersion
+        self.config["inputProperties"][2]["value"]["previousVersion"] = self.ssloVersion
+
+
         ## define port remap
         if self.want.portRemap != None:
             self.config["inputProperties"][2]["value"]["customService"]["portRemap"] = True
@@ -819,6 +833,13 @@ class ModuleManager(object):
                         net_config_in["vlan"]["tag"] = device["tagIn"]
                     else:
                         del net_config_in["vlan"]["tag"]
+
+                    ## =================================
+                    ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+                    ## =================================
+                    net_config_in["version"] = self.ssloVersion
+                    net_config_in["previousVersion"] = self.ssloVersion
+
                     self.config["inputProperties"][1]["value"].append(net_config_in)
 
                 ## process from-service network
@@ -833,6 +854,13 @@ class ModuleManager(object):
                         net_config_out["vlan"]["tag"] = device["tagOut"]
                     else:
                         del net_config_out["vlan"]["tag"]
+
+                    ## =================================
+                    ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+                    ## =================================
+                    net_config_out["version"] = self.ssloVersion
+                    net_config_out["previousVersion"] = self.ssloVersion
+
                     self.config["inputProperties"][1]["value"].append(net_config_out)
 
                 ## add f5-ssl-orchestrator-service-customService-connectionInformation-interfaces objects
@@ -907,6 +935,13 @@ class ModuleManager(object):
                         net_config_in["vlan"]["tag"] = device["tagIn"]
                     else:
                         del net_config_in["vlan"]["tag"]
+
+                    ## =================================
+                    ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+                    ## =================================
+                    net_config_in["version"] = self.ssloVersion
+                    net_config_in["previousVersion"] = self.ssloVersion
+
                     self.config["inputProperties"][2]["value"]["networkObjects"].append(net_config_in)
 
                 ## process from-service network
@@ -921,6 +956,13 @@ class ModuleManager(object):
                         net_config_out["vlan"]["tag"] = device["tagOut"]
                     else:
                         del net_config_out["vlan"]["tag"]
+
+                    ## =================================
+                    ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+                    ## =================================
+                    net_config_out["version"] = self.ssloVersion
+                    net_config_out["previousVersion"] = self.ssloVersion
+
                     self.config["inputProperties"][2]["value"]["networkObjects"].append(net_config_out)
 
             
@@ -1169,6 +1211,13 @@ class ModuleManager(object):
                             net_config["vlan"]["interface"][0] = service["interface"]
                             if "tag" in service.keys():
                                 net_config["vlan"]["tag"] = service["tag"]
+
+                            ## =================================
+                            ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+                            ## =================================
+                            net_config["version"] = self.ssloVersion
+                            net_config["previousVersion"] = self.ssloVersion
+
                             self.config["inputProperties"][2]["value"]["modifiedNetworkObjects"].append(net_config)
                     
 
@@ -1190,6 +1239,13 @@ class ModuleManager(object):
                                 del net_config["vlan"]["tag"]
                             if service["name"] in networkIdList.keys():
                                 net_config["existingBlockId"] = networkIdList[service["name"]]
+
+                            ## =================================
+                            ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+                            ## =================================
+                            net_config["version"] = self.ssloVersion
+                            net_config["previousVersion"] = self.ssloVersion
+
                             self.config["inputProperties"][1]["value"].append(net_config)
 
 
@@ -1231,6 +1287,13 @@ class ModuleManager(object):
                                 net_config_in["vlan"]["tag"] = device["tagIn"]
                             else:
                                 del net_config_in["vlan"]["tag"]
+
+                            ## =================================
+                            ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+                            ## =================================
+                            net_config_in["version"] = self.ssloVersion
+                            net_config_in["previousVersion"] = self.ssloVersion
+
                             self.config["inputProperties"][2]["value"]["networkObjects"].append(net_config_in)
 
                         ## process from-service network
@@ -1245,6 +1308,13 @@ class ModuleManager(object):
                                 net_config_out["vlan"]["tag"] = device["tagOut"]
                             else:
                                 del net_config_out["vlan"]["tag"]
+
+                            ## =================================
+                            ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+                            ## =================================
+                            net_config_out["version"] = self.ssloVersion
+                            net_config_out["previousVersion"] = self.ssloVersion
+
                             self.config["inputProperties"][2]["value"]["networkObjects"].append(net_config_out)
 
                     ## update f5-ssl-orchestrator-network objects
@@ -1260,6 +1330,13 @@ class ModuleManager(object):
                                 net_config_in["vlan"]["tag"] = device["tagIn"]
                             else:
                                 del net_config_in["vlan"]["tag"]
+
+                            ## =================================
+                            ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+                            ## =================================
+                            net_config_in["version"] = self.ssloVersion
+                            net_config_in["previousVersion"] = self.ssloVersion
+
                             self.config["inputProperties"][1]["value"].append(net_config_in)
 
                         ## process from-service network
@@ -1274,6 +1351,13 @@ class ModuleManager(object):
                                 net_config_out["vlan"]["tag"] = device["tagOut"]
                             else:
                                 del net_config_out["vlan"]["tag"]
+
+                            ## =================================
+                            ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+                            ## =================================
+                            net_config_out["version"] = self.ssloVersion
+                            net_config_out["previousVersion"] = self.ssloVersion
+
                             self.config["inputProperties"][1]["value"].append(net_config_out)
 
 

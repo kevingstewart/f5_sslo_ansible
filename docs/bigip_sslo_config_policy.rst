@@ -303,7 +303,7 @@ Description: defines a URL category lookup for all HTTP and HTTPS traffic (SNI a
           <td>&nbsp;</td>
           <td>all</td>
           <td><p>[list]</p>
-          <td>A list of URL category names *</td>
+          <p>A list of URL category names *</td>
         </tr>
       </tbody>
     </table>
@@ -795,7 +795,7 @@ Description: defines a traffic match based on the layer 7 TCP protocol.
           <td colspan="2" rowspan="1">values</td>
           <td>yes</td>
           <td>&nbsp;</td>
-          <td>dns<br />ftp<br />http<br />https<br />httpConnect<br />imap<br />pop3<br />smtps<br />telnet</td>
+          <td>dns<br />ftp<br />http<br />https<br />httpConnect<br />imap<br />pop3<br />smtps<br />telnet<br />http2 (9.0+)</td>
           <td>all</td>
           <td><p>[list]</p>
           <p>The list of layer 7 TCP protocols to match</p>
@@ -883,6 +883,248 @@ Description: defines a traffic match based on the unencrypted HTTP Host and URI 
           <td>all</td>
           <td><p>[string]</p>
           <p>The corresponding URL value</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+|
+
+Condition: clientVlans
+----------------------------
+Description: defines a traffic match based on a list of incoming (client-facing) VLANs.
+
+.. raw:: html
+
+    <table border="1" cellpadding="1" cellspacing="1" style="width:50%;background-color:#ffffcc;border-collapse:collapse;border:1px solid #ffcc00">
+      <tbody>
+        <tr>
+          <td colspan="2" rowspan="1" style="text-align: center;">Key</td>
+          <td style="text-align: center;">Required</td>
+          <td style="text-align: center;">Default</td>
+          <td style="text-align: center;">Options</td>
+          <td style="text-align: center;">Support</td>
+          <td style="text-align: center;">Description</td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">values</td>
+          <td>yes</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[list]</p>
+          <p>A list of VLANs (ex. /Common/client-vlan)</td>
+        </tr>
+      </tbody>
+    </table>
+
+|
+
+Condition: serverCertIssuerDn
+-------------------
+Description: defines a traffic match based on the issuer Distinguished Name (DN) of the remote server certificate.
+    
+.. raw:: html
+
+    <table border="1" cellpadding="1" cellspacing="1" style="width:50%;background-color:#ffffcc;border-collapse:collapse;border:1px solid #ffcc00">
+      <tbody>
+        <tr>
+          <td colspan="2" rowspan="1" style="text-align: center;">Key</td>
+          <td style="text-align: center;">Required</td>
+          <td style="text-align: center;">Default</td>
+          <td style="text-align: center;">Options</td>
+          <td style="text-align: center;">Support</td>
+          <td style="text-align: center;">Description</td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">values</td>
+          <td>yes</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[list]</p>
+          <p>A list of Issuer DN string matches</p>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+          <td>type</td>
+          <td>yes</td>
+          <td>&nbsp;</td>
+          <td>equals<br />substring<br />prefix<br />suffix<br />glob</td>
+          <td>9.0+</td>
+          <td><p>[string]</p>
+          <p>The type of string match to make</p>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+          <td>value</td>
+          <td>yes</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[string]</p>
+          <p>The corresponding Issuer DN value</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+|
+
+Condition: serverCertSubjectDn
+-------------------
+Description: defines a traffic match based on the subject Distinguished Name (DN) of the remote server certificate.
+    
+.. raw:: html
+
+    <table border="1" cellpadding="1" cellspacing="1" style="width:50%;background-color:#ffffcc;border-collapse:collapse;border:1px solid #ffcc00">
+      <tbody>
+        <tr>
+          <td colspan="2" rowspan="1" style="text-align: center;">Key</td>
+          <td style="text-align: center;">Required</td>
+          <td style="text-align: center;">Default</td>
+          <td style="text-align: center;">Options</td>
+          <td style="text-align: center;">Support</td>
+          <td style="text-align: center;">Description</td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">values</td>
+          <td>yes</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[list]</p>
+          <p>A list of Subject DN string matches</p>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+          <td>type</td>
+          <td>yes</td>
+          <td>&nbsp;</td>
+          <td>equals<br />substring<br />prefix<br />suffix<br />glob</td>
+          <td>9.0+</td>
+          <td><p>[string]</p>
+          <p>The type of string match to make</p>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+          <td>value</td>
+          <td>yes</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[string]</p>
+          <p>The corresponding Subject DN value</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+|
+
+Condition: serverCertSan
+-------------------
+Description: defines a traffic match based on the Subject Alternative Name (SAN) values in the remote server certificate.
+    
+.. raw:: html
+
+    <table border="1" cellpadding="1" cellspacing="1" style="width:50%;background-color:#ffffcc;border-collapse:collapse;border:1px solid #ffcc00">
+      <tbody>
+        <tr>
+          <td colspan="2" rowspan="1" style="text-align: center;">Key</td>
+          <td style="text-align: center;">Required</td>
+          <td style="text-align: center;">Default</td>
+          <td style="text-align: center;">Options</td>
+          <td style="text-align: center;">Support</td>
+          <td style="text-align: center;">Description</td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">values</td>
+          <td>yes</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[list]</p>
+          <p>A list of SAN string matches</p>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+          <td>type</td>
+          <td>yes</td>
+          <td>&nbsp;</td>
+          <td>equals<br />substring<br />prefix<br />suffix<br />glob</td>
+          <td>9.0+</td>
+          <td><p>[string]</p>
+          <p>The type of string match to make</p>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+          <td>value</td>
+          <td>yes</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[string]</p>
+          <p>The corresponding SAN value</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+|
+
+Condition: serverNameTlsClientHello
+-------------------
+Description: defines a traffic match based on the server name provided in the TLS handshake ClientHello message.
+    
+.. raw:: html
+
+    <table border="1" cellpadding="1" cellspacing="1" style="width:50%;background-color:#ffffcc;border-collapse:collapse;border:1px solid #ffcc00">
+      <tbody>
+        <tr>
+          <td colspan="2" rowspan="1" style="text-align: center;">Key</td>
+          <td style="text-align: center;">Required</td>
+          <td style="text-align: center;">Default</td>
+          <td style="text-align: center;">Options</td>
+          <td style="text-align: center;">Support</td>
+          <td style="text-align: center;">Description</td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1">values</td>
+          <td>yes</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[list]</p>
+          <p>A list of server name string matches</p>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+          <td>type</td>
+          <td>yes</td>
+          <td>&nbsp;</td>
+          <td>equals<br />substring<br />prefix<br />suffix<br />glob</td>
+          <td>9.0+</td>
+          <td><p>[string]</p>
+          <p>The type of string match to make</p>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+          <td>value</td>
+          <td>yes</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>9.0+</td>
+          <td><p>[string]</p>
+          <p>The corresponding server name value</p>
           </td>
         </tr>
       </tbody>

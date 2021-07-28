@@ -3,7 +3,15 @@
 # 
 # Copyright: (c) 2021, kevin-dot-g-dot-stewart-at-gmail-dot-com
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-# Version: 1.0
+# Version: 1.0.1
+
+#### Updates:
+#### 1.0.1 - added 9.0 support
+#          - changed max version
+#          - added clientssl "alpn" proxy support
+#          - added clientssl logPublisher support
+#          - added serverssl logPublisher support
+#          - updated version and previousVersion keys to match target SSLO version
 
 
 from __future__ import absolute_import, division, print_function
@@ -75,6 +83,16 @@ options:
             - Defines the CA certificate keychain in the client side settings. This would contain any CA subordinated in the trust chain between the signing CA and explicitly-trusted root certificate. If required, it should contain any intermediate CA certificates, up to but not including the self-signed root CA.
         type: str
         default: None
+      alpn:
+        description: 
+            - Requires 9.0+. Enables or disables ALPN HTTP/2 full proxy in an outbound (forward proxy) topology.
+        type: bool
+        default: False
+      logPublisher:
+        description: 
+            - Requires 9.0+. Defines a specific log publisher to use for client-side SSL-related events.
+        type: str
+        default: /Common/sys-ssl-publisher
   serverSettings:
     description:
       - Specifies the server-side SSL settings
@@ -122,6 +140,11 @@ options:
             - Defines a CRL configuration to use to perform certificate revocation checking again remote server certificates.
         type: str
         default: None
+      logPublisher:
+        description: 
+            - Requires 9.0+. Defines a specific log publisher to use for server-side SSL-related events.
+        type: str
+        default: /Common/sys-ssl-publisher
   bypassHandshakeFailure:
     description: 
         - Defines the action to take if a server side TLS handshake failure is detected. A value of False will cause the connection to fail. A value of True will shutdown TLS decryption and allow the connection to proceed un-decrypted.
@@ -213,6 +236,8 @@ EXAMPLES = r'''
           caCert: "/Common/subrsa.f5labs.com"
           caKey: "/Common/subrsa.f5labs.com"
           caChain: "/Common/my-ca-chain"
+          alpn: True
+          logPublisher: "/Common/my-ssl-publisher"
         serverSettings:
           cipherType: "group"
           cipher: "/Common/f5-default"
@@ -222,6 +247,7 @@ EXAMPLES = r'''
           blockUntrusted: False
           ocsp: "/Common/my-ocsp"
           crl: "/Common/my-crl"
+          logPublisher: "/Common/my-ssl-publisher"
         bypassHandshakeFailure: True
         bypassClientCertFailure: True
       delegate_to: localhost
@@ -336,6 +362,14 @@ clientSettings:
        description: defines the CA certificate chain for the issuing CA in a forward proxy.
        type: str
        sample: /Common/local-ca-chain.crt
+    alpn:
+       description: requires 9.0+. Enables or disables ALPN HTTP/2 full proxy through a forward proxy topology.
+       type: bool
+       sample: True
+    logPublisher:
+       description: requires 9.0+. Defines a specific log publisher for client-side SSL-related events.
+       type: str
+       sample: /Common/sys-ssl-publisher
 serverSettings:
   description: network settings for for-service configuration
   type: complex
@@ -372,6 +406,10 @@ serverSettings:
        description: defines aan existing CRL configuration to validate revocation of remote server certificates.
        type: str
        sample: /Common/my-crl
+    logPublisher:
+       description: requires 9.0+. Defines a specific log publisher for server-side SSL-related events.
+       type: str
+       sample: /Common/sys-ssl-publisher
 bypassHandshakeFailure:
   description:
     - Defines the action to take on receiving a TLS handshake alert from a server. True = bypass decryption and allow through, False = block
@@ -430,7 +468,7 @@ obj_attempts = 20
 min_version = 5.0
 
 ## define maximum supported tmos version - max(SSLO 8.x)
-max_version = 8.9
+max_version = 9.0
 
 json_template = {
     "name":"f5-ssl-orchestrator-gc",
@@ -747,6 +785,36 @@ class ModuleParameters(Parameters):
         mode = self._values['mode']
         return mode
 
+    @property
+    def client_alpn(self):
+        try:
+            client_alpn = self._values['clientSettings']['alpn']
+            if client_alpn is None:
+                return False
+            return client_alpn
+        except:
+            return False
+
+    @property
+    def client_log_publisher(self):
+        try:
+            client_log_publisher = self._values['clientSettings']['logPublisher']
+            if client_log_publisher is None:
+                return "/Common/sys-ssl-publisher"
+            return client_log_publisher
+        except:
+            return "/Common/sys-ssl-publisher"
+
+    @property
+    def server_log_publisher(self):
+        try:
+            server_log_publisher = self._values['clientSettings']['logPublisher']
+            if server_log_publisher is None:
+                return "/Common/sys-ssl-publisher"
+            return server_log_publisher
+        except:
+            return "/Common/sys-ssl-publisher"
+
 
 class ModuleManager(object):
     global print_output
@@ -816,6 +884,14 @@ class ModuleManager(object):
             raise F5ModuleError("Enabling server-side TLS 1.3 also requires a cipher group")
 
 
+        ## =================================
+        ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+        ## =================================
+        self.config["inputProperties"][0]["value"]["version"] = self.ssloVersion
+        self.config["inputProperties"][1]["value"]["version"] = self.ssloVersion
+        self.config["inputProperties"][1]["value"]["previousVersion"] = self.ssloVersion
+
+
         ## general json settings for all operations
         self.config["inputProperties"][0]["value"]["deploymentName"] = self.want.name
         self.config["inputProperties"][0]["value"]["operationType"] = operation
@@ -860,6 +936,8 @@ class ModuleManager(object):
         if self.want.client_ca_cert != None:
             ## assume this is a forward proxy
             self.config["inputProperties"][1]["value"]["generalSettings"]["isForwardProxy"] = True
+            self.proxyType = "forward"
+
             self.ca_cert_config = json_ca_cert_template
             self.ca_cert_config["cert"] = self.want.client_ca_cert
             self.ca_cert_config["key"] = self.want.client_ca_key
@@ -886,6 +964,7 @@ class ModuleManager(object):
         else:
             ## assume this is a reverse proxy
             self.config["inputProperties"][1]["value"]["generalSettings"]["isForwardProxy"] = False
+            self.proxyType = "reverse"
             
             ## client settings
             self.config["inputProperties"][1]["value"]["clientSettings"]["forwardByPass"] = False
@@ -902,6 +981,19 @@ class ModuleManager(object):
                 self.config["inputProperties"][1]["value"]["serverSettings"]["expiredCertificates"] = False
             else:
                 self.config["inputProperties"][1]["value"]["serverSettings"]["expiredCertificates"] = self.want.server_block_expired
+
+
+        ## ================================================
+        ## updates: 9.0
+        ## alpn - only available in 9.0+ and forward proxy
+        if self.ssloVersion >= 9.0 and self.proxyType == "forward":
+            self.config["inputProperties"][1]["value"]["clientSettings"]["alpn"] = self.want.client_alpn
+
+        ## logPublisher - only available in 9.0+
+        if self.ssloVersion >= 9.0:
+            self.config["inputProperties"][1]["value"]["clientSettings"]["logPublisher"] = self.want.client_log_publisher
+            self.config["inputProperties"][1]["value"]["serverSettings"]["logPublisher"] = self.want.server_log_publisher
+        ## ================================================
 
 
         ## create operation
@@ -1202,7 +1294,9 @@ class ArgumentSpec(object):
                     chain=dict(default=None),
                     caCert=dict(default=None),
                     caKey=dict(default=None),
-                    caChain=dict()
+                    caChain=dict(),
+                    alpn=dict(type='bool', default=False),
+                    logPublisher=dict(default='/Common/sys-ssl-publisher')
                 )
             ),
             serverSettings=dict(
@@ -1218,7 +1312,8 @@ class ArgumentSpec(object):
                     blockExpired=dict(type='bool'),
                     blockUntrusted=dict(type='bool'),
                     ocsp=dict(default=None),
-                    crl=dict(default=None)
+                    crl=dict(default=None),
+                    logPublisher=dict(default='/Common/sys-ssl-publisher')
                 )
             ),
             bypassHandshakeFailure=dict(type='bool', default=False),

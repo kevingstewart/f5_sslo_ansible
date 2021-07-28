@@ -1,0 +1,32 @@
+---
+
+- name: Create SSLO SWG service
+  hosts: localhost
+  gather_facts: False
+  connection: local
+
+  collections:
+    - kevingstewart.f5_sslo_ansible
+  
+  vars: 
+    provider:
+      server: 10.1.1.4
+      user: admin
+      password: admin
+      validate_certs: no
+      server_port: 443
+
+  tasks:
+    - name: SSLO SWG service
+      bigip_sslo_service_swg:
+        provider: "{{ provider }}"
+        name: "swg3"
+        swgPolicy: "/Common/test-swg"
+        #profileScope: "named"
+        #namedScope: "SSLO"
+        #accessProfile: "/Common/test-access"
+        #logSettings:
+        #  - "/Common/default-log-setting1"
+        #rules:
+        # - "/Common/test-rule"
+      delegate_to: localhost

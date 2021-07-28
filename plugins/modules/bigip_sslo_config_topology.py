@@ -5,6 +5,15 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 # Version: 1.0
 
+#### Updates:
+#### 1.0.1 - added 9.0 support
+#          - changed max version
+#          - added "verifyAccept" key for outbound L3/explicit topologies
+#          - added "ocspAuth" key for outbound L3/explicit topologies
+#          - added "dnsResolver" key for outbound explicit topology
+#          - updated version and previousVersion keys to match target SSLO version
+#          - added L2 vwire inbound/outbound topology support
+
 
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
@@ -17,178 +26,188 @@ description:
   - Manage an SSL Orchestrator topology
 version_added: "1.0.0"
 options:
-  name:
-    description:
-      - Specifies the name of the topology. Configuration auto-prepends "sslo_" to topology. Topology name should be less than 14 characters and not contain dashes "-".
-    type: str
-    required: True
-  
-  configReferences:
-    description:
-      - Defines any external object references to apply to the topology.
-    required: True
-    type: list
-    elements: dict
-    suboptions:
-      sslSettings:
-        description: 
-            - Defines the name of the SSL settings object if already created, or a jinja2 reference name for an SSL settings task in the same playbook.
-        type: str
-        required: True
-      securityPolicy:
-        description: 
-            - Defines the name of the security policy object if already created, or a jinja2 reference name for the security policy task in the same playbook.
-        type: str
-        required: True
-      services: 
-        description: 
-            - Defines a list of jinja2 references for security services created in the same playbook.
-        type: list
-      serviceChains:
-        description: 
-            - Defines a list of jinja2 references for service chains created in the same playbook.
-        type: list
-      resolver:
+    name:
         description:
-            - Defines a jinja2 reference for resolver settings created in the same playbook.
+        - Specifies the name of the topology. Configuration auto-prepends "sslo_" to topology. Topology name should be less than 14 characters and not contain dashes "-".
         type: str
+        required: True
+  
+    configReferences:
+        description:
+        - Defines any external object references to apply to the topology.
+        required: True
+        type: list
+        elements: dict
+        suboptions:
+        sslSettings:
+            description: 
+                - Defines the name of the SSL settings object if already created, or a jinja2 reference name for an SSL settings task in the same playbook.
+            type: str
+            required: True
+        securityPolicy:
+            description: 
+                - Defines the name of the security policy object if already created, or a jinja2 reference name for the security policy task in the same playbook.
+            type: str
+            required: True
+        services: 
+            description: 
+                - Defines a list of jinja2 references for security services created in the same playbook.
+            type: list
+        serviceChains:
+            description: 
+                - Defines a list of jinja2 references for service chains created in the same playbook.
+            type: list
+        resolver:
+            description:
+                - Defines a jinja2 reference for resolver settings created in the same playbook.
+            type: str
     
     topologyOutboundL3
-      description:
+        description:
         - Defines the set of options used for an outbound layer 3 SSL Orchestrator topology.
-      type: str
-      suboptions:
+        type: str
+        suboptions:
         ipFamily:
-          description:
+            description:
             - Defines the IP family for this topology.
-          type: str
-          choices: 
+            type: str
+            choices: 
             - ipv4
             - ipv6
-          default: ipv4
+            default: ipv4
         protocol:
-          description:
+            description:
             - Defines the topology protocol, either tcp, udp, or other (non-tcp/non-udp).
-          type: str
-          choices: 
+            type: str
+            choices: 
             - tcp
             - udp
             - other
-          default: tcp
+            default: tcp
         source:
-          description:
+            description:
             - Defines the source address filter and optional route domain for the topology listener.
-          type: str
-          default: 0.0.0.0%0/0
+            type: str
+            default: 0.0.0.0%0/0
         dest:
-          description:
+            description:
             - Defines the destination address filter and optional route domain for the topology listener.
-          type: str
-          default: 0.0.0.0%0/0
+            type: str
+            default: 0.0.0.0%0/0
         port:
-          description:
+            description:
             - Defines the port filter for the topology listener.
-          type: int
-          default: 0
+            type: int
+            default: 0
         vlans:
-          description:
+            description:
             - Defines the list of listening VLANs for the topology listener.
-          type: list
-          default: None
+            type: list
+            default: None
         snat:
-          description:
+            description:
             - Defines the type egress source NAT used (if any). The 'none' options means no outbound SNAT. The 'automap' option enables AutoMap SNAT. The 'snatpool' option defines that an existing SNAT pool will be used, and also requires the separate 'snatpool' key. The 'snatlist' option in combination with a separate 'snatlist' key defines a list of SNAT IPs.
-          type: str
-          choices: 
+            type: str
+            choices: 
             - none
             - automap
             - snatpool
             - snatlist
-          default: None
+            default: None
         snatlist:
-          description:
+            description:
             - When the 'snat' key is set to 'snatlist', this setting defines the list of SNAT IPs to use for egress traffic.
-          type: list
-          default: None
+            type: list
+            default: None
         snatpool:
-          description:
+            description:
             - When the 'snat' key is set to 'snatpool', this setting defines the name of an existing SNAT pool to use for egress traffic.
-          type: str
-          default: None
+            type: str
+            default: None
         gateway:
-          description:
+            description:
             - Defines the type of egress gateway to use. The 'system' option means to use the system-defined gateway route. The 'pool' option defines that an existing gateway pool will be used, and also requires the separate 'gatewaypool' key. The 'iplist' option in combination with a separate 'gatewaylist' key defines a list of gateway IPs.
-          type: str
-          choices: 
+            type: str
+            choices: 
             - system
             - pool
             - iplist
-          default: system
+            default: system
         gatewaylist:
-          description:
+            description:
             - When the 'gateway' key is set to 'iplist', this setting defines the list of gateway IPs to use for egress traffic.
-          type: str
-          default: None
+            type: str
+            default: None
         gatewaypool:
-          description:
+            description:
             - When the 'gateway' key is set to 'pool', this setting defines the name of an existing gateway pool to use for egress traffic.
-          type: str
-          default: None
+            type: str
+            default: None
         tcpSettingsClient:
-          description:
+            description:
             - Defines a custom client side TCP profile to use.
-          type: str
-          default: /Common/f5-tcp-lan
+            type: str
+            default: /Common/f5-tcp-lan
         tcpSettingsServer:
-          description:
+            description:
             - Defines a custom server side TCP profile to use.
-          type: str
-          default: /Common/f5-tcp-wan
+            type: str
+            default: /Common/f5-tcp-wan
         L7ProfileType:
-          description:
+            description:
             - Defines the L7 protocol type, and can either be 'none' for all protocols, or 'http'.
-          type: str
-          choices: 
+            type: str
+            choices: 
             - None
             - http
-          default: None
+            default: None
         L7Profile:
-          description:
+            description:
             - Defines the specific HTTP profile (ex. /Common/http) if the L7ProfileType is set to 'http'.
-          type: str
-          default: None
+            type: str
+            default: None
         additionalProtocols:
-          description:
+            description:
             - Defines a list of additional protocols to create listeners for.
-          type: str
-          choices: 
+            type: str
+            choices: 
             - ftp
             - imap
             - pop3
             - smtps
-          default: None
+            default: None
         accessProfile:
-          description:
+            description:
             - Defines a custom access profile to use. In the absence of this setting, a topology-defined access profile will be created.
-          type: str
+            type: str
         profileScope:
-          description:
+            description:
             - Available in SSL Orchestrator 8.2, this setting defines the access profile scope. In an outbound L3 (transparent proxy) topology with (captive portal) authentication, the 'named' profile scope is used to allow the transparent proxy and authentication service to communicate authenticated session information.
-          type: str
-          choices: 
+            type: str
+            choices: 
             - public
             - named
-          default: public
+            default: public
         profileScopeValue:
-          description:
+            description:
             - Available in 8.2 and required when the 'profileScope' option is set to 'named'. This setting defines a string name shared between the transparent proxy SSL Orchestrator profile and the captive portal authentication access profile.
-          type: str
-          default: None
+            type: str
+            default: None
         primaryAuthUri:
-          description:
+            description:
             - Available in 8.2 and required when the 'profileScope' option is set to 'named'. This setting defines the authentication service (ie. captive portal) to redirect new users to. This setting should contain a fully-qualified domain name (ex. https://auth.f5labs.com)
-          type: str
-          default: None
+            type: str
+            default: None
+        verifyAccept:
+            description:
+            - Available in 9.0. Enables TCP Verify Accept proxy through an outbound topology.
+            type: bool
+            default: False
+        ocspAuth:
+            description:
+            - Available in 9.0. This setting defines an OCSP Authentication profile.
+            type: str
+            default: None
 
     topologyOutboundExplicit
       description:
@@ -267,6 +286,22 @@ options:
           description:
             - Defines an access profile to use for explicit proxy authentication.
           type: str
+        verifyAccept:
+          description:
+            - Available in 9.0. Enables TCP Verify Accept proxy through an outbound topology.
+          type: bool
+          default: False
+        ocspAuth:
+          description:
+            - Available in 9.0. This setting defines an OCSP Authentication profile.
+          type: str
+          default: None
+        dnsResolver:
+          description:
+            - Available and required in 9.0. This setting defines a per-topology DNS resolver configuration object.
+          type: str
+          required: True
+          default: None
 
     topologyInboundL3
       description:
@@ -378,113 +413,281 @@ options:
           type: str
           default: /Common/http
 
-  logging:
-    description:
-      - Defines the setting of logging characteristics for an SSL Orchestrator topology.
-    type: str
+    topologyOutboundL2
+        description:
+        - Defines the set of options used for an outbound layer 2 SSL Orchestrator topology.
+        type: str
+        suboptions:
+        ipFamily:
+            description:
+            - Defines the IP family for this topology.
+            type: str
+            choices: 
+            - ipv4
+            - ipv6
+            default: ipv4
+        protocol:
+            description:
+            - Defines the topology protocol, either tcp, udp, or other (non-tcp/non-udp).
+            type: str
+            choices: 
+            - tcp
+            - udp
+            - other
+            default: tcp
+        source:
+            description:
+            - Defines the source address filter and optional route domain for the topology listener.
+            type: str
+            default: 0.0.0.0%0/0
+        dest:
+            description:
+            - Defines the destination address filter and optional route domain for the topology listener.
+            type: str
+            default: 0.0.0.0%0/0
+        port:
+            description:
+            - Defines the port filter for the topology listener.
+            type: int
+            default: 0
+        vlans:
+            description:
+            - Defines the list of listening VLANs for the topology listener.
+            type: list
+            default: None
+        tcpSettingsClient:
+            description:
+            - Defines a custom client side TCP profile to use.
+            type: str
+            default: /Common/f5-tcp-lan
+        tcpSettingsServer:
+            description:
+            - Defines a custom server side TCP profile to use.
+            type: str
+            default: /Common/f5-tcp-wan
+        L7ProfileType:
+            description:
+            - Defines the L7 protocol type, and can either be 'none' for all protocols, or 'http'.
+            type: str
+            choices: 
+            - None
+            - http
+            default: None
+        L7Profile:
+            description:
+            - Defines the specific HTTP profile (ex. /Common/http) if the L7ProfileType is set to 'http'.
+            type: str
+            default: None
+        accessProfile:
+            description:
+            - Defines a custom access profile to use. In the absence of this setting, a topology-defined access profile will be created.
+            type: str
+        profileScope:
+            description:
+            - Available in SSL Orchestrator 8.2, this setting defines the access profile scope. In an outbound L3 (transparent proxy) topology with (captive portal) authentication, the 'named' profile scope is used to allow the transparent proxy and authentication service to communicate authenticated session information.
+            type: str
+            choices: 
+            - public
+            - named
+            default: public
+        profileScopeValue:
+            description:
+            - Available in 8.2 and required when the 'profileScope' option is set to 'named'. This setting defines a string name shared between the transparent proxy SSL Orchestrator profile and the captive portal authentication access profile.
+            type: str
+            default: None
+        primaryAuthUri:
+            description:
+            - Available in 8.2 and required when the 'profileScope' option is set to 'named'. This setting defines the authentication service (ie. captive portal) to redirect new users to. This setting should contain a fully-qualified domain name (ex. https://auth.f5labs.com)
+            type: str
+            default: None
+        verifyAccept:
+            description:
+            - Available in 9.0. Enables TCP Verify Accept proxy through an outbound topology.
+            type: bool
+            default: False
+        ocspAuth:
+            description:
+            - Available in 9.0. This setting defines an OCSP Authentication profile.
+            type: str
+            default: None
+
+    topologyInboundL2
+      description:
+        - Defines the set of options used for an inbound layer 2 SSL Orchestrator topology.
+      type: str
       suboptions:
-        sslo:
+        ipFamily:
           description:
-            - Defines the logging facility used for the SSL Orchestrator summary logging.
+            - Defines the IP family for this topology.
           type: str
-          choices:
-            - emergency
-            - alert
-            - critical
-            - warning
-            - error
-            - notice
-            - information
-            - debug
-          default: error
-        perRequestPolicy:
+          choices: 
+            - ipv4
+            - ipv6
+          default: ipv4
+        protocol:
           description:
-            - Defines the logging facility used for the SSL Orchestrator security policy logging.
+            - Defines the topology protocol, either tcp, udp, or other (non-tcp/non-udp).
           type: str
-          choices:
-            - emergency
-            - alert
-            - critical
-            - warning
-            - error
-            - notice
-            - information
-            - debug
-          default: error
-        ftp:
+          choices: 
+            - tcp
+            - udp
+            - other
+          default: tcp
+        source:
           description:
-            - Defines the logging facility used for the SSL Orchestrator ftp listener logging.
+            - Defines the source address filter and optional route domain for the topology listener.
           type: str
-          choices:
-            - emergency
-            - alert
-            - critical
-            - warning
-            - error
-            - notice
-            - information
-            - debug
-          default: error
-        imap:
+          default: 0.0.0.0%0/0
+        dest:
           description:
-            - Defines the logging facility used for the SSL Orchestrator imap listener logging.
+            - Defines the destination address filter and optional route domain for the topology listener.
           type: str
-          choices:
-            - emergency
-            - alert
-            - critical
-            - warning
-            - error
-            - notice
-            - information
-            - debug
-          default: error
-        pop3:
+          default: 0.0.0.0%0/0
+        port:
           description:
-            - Defines the logging facility used for the SSL Orchestrator pop3 listener logging.
-          type: str
-          choices:
-            - emergency
-            - alert
-            - critical
-            - warning
-            - error
-            - notice
-            - information
-            - debug
-          default: error
-        smtps:
+            - Defines the port filter for the topology listener.
+          type: int
+          default: 0
+        vlans:
           description:
-            - Defines the logging facility used for the SSL Orchestrator smtps listener logging.
+            - Defines the list of listening VLANs for the topology listener.
+          type: list
+          default: None
+        tcpSettingsClient:
+          description:
+            - Defines a custom client side TCP profile to use.
           type: str
-          choices:
-            - emergency
-            - alert
-            - critical
-            - warning
-            - error
-            - notice
-            - information
-            - debug
-          default: error
+          default: /Common/f5-tcp-wan
+        tcpSettingsServer:
+          description:
+            - Defines a custom server side TCP profile to use.
+          type: str
+          default: /Common/f5-tcp-lan
+        L7ProfileType:
+          description:
+            - Defines the L7 protocol type, and can either be 'none' for all protocols, or 'http'.
+          type: str
+          choices: 
+            - None
+            - http
+          default: http
+        L7Profile:
+          description:
+            - Defines the specific HTTP profile (ex. /Common/http) if the L7ProfileType is set to 'http'.
+          type: str
+          default: /Common/http
+        accessProfile:
+            description:
+            - Defines a custom access profile to use. In the absence of this setting, a topology-defined access profile will be created.
+            type: str
+    
+    logging:
+        description:
+        - Defines the setting of logging characteristics for an SSL Orchestrator topology.
+        type: str
+        suboptions:
+            sslo:
+            description:
+                - Defines the logging facility used for the SSL Orchestrator summary logging.
+            type: str
+            choices:
+                - emergency
+                - alert
+                - critical
+                - warning
+                - error
+                - notice
+                - information
+                - debug
+            default: error
+            perRequestPolicy:
+            description:
+                - Defines the logging facility used for the SSL Orchestrator security policy logging.
+            type: str
+            choices:
+                - emergency
+                - alert
+                - critical
+                - warning
+                - error
+                - notice
+                - information
+                - debug
+            default: error
+            ftp:
+            description:
+                - Defines the logging facility used for the SSL Orchestrator ftp listener logging.
+            type: str
+            choices:
+                - emergency
+                - alert
+                - critical
+                - warning
+                - error
+                - notice
+                - information
+                - debug
+            default: error
+            imap:
+            description:
+                - Defines the logging facility used for the SSL Orchestrator imap listener logging.
+            type: str
+            choices:
+                - emergency
+                - alert
+                - critical
+                - warning
+                - error
+                - notice
+                - information
+                - debug
+            default: error
+            pop3:
+            description:
+                - Defines the logging facility used for the SSL Orchestrator pop3 listener logging.
+            type: str
+            choices:
+                - emergency
+                - alert
+                - critical
+                - warning
+                - error
+                - notice
+                - information
+                - debug
+            default: error
+            smtps:
+            description:
+                - Defines the logging facility used for the SSL Orchestrator smtps listener logging.
+            type: str
+            choices:
+                - emergency
+                - alert
+                - critical
+                - warning
+                - error
+                - notice
+                - information
+                - debug
+            default: error
 
-  mode:
-    description:
-      - Defines how this task is handled. With the default setting of 'update', the module performs the tasks required to update the target resource. With the 'output' setting, the resulting JSON object blocks are returned without updating the target resource. This option is useful for debugging, and when subordinate objects (ex. SSL, services, service chains, policy, resolver) are created in the same playbook, and their respectice output JSON referenced in a single Topology create task.
-    type: str
-    choices:
-      - update
-      - output
-    default: update
+    mode:
+        description:
+        - Defines how this task is handled. With the default setting of 'update', the module performs the tasks required to update the target resource. With the 'output' setting, the resulting JSON object blocks are returned without updating the target resource. This option is useful for debugging, and when subordinate objects (ex. SSL, services, service chains, policy, resolver) are created in the same playbook, and their respectice output JSON referenced in a single Topology create task.
+        type: str
+        choices:
+        - update
+        - output
+        default: update
 
-  state:
-    description:
-        - Specifies the present/absent state required.
-    type: str
-    choices: 
-        - absent
-        - present
-    default: present
+    state:
+        description:
+            - Specifies the present/absent state required.
+        type: str
+        choices: 
+            - absent
+            - present
+        default: present
 
 extends_documentation_fragment: f5networks.f5_modules.f5
 author:
@@ -502,7 +705,7 @@ EXAMPLES = r'''
 
   vars: 
     provider:
-      server: 172.16.1.77
+      server: 10.1.1.4
       user: admin
       password: admin
       validate_certs: no
@@ -545,7 +748,7 @@ EXAMPLES = r'''
 
   vars: 
     provider:
-      server: 172.16.1.77
+      server: 10.1.1.4
       user: admin
       password: admin
       validate_certs: no
@@ -593,7 +796,7 @@ EXAMPLES = r'''
 
   vars: 
     provider:
-      server: 172.16.1.78
+      server: 10.1.1.4
       user: admin
       password: admin
       validate_certs: no
@@ -628,7 +831,7 @@ EXAMPLES = r'''
 
   vars: 
     provider:
-      server: 172.16.1.78
+      server: 10.1.14
       user: admin
       password: admin
       validate_certs: no
@@ -659,7 +862,7 @@ EXAMPLES = r'''
 
   vars: 
     provider:
-      server: 172.16.1.77
+      server: 10.1.1.4
       user: admin
       password: admin
       validate_certs: no
@@ -781,6 +984,139 @@ EXAMPLES = r'''
           gatewaylist: 
             - ip: 10.1.20.1        
       delegate_to: localhost
+
+- name: Create SSLO Topology (explicit proxy - atomic 9.0 with inline OCSP Auth)
+    hosts: localhost
+    gather_facts: False
+    connection: local
+
+    collections:
+      - kevingstewart.f5_sslo_ansible
+    
+    vars: 
+      provider:
+        server: 10.1.1.4
+        user: admin
+        password: admin
+        validate_certs: no
+        server_port: 443
+    
+    tasks:
+      #### ocsp authentication ####################
+      - name: SSLO authentication
+        bigip_sslo_config_authentication:
+            provider: "{{ provider }}"
+            name: "ocsp2"
+            ocsp:
+                fqdn: "ocsp2.f5labs.com"
+                dest: "10.1.10.133/32"
+                sslProfile: "demossl"
+                vlans: 
+                - "/Common/client-vlan"
+            mode: output
+        register: auth_ocsp
+        delegate_to: localhost
+    
+      #### explicit proxy topology ################
+      - name: SSLO topology
+        bigip_sslo_config_topology:
+            provider: "{{ provider }}"
+            name: "demoxp1"
+            configReferences:
+                sslSettings: "demossl"
+                securityPolicy: "demopolicy"
+            topologyOutboundExplicit:
+                proxyIp: "10.1.10.150"
+                proxyPort: 3128
+                vlans:
+                - "/Common/client-vlan"
+                gateway: "iplist"
+                gatewaylist:
+                - ip: 10.1.20.1
+                snat: automap
+                ocspAuth: "{{ auth_ocsp }}"
+        delegate_to: localhost
+
+- name: Create SSLO Topology (outbound Layer 2)
+    hosts: localhost
+    gather_facts: False
+    connection: local
+    
+    collections:
+      - kevingstewart.f5_sslo_ansible
+    
+    vars: 
+      provider:
+        server: 10.1.1.4
+        user: admin
+        password: admin
+        validate_certs: no
+        server_port: 443
+    
+    tasks:
+      #### ssl ######################################
+      - name: SSLO SSL settings
+        bigip_sslo_config_ssl:
+            provider: "{{ provider }}"
+            name: "demossl"
+            clientSettings:
+                caCert: "/Common/subrsa.f5labs.com"
+                caKey: "/Common/subrsa.f5labs.com"
+            mode: output
+        register: sslsettings
+        delegate_to: localhost
+
+    #### resolver #################################
+    - name: SSLO dns resolver
+        bigip_sslo_config_resolver:
+            provider: "{{ provider }}"
+            forwardingNameservers:
+                - "10.1.20.1"
+            mode: output
+        register: myresolver
+        delegate_to: localhost
+
+      #### policy ###################################
+      - name: SSLO security policy
+        bigip_sslo_config_policy:
+            provider: "{{ provider }}"
+            name: "demopolicy"
+            policyType: "outbound"
+            defaultRule:
+                allowBlock: "allow"
+                tlsIntercept: "intercept"
+                serviceChain: ""
+            trafficRules:
+                - name: "pinners"
+                conditions:
+                    - condition: "pinnersRule"
+                - name: "bypass_Finance_Health"
+                matchType: "or"
+                allowBlock: "allow"
+                tlsIntercept: "bypass"
+                serviceChain: ""
+                conditions:
+                    - condition: "categoryLookupAll"
+                    values:
+                        - "/Common/Financial_Data_and_Services"
+                        - "/Common/Health_and_Medicine"
+            mode: output
+        register: securitypolicy
+        delegate_to: localhost
+
+      #### topology #################################
+      - name: SSLO topology
+        bigip_sslo_config_topology:
+            provider: "{{ provider }}"
+            name: "demoOutL2"  
+            configReferences:
+                sslSettings: "{{ sslsettings }}"
+                securityPolicy: "{{ securitypolicy }}"
+                resolver: "{{ myresolver }}"
+            topologyOutboundL2:
+                vlans:
+                - "/Common/vwire_vlan_4096_1_631"
+        delegate_to: localhost
 '''
 
 RETURN = r'''
@@ -918,6 +1254,14 @@ topologyOutboundL3:
        description: in 8.2 and above, and when profileScope is set to 'named', describes the captive portal authentication service URL.
        type: str
        sample: https://auth.f5labs.com
+    verifyAccept:
+       description: in 9.0 and above, enabled or disables TCP Verify Accept proxy.
+       type: bool
+       sample: False
+    ocspAuth:
+       description: in 9.0 and above, defines an OCSP Authentication profile object.
+       type: str
+       sample: ssloA_my_ocsp
 
 topologyOutboundExplicit:
   description: describes the set of options for an SSL Orchestrator outbound explicit proxy topology
@@ -978,6 +1322,18 @@ topologyOutboundExplicit:
        description: describes a custom authentication per-session access profile to apply to the explicit proxy.
        type: str
        sample: /Common/my-auth-profile
+    verifyAccept:
+       description: in 9.0 and above, enabled or disables TCP Verify Accept proxy.
+       type: bool
+       sample: False
+    ocspAuth:
+       description: in 9.0 and above, defines an OCSP Authentication profile object.
+       type: str
+       sample: ssloA_my_ocsp
+    dnsResolver:
+       description: required in 9.0 and above, defines a per-topology DNS resolver configuration.
+       type: str
+       sample: /Common/my_dns_resolver
 
 topologyInboundL3:
   description: describes the set of options for an SSL Orchestrator inbound layer 3 topology
@@ -1059,6 +1415,128 @@ topologyInboundL3:
        type: str
        sample: /Common/http
 
+topologyOutboundL2:
+  description: describes the set of options for an SSL Orchestrator outbound layer 2 topology
+  type: complex
+  contains:
+    ipFamily:
+       description: describes the IP family to use for this topology.
+       type: str
+       sample: ipv4
+    protocol:
+       description: describes the protocol to use for this topology.
+       type: str
+       sample: tcp
+    source:
+       description: describes the source address filter to use.
+       type: str
+       sample: 0.0.0.0%0/0
+    dest:
+       description: describes the destination address filter to use.
+       type: str
+       sample: 0.0.0.0%0/0
+    port:
+       description: describes the port filter to use.
+       type: int
+       sample: 0
+    vlans:
+       description: describes the list of VLANs to listen on.
+       type: str
+       sample:
+         - /Common/client-vlan1
+         - /Common/client-vlan2
+    tcpSettingsClient:
+       description: describes the client side TCP profile to use.
+       type: str
+       sample: /Common/f5-tcp-lan
+    tcpSettingsServer:
+       description: describes the server side TCP profile to use.
+       type: str
+       sample: /Common/f5-tcp-wan
+    L7ProfileType:
+       description: describes the L7 profile type.
+       type: str
+       sample: http
+    L7Profile:
+       description: describes the corresponding L7 profile to use.
+       type: str
+       sample: /Common/http
+    accessProfile:
+       description: describes a custom SSL Orchestrator-type access profile to apply.
+       type: str
+       sample: /Common/my-custom-sslo-profile
+    profileScope:
+       description: in 8.2 and above, describes the profile scope to apply.
+       type: str
+       sample: named
+    profileScopeValue:
+       description: in 8.2 and above, and when profileScope is set to 'named', describes the string name that is shared between this profile and the captive portal authentication access profile.
+       type: str
+       sample: SSLO
+    primaryAuthUri:
+       description: in 8.2 and above, and when profileScope is set to 'named', describes the captive portal authentication service URL.
+       type: str
+       sample: https://auth.f5labs.com
+    verifyAccept:
+       description: in 9.0 and above, enabled or disables TCP Verify Accept proxy.
+       type: bool
+       sample: False
+    ocspAuth:
+       description: in 9.0 and above, defines an OCSP Authentication profile object.
+       type: str
+       sample: ssloA_my_ocsp
+
+topologyInboundL2:
+  description: describes the set of options for an SSL Orchestrator inbound layer 2 topology
+  type: complex
+  contains:
+    ipFamily:
+       description: describes the IP family to use for this topology.
+       type: str
+       sample: ipv4
+    protocol:
+       description: describes the protocol to use for this topology.
+       type: str
+       sample: tcp
+    source:
+       description: describes the source address filter to use.
+       type: str
+       sample: 0.0.0.0%0/0
+    dest:
+       description: describes the destination address filter to use.
+       type: str
+       sample: 0.0.0.0%0/0
+    port:
+       description: describes the port filter to use.
+       type: int
+       sample: 0
+    vlans:
+       description: describes the list of VLANs to listen on.
+       type: str
+       sample:
+         - /Common/client-vlan1
+         - /Common/client-vlan2
+    tcpSettingsClient:
+       description: describes the client side TCP profile to use.
+       type: str
+       sample: /Common/f5-tcp-lan
+    tcpSettingsServer:
+       description: describes the server side TCP profile to use.
+       type: str
+       sample: /Common/f5-tcp-wan
+    L7ProfileType:
+       description: describes the L7 profile type.
+       type: str
+       sample: http
+    L7Profile:
+       description: describes the corresponding L7 profile to use.
+       type: str
+       sample: /Common/http
+    accessProfile:
+       description: describes a custom SSL Orchestrator-type access profile to apply.
+       type: str
+       sample: /Common/my-custom-sslo-profile
+
 logging:
   description: describes the set of options for an SSL Orchestrator inbound layer 3 topology
   type: complex
@@ -1126,7 +1604,7 @@ obj_attempts = 60
 min_version = 5.0
 
 ## define maximum supported tmos version - max(SSLO 8.x)
-max_version = 8.9
+max_version = 9.0
 
 json_template = {
    "name": "proxy-f5-ssl-orchestrator-topology-CREATE",
@@ -1632,6 +2110,25 @@ class ModuleParameters(Parameters):
         except:
             return None
 
+    @property
+    def topo_outboundl3_verifyAccept(self):
+        try:
+            topo_outboundl3_verifyAccept = self._values['topologyOutboundL3']['verifyAccept']
+            if topo_outboundl3_verifyAccept == None:
+                return False
+            return topo_outboundl3_verifyAccept
+        except:
+            return False
+
+    @property
+    def topo_outboundl3_ocspAuth(self):
+        try:
+            topo_outboundl3_ocspAuth = self._values['topologyOutboundL3']['ocspAuth']
+            if topo_outboundl3_ocspAuth == None:
+                return None
+            return topo_outboundl3_ocspAuth
+        except:
+            return None
 
     # Outbound Explicit Topology
 
@@ -1762,6 +2259,36 @@ class ModuleParameters(Parameters):
             if topo_outboundxp_authprofile == None:
                 return None
             return topo_outboundxp_authprofile
+        except:
+            return None
+
+    @property
+    def topo_outboundxp_verifyAccept(self):
+        try:
+            topo_outboundxp_verifyAccept = self._values['topologyOutboundExplicit']['verifyAccept']
+            if topo_outboundxp_verifyAccept == None:
+                return False
+            return topo_outboundxp_verifyAccept
+        except:
+            return False
+
+    @property
+    def topo_outboundxp_ocspAuth(self):
+        try:
+            topo_outboundxp_ocspAuth = self._values['topologyOutboundExplicit']['ocspAuth']
+            if topo_outboundxp_ocspAuth == None:
+                return None
+            return topo_outboundxp_ocspAuth
+        except:
+            return None
+
+    @property
+    def topo_outboundxp_dnsResolver(self):
+        try:
+            topo_outboundxp_dnsResolver = self._values['topologyOutboundExplicit']['dnsResolver']
+            if topo_outboundxp_dnsResolver == None:
+                return None
+            return topo_outboundxp_dnsResolver
         except:
             return None
 
@@ -1958,6 +2485,302 @@ class ModuleParameters(Parameters):
         except:
             return None
 
+    
+    # Outbound L2 Topology
+
+    @property
+    def topo_outboundl2(self):
+        try:
+            topo_outboundl2 = self._values['topologyOutboundL2']
+            if topo_outboundl2 == None:
+                return False
+            return True
+        except:
+            return False
+
+    @property
+    def topo_outboundl2_ipfamily(self):
+        try:
+            topo_outboundl2_ipfamily = self._values['topologyOutboundL2']['ipFamily']
+            if topo_outboundl2_ipfamily == None:
+                return "ipv4"
+            return topo_outboundl2_ipfamily
+        except:
+            return "ipv4"
+
+    @property
+    def topo_outboundl2_proto(self):
+        try:
+            topo_outboundl2_proto = self._values['topologyOutboundL2']['protocol']
+            if topo_outboundl2_proto == None:
+                return "tcp"
+            return topo_outboundl2_proto
+        except:
+            return "tcp"
+
+    @property
+    def topo_outboundl2_source(self):
+        try:
+            topo_outboundl2_source = self._values['topologyOutboundL2']['source']
+            if topo_outboundl2_source == None:
+                return "0.0.0.0%0/0"
+            return topo_outboundl2_source
+        except:
+            return "0.0.0.0%0/0"
+
+    @property
+    def topo_outboundl2_dest(self):
+        try:
+            topo_outboundl2_dest = self._values['topologyOutboundL2']['dest']
+            if topo_outboundl2_dest == None:
+                return "0.0.0.0%0/0"
+            return topo_outboundl2_dest
+        except:
+            return "0.0.0.0%0/0"
+
+    @property
+    def topo_outboundl2_port(self):
+        try:
+            topo_outboundl2_port = self._values['topologyOutboundL2']['port']
+            if topo_outboundl2_port == None:
+                return 0
+            return topo_outboundl2_port
+        except:
+            return 0
+
+    @property
+    def topo_outboundl2_vlans(self):
+        try:
+            topo_outboundl2_vlans = self._values['topologyOutboundL2']['vlans']
+            if topo_outboundl2_vlans == None:
+                return None
+            return topo_outboundl2_vlans
+        except:
+            return None
+
+    @property
+    def topo_outboundl2_tcp_client(self):
+        try:
+            topo_outboundl2_tcp_client = self._values['topologyOutboundL2']['tcpSettingsClient']
+            if topo_outboundl2_tcp_client == None:
+                return "/Common/f5-tcp-lan"
+            return topo_outboundl2_tcp_client
+        except:
+            return "/Common/f5-tcp-lan"
+
+    @property
+    def topo_outboundl2_tcp_server(self):
+        try:
+            topo_outboundl2_tcp_server = self._values['topologyOutboundL2']['tcpSettingsServer']
+            if topo_outboundl2_tcp_server == None:
+                return "/Common/f5-tcp-wan"
+            return topo_outboundl2_tcp_server
+        except:
+            return "/Common/f5-tcp-wan"
+
+    @property
+    def topo_outboundl2_L7profiletype(self):
+        try:
+            topo_outboundl2_L7profiletype = self._values['topologyOutboundL2']['L7ProfileType']
+            if topo_outboundl2_L7profiletype == None:
+                return None
+            return topo_outboundl2_L7profiletype
+        except:
+            return None
+
+    @property
+    def topo_outboundl2_L7profile(self):
+        try:
+            topo_outboundl2_L7profile = self._values['topologyOutboundL2']['L7Profile']
+            if topo_outboundl2_L7profile == None:
+                return None
+            return topo_outboundl2_L7profile
+        except:
+            return None
+
+    @property
+    def topo_outboundl2_accessprofile(self):
+        try:
+            topo_outboundl2_accessprofile = self._values['topologyOutboundL2']['accessProfile']
+            if topo_outboundl2_accessprofile == None:
+                return None
+            return topo_outboundl2_accessprofile
+        except:
+            return None
+
+    @property
+    def topo_outboundl2_profilescope(self):
+        try:
+            topo_outboundl2_profilescope = self._values['topologyOutboundL2']['profileScope']
+            if topo_outboundl2_profilescope == None:
+                return "public"
+            return topo_outboundl2_profilescope
+        except:
+            return "public"
+
+    @property
+    def topo_outboundl2_profilescopevalue(self):
+        try:
+            topo_outboundl2_profilescopevalue = self._values['topologyOutboundL2']['profileScopeValue']
+            if topo_outboundl2_profilescopevalue == None:
+                return None
+            return topo_outboundl2_profilescopevalue
+        except:
+            return None
+
+    @property
+    def topo_outboundl2_primaryauthuri(self):
+        try:
+            topo_outboundl2_primaryauthuri = self._values['topologyOutboundL2']['primaryAuthUri']
+            if topo_outboundl2_primaryauthuri == None:
+                return None
+            return topo_outboundl2_primaryauthuri
+        except:
+            return None
+
+    @property
+    def topo_outboundl2_ocspAuth(self):
+        try:
+            topo_outboundl2_ocspAuth = self._values['topologyOutboundL2']['ocspAuth']
+            if topo_outboundl2_ocspAuth == None:
+                return None
+            return topo_outboundl2_ocspAuth
+        except:
+            return None
+
+    @property
+    def topo_outboundl2_verifyAccept(self):
+        try:
+            topo_outboundl2_verifyAccept = self._values['topologyOutboundL2']['verifyAccept']
+            if topo_outboundl2_verifyAccept == None:
+                return False
+            return topo_outboundl2_verifyAccept
+        except:
+            return False
+
+
+    # Inbound L2 Topology
+
+    @property
+    def topo_inboundl2(self):
+        try:
+            topo_inboundl2 = self._values['topologyInboundL2']
+            if topo_inboundl2 == None:
+                return False
+            return True
+        except:
+            return False
+
+    @property
+    def topo_inboundl2_proto(self):
+        try:
+            topo_inboundl2_proto = self._values['topologyInboundL2']['protocol']
+            if topo_inboundl2_proto == None:
+                return "tcp"
+            return topo_inboundl2_proto
+        except:
+            return "tcp"
+
+    @property
+    def topo_inboundl2_ipfamily(self):
+        try:
+            topo_inboundl2_ipfamily = self._values['topologyInboundL2']['ipFamily']
+            if topo_inboundl2_ipfamily == None:
+                return "ipv4"
+            return topo_inboundl2_ipfamily
+        except:
+            return "ipv4"
+
+    @property
+    def topo_inboundl2_source(self):
+        try:
+            topo_inboundl2_source = self._values['topologyInboundL2']['source']
+            if topo_inboundl2_source == None:
+                return "0.0.0.0%0/0"
+            return topo_inboundl2_source
+        except:
+            return "0.0.0.0%0/0"
+
+    @property
+    def topo_inboundl2_dest(self):
+        try:
+            topo_inboundl2_dest = self._values['topologyInboundL2']['dest']
+            if topo_inboundl2_dest == None:
+                return "0.0.0.0%0/0"
+            return topo_inboundl2_dest
+        except:
+            return "0.0.0.0%0/0"
+
+    @property
+    def topo_inboundl2_port(self):
+        try:
+            topo_inboundl2_port = self._values['topologyInboundL2']['port']
+            if topo_inboundl2_port == None:
+                return 0
+            return topo_inboundl2_port
+        except:
+            return 0
+
+    @property
+    def topo_inboundl2_vlans(self):
+        try:
+            topo_inboundl2_vlans = self._values['topologyInboundL2']['vlans']
+            if topo_inboundl2_vlans == None:
+                return None
+            return topo_inboundl2_vlans
+        except:
+            return None
+
+    @property
+    def topo_inboundl2_tcp_client(self):
+        try:
+            topo_inboundl2_tcp_client = self._values['topologyInboundL2']['tcpSettingsClient']
+            if topo_inboundl2_tcp_client == None:
+                return "/Common/f5-tcp-wan"
+            return topo_inboundl2_tcp_client
+        except:
+            return "/Common/f5-tcp-wan"
+
+    @property
+    def topo_inboundl2_tcp_server(self):
+        try:
+            topo_inboundl2_tcp_server = self._values['topologyInboundL2']['tcpSettingsServer']
+            if topo_inboundl2_tcp_server == None:
+                return "/Common/f5-tcp-lan"
+            return topo_inboundl2_tcp_server
+        except:
+            return "/Common/f5-tcp-lan"
+
+    @property
+    def topo_inboundl2_L7profiletype(self):
+        try:
+            topo_inboundl2_L7profiletype = self._values['topologyInboundL2']['L7ProfileType']
+            if topo_inboundl2_L7profiletype == None:
+                return "http"
+            return topo_inboundl2_L7profiletype
+        except:
+            return "http"
+
+    @property
+    def topo_inboundl2_L7profile(self):
+        try:
+            topo_inboundl2_L7profile = self._values['topologyInboundL2']['L7Profile']
+            if topo_inboundl2_L7profile == None:
+                return "/Common/http"
+            return topo_inboundl2_L7profile
+        except:
+            return "/Common/http"
+
+    @property
+    def topo_inboundl2_accessprofile(self):
+        try:
+            topo_inboundl2_accessprofile = self._values['topologyInboundL2']['accessProfile']
+            if topo_inboundl2_accessprofile == None:
+                return None
+            return topo_inboundl2_accessprofile
+        except:
+            return None
+
 
     # Logging
 
@@ -2146,6 +2969,10 @@ class ModuleManager(object):
             del self.config["inputProperties"][1]["value"]["accessProfileNameScopeValue"]
             del self.config["inputProperties"][1]["value"]["primaryAuthenticationURI"]
 
+        ## authProfile added in 6.2
+        if self.ssloVersion < 6.2:
+            del self.config["inputProperties"][1]["value"]["authProfile"]
+
         ## loggingConfig only exists in 6.0 and above
         if self.ssloVersion < 6.0:
             del self.config["inputProperties"][1]["value"]["loggingConfig"]
@@ -2179,6 +3006,10 @@ class ModuleManager(object):
             self.snatlist = self.want.topo_inboundl3_snatlist
             self.snatpool = self.want.topo_inboundl3_snatpool
             self.ipfamily = self.want.topo_inboundl3_ipfamily
+        elif self.want.topo_outboundl2 == True:
+            self.snat = None
+        elif self.want.topo_inboundl2 == True:
+            self.snat = None
 
         if self.snat != None:
             ## input validation: snatpool and snatlist cannot both be defined
@@ -2229,6 +3060,10 @@ class ModuleManager(object):
             self.gwlist = self.want.topo_inboundl3_gatewaylist
             self.gwpool = self.want.topo_inboundl3_gatewaypool
             self.ipfamily = self.want.topo_inboundl3_ipfamily
+        elif self.want.topo_outboundl2 == True:
+            self.gw = None
+        elif self.want.topo_inboundl2 == True:
+            self.gw = None
 
         ## input validation: if gw == pool, gwpool must also be defined
         if self.gw == "pool" and self.gwpool == None:
@@ -2255,6 +3090,20 @@ class ModuleManager(object):
                 elif self.ipfamily == "ipv6":
                     self.config["inputProperties"][1]["value"]["egressNetwork"]["outboundGateways"]["ipv6OutboundGateways"].append(gw)
         
+
+        ## add 9.0+ keys (verifyAccept, dnsResolver, ocspAuth)
+        if self.ssloVersion >= 9.0:
+            self.config["inputProperties"][1]["value"]["ocspAuth"] = ""
+            self.config["inputProperties"][1]["value"]["proxySettings"]["tcpProfile"] = {}
+            self.config["inputProperties"][1]["value"]["proxySettings"]["tcpProfile"]["verifyAccept"] = False
+
+
+        ## =================================
+        ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+        ## =================================
+        self.config["inputProperties"][0]["value"]["version"] = self.ssloVersion
+        self.config["inputProperties"][1]["value"]["version"] = self.ssloVersion
+        self.config["inputProperties"][1]["value"]["previousVersion"] = self.ssloVersion
 
 
         ## format json based on topology defined
@@ -2413,6 +3262,13 @@ class ModuleManager(object):
                 self.config["inputProperties"][1]["value"]["accessProfile"] = self.want.name + "_accessProfile"
 
 
+            ## =================================
+            ## 9.0 Update: verifyAccept
+            ## =================================
+            if self.ssloVersion >= 9.0:
+                self.config["inputProperties"][1]["value"]["proxySettings"]["tcpProfile"]["verifyAccept"] = self.want.topo_outboundl3_verifyAccept
+
+
         ## =================================
         ## OUTBOUND EXPLICIT TOPOLOGY
         ## =================================
@@ -2485,6 +3341,27 @@ class ModuleManager(object):
             ## update json for outbound explicit topology - authprofile
             if self.want.topo_outboundxp_authprofile != None:
                 self.config["inputProperties"][1]["value"]["authProfile"] = self.want.topo_outboundxp_authprofile
+
+
+            ## =================================
+            ## 9.0 Update: verifyAccept
+            ## =================================
+            if self.ssloVersion >= 9.0:
+                self.config["inputProperties"][1]["value"]["proxySettings"]["tcpProfile"]["verifyAccept"] = self.want.topo_outboundxp_verifyAccept
+
+            ## =================================
+            ## 9.0 Update: add httpProfile value
+            ## =================================
+            if self.ssloVersion >= 9.0:
+                self.config["inputProperties"][1]["value"]["httpProfile"] = "/Common/" + self.want.name + ".app/" + self.want.name + "-xp-http"
+
+            ## =================================
+            ## 9.0 Update: dnsResolver (required in 9.0)
+            ## =================================
+            if self.ssloVersion >= 9.0 and self.want.topo_outboundxp_dnsResolver != None and self.want.topo_outboundxp_dnsResolver != "":
+                self.config["inputProperties"][1]["value"]["dnsResolver"] = self.want.topo_outboundxp_dnsResolver
+            #else:
+            #    raise F5ModuleError("An outbound explicit proxy topology in 9.0+ requires a dnsResolver value. Aborting")
 
 
         ## =================================
@@ -2607,7 +3484,262 @@ class ModuleManager(object):
             if self.want.topo_inboundl3_pool != None:
                 self.config["inputProperties"][1]["value"]["pool"] = self.want.topo_inboundl3_pool
 
+
+        ## =================================
+        ## OUTBOUND L2 TOPOLOGY
+        ## =================================
+        if self.want.topo_outboundl2 == True:
+
+            ## input validation: a tcp protocol outboundl2 topology requires the sslSettings key
+            if (self.want.configref_ssl == None) and (self.want.topo_outboundl2_proto == "tcp"):
+                raise F5ModuleError("The Outbound L2 topology for TCP traffic requires an sslSettings key.")
+
+            ## input validation: a udp protocol outboundl2 topology cannot have the sslSettings key
+            if (self.want.configref_ssl != None) and (self.want.topo_outboundl2_proto == "udp"):
+                raise F5ModuleError("The Outbound L2 topology for UDP traffic cannot contain an sslSettings key.")
+
+            ## input validation: an other protocol outboundl2 topology cannot have the sslSettings key
+            if (self.want.configref_ssl != None) and (self.want.topo_outboundl2_proto == "other"):
+                raise F5ModuleError("The Outbound L2 topology for non-TCP/non-UDP traffic cannot contain an sslSettings key.")
+
+            ## input validation: an other protocol outboundl2 topology cannot have the securityPolicy key
+            if (self.want.configref_policy != None) and (self.want.topo_outboundl2_proto == "other"):
+                raise F5ModuleError("The Outbound L2 topology for non-TCP/non-UDP traffic cannot contain a securityPolicy key.")
+
+            ## input validation: profileScopeValue, and primaryAuthUri require TCP
+            if (self.want.topo_outboundl2_proto != "tcp") and (self.want.topo_outboundl2_profilescopevalue != None):
+                raise F5ModuleError("The profileScopeValue key can only be used with an outbound L2 TCP topology.")
+            if (self.want.topo_outboundl2_proto != "tcp") and (self.want.topo_outboundl2_primaryauthuri != None):
+                raise F5ModuleError("The primaryAuthUri key can only be used with an outbound L2 TCP topology.")
+
+            ## input validation: if profileScope == named, profileScopeValue and primaryAuthUri must also be defined (not None)
+            if (self.want.topo_outboundl2_profilescope == "named") and (self.want.topo_outboundl2_profilescopevalue == None):
+                raise F5ModuleError("When the profileScope key is set to 'named', the profileScopeValue and primaryAuthUri values must also be set.")
+            if (self.want.topo_outboundl2_profilescope == "named") and (self.want.topo_outboundl2_primaryauthuri == None):
+                raise F5ModuleError("When the profileScope key is set to 'named', the profileScopeValue and primaryAuthUri values must also be set.")
+
+            ## input validation: source and dest must be in the same ipFamily
+            source = re.sub('/.*', '', re.sub('%.*', '', self.want.topo_outboundl2_source))
+            dest = re.sub('/.*', '', re.sub('%.*', '', self.want.topo_outboundl2_dest))
+            if self.getIpFamily(source) != self.getIpFamily(dest):
+                raise F5ModuleError("Source and destination addresses must be in the same IP family.")
+
+            ## input validation: source must include subnet
+            try:
+                m = re.search('^.*/(\d+)$', self.want.topo_outboundl2_source)
+                if int(m.group(1)) > 32:
+                    raise F5ModuleError("Source address must contain a subnet (CIDR) value <= 32.")
+            except AttributeError:
+                raise F5ModuleError("Source address must contain a subnet (CIDR) value <= 32.")
+
+            ## input validation: source address must contain a route domain - if it doesn't, auto-add %0
+            m = re.search('^.*%(\d+).*$', self.want.topo_outboundl2_source)            
+            try:
+                tmp = m.group(1)
+                self.source = self.want.topo_outboundl2_source
+            except:
+                iplist = self.want.topo_outboundl2_source.split("/")
+                iplist[0] = re.sub('%.*', '', iplist[0])
+                self.source = iplist[0] + "%0/" + iplist[1]
+
+            ## input validation: destination must include subnet
+            try:
+                m = re.search('^.*/(\d+)$', self.want.topo_outboundl2_dest)
+                if int(m.group(1)) > 32:
+                    raise F5ModuleError("Destination address must contain a subnet (CIDR) value <= 32.")
+            except AttributeError:
+                raise F5ModuleError("Destination address must contain a subnet (CIDR) value <= 32.")
+
+            ## input validation: destination address must contain a route domain - if it doesn't, auto-add %0
+            m = re.search('^.*%(\d+).*$', self.want.topo_outboundl2_dest)            
+            try:
+                tmp = m.group(1)
+                self.dest = self.want.topo_outboundl2_dest
+            except:
+                iplist = self.want.topo_outboundl2_dest.split("/")
+                iplist[0] = re.sub('%.*', '', iplist[0])
+                self.dest = iplist[0] + "%0/" + iplist[1]
+
+            ## input validation: source port must be an integer between 0 and 65535
+            if self.want.topo_outboundl2_port >= 0 and self.want.topo_outboundl2_port <= 65535:
+                self.port = self.want.topo_outboundl2_port
+            else:
+                raise F5ModuleError("A defined port must be an integer between 0 and 65535.")
+
+            ## input validation: vlan key must contain at least one entry
+            if self.want.topo_outboundl2_vlans == None:
+                raise F5ModuleError("At least one VLAN must be defined.")
+
+
+            ## update json for outbound L2 topology - basic settings
+            self.config["inputProperties"][1]["value"]["type"] = "topology_l2_outbound"
+            self.config["inputProperties"][1]["value"]["ruleType"] = "Outbound"
+            self.config["inputProperties"][1]["value"]["ruleLabel"] = "Outbound"
+            self.config["inputProperties"][1]["value"]["proxySettings"]["proxyType"] = "transparent"
+            self.config["inputProperties"][1]["value"]["ipFamily"] = self.want.topo_outboundl2_ipfamily
+
+            ## update json for outbound L2 topology - serviceDef
+            self.config["inputProperties"][1]["value"]["serviceDef"]["source"] = self.source
+            self.config["inputProperties"][1]["value"]["serviceDef"]["destination"]["protocol"] = self.want.topo_outboundl2_proto
+            self.config["inputProperties"][1]["value"]["serviceDef"]["destination"]["address"] = self.dest
+            self.config["inputProperties"][1]["value"]["serviceDef"]["destination"]["port"] = self.port
+
+            ## update json for outbound L2 topology - tcp profile settings
+            if self.want.topo_outboundl2_tcp_client != None:
+                self.config["inputProperties"][1]["value"]["tcpSettings"]["clientTcpProfile"] = self.want.topo_outboundl2_tcp_client
+            if self.want.topo_outboundl2_tcp_server != None:
+                self.config["inputProperties"][1]["value"]["tcpSettings"]["serverTcpProfile"] = self.want.topo_outboundl2_tcp_server
+
+            ## update json for outbound L2 topology - vlans
+            for vlan in self.want.topo_outboundl2_vlans:
+                vlanlist = {}
+                vlanlist["name"] = vlan
+                vlanlist["value"] = vlan
+                self.config["inputProperties"][1]["value"]["ingressNetwork"]["vlans"].append(vlanlist)
+
+            ## update json for outbound L2 topology - L7Profile and L7Profiletype
+            if self.want.topo_outboundl2_L7profiletype != "none":
+                self.config["inputProperties"][1]["value"]["l7ProfileType"] = self.want.topo_outboundl2_L7profiletype
+            else:
+                self.config["inputProperties"][1]["value"]["l7ProfileType"] = ""
+            if self.want.topo_outboundl2_L7profile != None:
+                self.config["inputProperties"][1]["value"]["l7Profile"] = self.want.topo_outboundl2_L7profile
+
+            ## update json for outbound L2 topology - profileScope, profileScopeValue, and primaryAuthenticationUri (if SSLO >= 8.2)
+            if self.ssloVersion >= 8.2:
+                if self.want.topo_outboundl2_profilescope != None:
+                    self.config["inputProperties"][1]["value"]["accessProfileScope"] = self.want.topo_outboundl2_profilescope
+                if self.want.topo_outboundl2_profilescopevalue != None:
+                    self.config["inputProperties"][1]["value"]["accessProfileNameScopeValue"] = self.want.topo_outboundl2_profilescopevalue
+                if self.want.topo_outboundl2_primaryauthuri != None:
+                    self.config["inputProperties"][1]["value"]["primaryAuthenticationURI"] = self.want.topo_outboundl2_primaryauthuri
+
+            ## update json for outbound L2 topology - accessprofile
+            if self.want.topo_outboundl2_accessprofile != None:
+                self.config["inputProperties"][1]["value"]["accessProfile"] = self.want.topo_outboundl2_accessprofile
+            else:
+                self.config["inputProperties"][1]["value"]["accessProfile"] = self.want.name + "_accessProfile"
+
+            ## update json for outbound L2 topology - deployedNetwork
+            self.config["inputProperties"][1]["value"]["deployedNetwork"] = "l2_network"
+
+            ## =================================
+            ## 9.0 Update: verifyAccept
+            ## =================================
+            if self.ssloVersion >= 9.0:
+                self.config["inputProperties"][1]["value"]["proxySettings"]["tcpProfile"]["verifyAccept"] = self.want.topo_outboundl3_verifyAccept
+
         
+        ## =================================
+        ## INBOUND L2 TOPOLOGY
+        ## =================================
+        elif self.want.topo_inboundl2 == True:
+
+            ## input validation: source and dest must be in the same ipFamily
+            source = re.sub('/.*', '', re.sub('%.*', '', self.want.topo_inboundl2_source))
+            dest = re.sub('/.*', '', re.sub('%.*', '', self.want.topo_inboundl2_dest))
+            if self.getIpFamily(source) != self.getIpFamily(dest):
+                raise F5ModuleError("Source and destination addresses must be in the same IP family.")
+
+            ## input validation: source must include subnet
+            try:
+                m = re.search('^.*/(\d+)$', self.want.topo_inboundl2_source)
+                if int(m.group(1)) > 32:
+                    raise F5ModuleError("Source address must contain a subnet (CIDR) value <= 32.")
+            except AttributeError:
+                raise F5ModuleError("Source address must contain a subnet (CIDR) value <= 32.")
+
+            ## input validation: source address must contain a route domain - if it doesn't, auto-add %0
+            m = re.search('^.*%(\d+).*$', self.want.topo_inboundl2_source)            
+            try:
+                tmp = m.group(1)
+                self.source = self.want.topo_inboundl2_source
+            except:
+                iplist = self.want.topo_inboundl2_source.split("/")
+                iplist[0] = re.sub('%.*', '', iplist[0])
+                self.source = iplist[0] + "%0/" + iplist[1]
+
+            ## input validation: destination must include subnet
+            try:
+                m = re.search('^.*/(\d+)$', self.want.topo_inboundl2_dest)
+                if int(m.group(1)) > 32:
+                    raise F5ModuleError("Destination address must contain a subnet (CIDR) value <= 32.")
+            except AttributeError:
+                raise F5ModuleError("Destination address must contain a subnet (CIDR) value <= 32.")
+
+            ## input validation: destination address must contain a route domain - if it doesn't, auto-add %0
+            m = re.search('^.*%(\d+).*$', self.want.topo_inboundl2_dest)            
+            try:
+                tmp = m.group(1)
+                self.dest = self.want.topo_inboundl2_dest
+            except:
+                iplist = self.want.topo_inboundl2_dest.split("/")
+                iplist[0] = re.sub('%.*', '', iplist[0])
+                self.dest = iplist[0] + "%0/" + iplist[1]
+
+            ## input validation: source port must be an integer between 0 and 65535
+            if self.want.topo_outboundl2_port >= 0 and self.want.topo_outboundl2_port <= 65535:
+                self.port = self.want.topo_outboundl2_port
+            else:
+                raise F5ModuleError("A defined port must be an integer between 0 and 65535.")
+
+            ## input validation: vlan key must contain at least one entry
+            if self.want.topo_inboundl2_vlans == None:
+                raise F5ModuleError("At least one VLAN must be defined.")
+
+
+            ## update json for inbound L2 topology - basic settings
+            self.config["inputProperties"][1]["value"]["type"] = "topology_l2_inbound"
+            self.config["inputProperties"][1]["value"]["ruleType"] = "Inbound"
+            self.config["inputProperties"][1]["value"]["ruleLabel"] = "Inbound"
+            self.config["inputProperties"][1]["value"]["proxySettings"]["proxyType"] = ""
+            self.config["inputProperties"][1]["value"]["ipFamily"] = self.want.topo_inboundl2_ipfamily
+
+            ## update json for inbound L2 topology - serviceDef
+            self.config["inputProperties"][1]["value"]["serviceDef"]["source"] = self.source
+            self.config["inputProperties"][1]["value"]["serviceDef"]["destination"]["protocol"] = self.want.topo_inboundl2_proto
+            self.config["inputProperties"][1]["value"]["serviceDef"]["destination"]["address"] = self.dest
+            self.config["inputProperties"][1]["value"]["serviceDef"]["destination"]["port"] = self.port
+
+            ## update json for inbound L2 topology - tcp profile settings
+            if self.want.topo_inboundl2_tcp_client != None:
+                self.config["inputProperties"][1]["value"]["tcpSettings"]["clientTcpProfile"] = self.want.topo_inboundl2_tcp_client
+            if self.want.topo_inboundl2_tcp_server != None:
+                self.config["inputProperties"][1]["value"]["tcpSettings"]["serverTcpProfile"] = self.want.topo_inboundl2_tcp_server
+
+            ## update json for inbound L2 topology - vlans
+            for vlan in self.want.topo_inboundl2_vlans:
+                vlanlist = {}
+                vlanlist["name"] = vlan
+                vlanlist["value"] = vlan
+                self.config["inputProperties"][1]["value"]["ingressNetwork"]["vlans"].append(vlanlist)
+
+            ## update json for outbound L2 topology - L7Profile and L7Profiletype
+            if self.want.topo_inboundl2_L7profiletype != None:
+                self.config["inputProperties"][1]["value"]["l7ProfileType"] = self.want.topo_inboundl2_L7profiletype
+            else:
+                self.config["inputProperties"][1]["value"]["l7ProfileType"] = "http"
+            if self.want.topo_inboundl2_L7profile != None:
+                self.config["inputProperties"][1]["value"]["l7Profile"] = self.want.topo_inboundl2_L7profile
+            else:
+                self.config["inputProperties"][1]["value"]["l7Profile"] = "/Common/http"
+
+            ## update json for inbound L2 topology - accessprofile
+            if self.want.topo_inboundl2_accessprofile != None:
+                self.config["inputProperties"][1]["value"]["accessProfile"] = self.want.topo_inboundl2_accessprofile
+            else:
+                self.config["inputProperties"][1]["value"]["accessProfile"] = self.want.name + "_accessProfile"
+
+            ## update json for inbound L2 topology - accessprofile
+            if self.want.topo_inboundl2_accessprofile != None:
+                self.config["inputProperties"][1]["value"]["accessProfile"] = self.want.topo_inboundl2_accessprofile
+            else:
+                self.config["inputProperties"][1]["value"]["accessProfile"] = self.want.name + "_accessProfile"
+
+            ## update json for inbound L2 topology - deployedNetwork
+            self.config["inputProperties"][1]["value"]["deployedNetwork"] = "l2_network"
+
+
         ## =================================
         ## GENERAL POST-CONFIG
         ## =================================
@@ -2672,6 +3804,13 @@ class ModuleManager(object):
                 gs = json_template_gs
                 if self.ssloVersion >= 6.0:
                     del gs["loggingConfig"]
+                
+                ## =================================
+                ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
+                ## =================================
+                gs["version"] = self.ssloVersion
+                gs["previousVersion"] = self.ssloVersion
+                
                 self.config["inputProperties"][2]["value"] = gs
 
         ## config reference - policy
@@ -2724,6 +3863,40 @@ class ModuleManager(object):
                         raise F5ModuleError("A Service reference is corrupt or contains incorrect information (1). Aborting")
             except:
                 raise F5ModuleError("A Service reference is corrupt or contains incorrect information (2). Aborting")
+
+
+        ## =================================
+        ## 9.0 Update: ocspAuth (could be a string or jinja2 reference)
+        ## =================================
+        #if self.ssloVersion >= 9.0 and self.want.topo_outboundl3_ocspAuth != None and self.want.topo_outboundl3_ocspAuth != "":
+        #    self.config["inputProperties"][1]["value"]["ocspAuth"] = self.want.topo_outboundl3_ocspAuth
+        if self.ssloVersion >= 9.0 and (self.want.topo_outboundl3 == True or self.want.topo_outboundxp == True): 
+            ocspAuth = ""
+            if (self.want.topo_outboundl3 == True and self.want.topo_outboundl3_ocspAuth != None and self.want.topo_outboundl3_ocspAuth != ""):
+                ocspAuth = self.want.topo_outboundl3_ocspAuth
+            elif (self.want.topo_outboundxp == True and self.want.topo_outboundxp_ocspAuth != None and self.want.topo_outboundxp_ocspAuth != ""):
+                ocspAuth = self.want.topo_outboundxp_ocspAuth
+
+            if ocspAuth != "":
+                if re.match(r'^.*\'print_output\':', ocspAuth):
+                    ## this is a JSON config - extract main content from JSON
+                    auth = ocspAuth
+                    auth = ast.literal_eval(auth)
+                    auth = auth["print_output"][0]["inputProperties"][1]
+                    ## make sure this is valid json and minimall contains 'name' and 'ocsp' keys
+                    try:
+                        if "name" in auth["value"] and "ocsp" in auth["value"]:
+                            self.config["inputProperties"][1]["value"]["ocspAuth"] = auth["value"]["name"]
+                            self.config["inputProperties"].append(auth)
+                    except:
+                        raise F5ModuleError("The referenced OCSP Authentication appears to be corrupt. Aborting")
+                    
+                else:
+                    ## this is a static configuration reference - make sure the string starts with ssloA_
+                    if not ocspAuth.startswith("ssloA_"):
+                        ocspAuth = "ssloA_" + ocspAuth
+                    ## add to json config
+                    self.config["inputProperties"][1]["value"]["ocspAuth"] = ocspAuth
 
 
         ## create operation
@@ -3096,6 +4269,13 @@ class ArgumentSpec(object):
                     ),
                     primaryAuthUri=dict(
                         default=None
+                    ),
+                    verifyAccept=dict(
+                        type='bool',
+                        default=False
+                    ),
+                    ocspAuth=dict(
+                        default=None
                     )
                 )
             ),
@@ -3143,6 +4323,16 @@ class ArgumentSpec(object):
                         default=None
                     ),
                     authProfile=dict(
+                        default=None
+                    ),
+                    verifyAccept=dict(
+                        type='bool',
+                        default=False
+                    ),
+                    ocspAuth=dict(
+                        default=None
+                    ),
+                    dnsResolver=dict(
                         default=None
                     )
                 )
@@ -3215,6 +4405,109 @@ class ArgumentSpec(object):
                     )
                 )
             ),
+            topologyOutboundL2=dict(
+                type='dict',
+                options=dict(
+                    protocol=dict(
+                        choices=["tcp","udp","other"],
+                        default="tcp"
+                    ),
+                    ipFamily=dict(
+                        choices=["ipv4","ipv6"],
+                        default="ipv4"
+                    ),
+                    source=dict(
+                        default="0.0.0.0%0/0"
+                    ),
+                    dest=dict(
+                        default="0.0.0.0%0/0"
+                    ),
+                    port=dict(
+                        type='int',
+                        default=0
+                    ),
+                    vlans=dict(
+                        type='list',
+                        default=None
+                    ),
+                    tcpSettingsClient=dict(
+                        default="/Common/f5-tcp-lan"
+                    ),
+                    tcpSettingsServer=dict(
+                        default="/Common/f5-tcp-wan"
+                    ),
+                    L7ProfileType=dict(
+                        choices=["none","http"],
+                        default="none"
+                    ),
+                    L7Profile=dict(
+                        default=None
+                    ),
+                    accessProfile=dict(
+                        default=None
+                    ),
+                    profileScope=dict(
+                        choices=["public","named"],
+                        default="public"
+                    ),
+                    profileScopeValue=dict(
+                        default=None
+                    ),
+                    primaryAuthUri=dict(
+                        default=None
+                    ),
+                    ocspAuth=dict(
+                        default=None
+                    ),
+                    verifyAccept=dict(
+                        type='bool',
+                        default=False
+                    )
+                )
+            ),
+            topologyInboundL2=dict(
+                type='dict',
+                options=dict(
+                    protocol=dict(
+                        choices=["tcp","udp","other"],
+                        default="tcp"
+                    ),
+                    ipFamily=dict(
+                        choices=["ipv4","ipv6"],
+                        default="ipv4"
+                    ),
+                    source=dict(
+                        default="0.0.0.0%0/0"
+                    ),
+                    dest=dict(
+                        default="0.0.0.0%0/0"
+                    ),
+                    port=dict(
+                        type='int',
+                        default=0
+                    ),
+                    vlans=dict(
+                        type='list',
+                        default=None
+                    ),
+                    tcpSettingsClient=dict(
+                        default="/Common/f5-tcp-lan"
+                    ),
+                    tcpSettingsServer=dict(
+                        default="/Common/f5-tcp-wan"
+                    ),
+                    L7ProfileType=dict(
+                        choices=["none","http"],
+                        default="http"
+                    ),
+                    L7Profile=dict(
+                        default="/Common/http"
+                    ),
+                    accessProfile=dict(
+                        default=None
+                    )
+                )
+            ),
             logging=dict(
                 type='dict',
                 options=dict(
@@ -3257,10 +4550,10 @@ class ArgumentSpec(object):
         self.argument_spec.update(f5_argument_spec)
         self.argument_spec.update(argument_spec)
         self.mutually_exclusive=[
-            ['topologyOutboundL3', 'topologyOutboundExplicit', 'topologyInboundL3']
+            ['topologyOutboundL3', 'topologyOutboundExplicit', 'topologyInboundL3', 'topologyOutboundL2', 'topologyInboundL2']
         ]
         self.required_one_of=[
-            ['topologyOutboundL3', 'topologyOutboundExplicit', 'topologyInboundL3']
+            ['topologyOutboundL3', 'topologyOutboundExplicit', 'topologyInboundL3', 'topologyOutboundL2', 'topologyInboundL2']
         ]
 
 def main():
