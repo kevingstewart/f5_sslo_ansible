@@ -144,12 +144,14 @@ The following modules are currently available:
 | bigip_sslo_service_http           | Used to create/modify/delete an inline http (proxy) security service |
 | bigip_sslo_service_icap           | Used to create/modify/delete an icap security service |
 | bigip_sslo_service_tap            | Used to create/modify/delete a passive tap security service |
+| bigip_sslo_service_swg            | Used to create/modify/delete an SWG security service |
 | bigip_sslo_config_service_chain   | Used to create/modify/delete a security service chain |
 | bigip_sslo_config_policy          | Used to create/modify/delete a security policy |
 | bigip_sslo_config_ssl             | Used to create/modify/delete an ssl configuration |
 | bigip_sslo_config_resolver        | Used to create/modify/delete a DNS resolver configuration |
 | bigip_sslo_config_topology        | Used to create/modify/delete an SSL Orchestrator topology |
 | bigip_sslo_config_utility         | Used to perform various SSL Orchestrator utility functions |
+| bigip_sslo_config_authentication  | Used to create/modify/delete an OCSP Authentication configuration |
 
 Full documentation on each module can be found in the [docs](docs/) folder.
 
