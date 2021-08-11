@@ -3370,7 +3370,7 @@ class ModuleManager(object):
         elif self.want.topo_inboundl3 == True:
 
             ## input validation: pool, gateway|gatewaylist|gatewaypool are mutually exclusive
-            if (self.want.topo_inboundl3_pool != None) and (self.want.topo_inboundl3_gateway != "none"):
+            if (self.want.topo_inboundl3_pool != None) and (self.want.topo_inboundl3_gateway != "system"):
                 raise F5ModuleError("An inbound L3 topology can have a pool assigned, or a gateway, but not both.")
             if (self.want.topo_inboundl3_pool != None) and (self.want.topo_inboundl3_gatewaylist != None):
                 raise F5ModuleError("An inbound L3 topology can have a pool assigned, or a gateway, but not both.")

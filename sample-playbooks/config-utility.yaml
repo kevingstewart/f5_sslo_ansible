@@ -1,6 +1,6 @@
 ---
 
-- name: Create SSLO DNS resolver
+- name: SSLO Utility Functions
   hosts: localhost
   gather_facts: False
   connection: local
