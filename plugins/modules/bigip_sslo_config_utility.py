@@ -7,6 +7,7 @@
 
 #### Updates:
 #### 1.0.1 - added 9.0 support (same as 8.3 so just changed max version)
+####       - added rpm-update utility support
 
 
 from __future__ import absolute_import, division, print_function
@@ -26,6 +27,11 @@ options:
     type: str
     choices:
         - delete-all
+        - rpm-update
+  packages:
+    description:
+        - Used with the rpm-update utility function, this specifies the local path of the RPM file to push to the BIG-IP
+    type: str  
   
 extends_documentation_fragment: f5networks.f5_modules.f5
 author:
@@ -33,7 +39,7 @@ author:
 '''
 
 EXAMPLES = r'''
-- name: SSLO utility functions
+- name: SSLO utility functions (delete-all)
   hosts: localhost
   gather_facts: False
   connection: local
@@ -57,6 +63,32 @@ EXAMPLES = r'''
         utility: delete-all
 
       delegate_to: localhost
+
+- name: SSLO utility functions (rpm-update)
+  hosts: localhost
+  gather_facts: False
+  connection: local
+
+  collections:
+    - kevingstewart.f5_sslo_ansible
+  
+  vars: 
+    provider:
+      server: 172.16.1.77
+      user: admin
+      password: admin
+      validate_certs: no
+      server_port: 443
+
+  tasks:
+    - name: SSLO Utility Functions
+      bigip_sslo_config_utility:
+        provider: "{{ provider }}"
+        
+        utility: rpm-update
+        package: ./f5-iappslx-ssl-orchestrator-16.0.1.1-8.4.15.noarch.rpm
+
+      delegate_to: localhost
 '''
 
 RETURN = r'''
@@ -65,6 +97,11 @@ utility:
     - Defines the utility function to perform.
   type: str
   sample: delete-all
+package:
+  description:
+    - Used with the rpm-update function, defines the local path of RPM file to push to BIG-IP
+  type: str
+  sample: ./f5-iappslx-ssl-orchestrator-16.0.1.1-8.4.15.noarch.rpm
 '''
 
 from datetime import datetime
@@ -76,7 +113,9 @@ from ansible_collections.f5networks.f5_modules.plugins.module_utils.common impor
     F5ModuleError, AnsibleF5Parameters, transform_name, f5_argument_spec
 )
 from ansible_collections.f5networks.f5_modules.plugins.module_utils.icontrol import tmos_version
-import json, time, re, hashlib, ipaddress
+from ansible_collections.f5networks.f5_modules.plugins.module_utils.icontrol import upload_file
+import json, time, re, hashlib, ipaddress, os
+
 
 global print_output
 global json_template
@@ -120,6 +159,12 @@ class ModuleParameters(Parameters):
             return None
         return utility
 
+    @property
+    def package(self):
+        package = self._values['package']
+        if package == None:
+            return None
+        return package
 
 class ModuleManager(object):
     global print_output
@@ -190,6 +235,12 @@ class ModuleManager(object):
         if self.want.utility == "delete-all":
             changed = self.deleteAll()
 
+        elif self.want.utility == "rpm-update":
+            if self.want.package == None:
+                raise F5ModuleError("The rpm-update utility function requires a 'package' key that defines the local path of the RPM file to push to the BIG-IP")
+            else:
+                changed = self.rpmUpdate()
+
 
         result.update(dict(changed=changed))
         print_output.append('changed=' + str(changed))
@@ -236,14 +287,72 @@ class ModuleManager(object):
                 raise F5ModuleError("Utility(delete-all) failed with the following message: " + str(err))
 
 
+    def rpmUpdate(self):
+        if self.module.check_mode:
+            return True
+
+        ## upload the file
+        name = os.path.split(self.want.package)[1]
+        uri = "https://{0}:{1}/mgmt/shared/file-transfer/uploads".format(
+            self.client.provider['server'],
+            self.client.provider['server_port'],
+        )
+
+        try:
+            upload_file(self.client, uri, self.want.package, name)
+        except F5ModuleError:
+            raise F5ModuleError("Failed to upload the file.")
+
+        ## install package
+        uri = "https://{0}:{1}/mgmt/shared/iapp/package-management-tasks".format(
+            self.client.provider['server'],
+            self.client.provider['server_port'],
+        )
+        jsonstr = {"operation": "INSTALL", "packageFilePath": "/var/config/rest/downloads/" + name}
+        resp = self.client.api.post(uri, json=jsonstr)
+
+        try:
+            response = resp.json()
+        except ValueError as ex:
+            raise F5ModuleError(str(ex))
+
+        if resp.status not in [200, 201, 202] or 'code' in response and response['code'] not in [200, 201, 202]:
+            raise F5ModuleError(resp.content)
+
+        id = response['id']
+        
+        ## poll the request to see if any errors are generated
+        attempts = 1
+        while attempts <= obj_attempts:
+            uri = "https://{0}:{1}/mgmt/shared/iapp/package-management-tasks/{2}".format(
+                self.client.provider['server'],
+                self.client.provider['server_port'],
+                id
+            )
+            resp = self.client.api.get(uri).json()
+
+            time.sleep(1)
+            try:
+                if resp["status"] == "FINISHED":
+                    break
+                elif resp["status"] == "FAILED":
+                    raise F5ModuleError(str(resp["errorMessage"]))
+                    break
+                else:
+                    attempts += 1
+            except Exception as err:
+                raise F5ModuleError("Utility(rpm-update) failed with the following message: " + str(err))
+
+
 class ArgumentSpec(object):
     def __init__(self):
         self.supports_check_mode = True
         argument_spec = dict(
             utility=dict(
-                choices=["delete-all"],
+                choices=["delete-all","rpm-update"],
                 required=True
             ),
+            package=dict(),
             mode=dict(
                 choices=["update","output"],
                 default="update"

@@ -22,5 +22,7 @@
         provider: "{{ provider }}"
         
         utility: delete-all
+        #utility: rpm-update
+        #package: /home/bob/downloads/f5-iappslx-ssl-orchestrator-16.0.1.1-8.4.15.noarch.rpm
 
       delegate_to: localhost
