@@ -68,7 +68,7 @@ Parameters
           <td colspan="2" rowspan="1">utility</td>
           <td>yes</td>
           <td>&nbsp;</td>
-          <td><nobr>delete-all<br />rpm-update</nobr></td>
+          <td><nobr>delete-all</nobr><br /><nobr>rpm-update</nobr></td>
           <td>all</td>
           <td><p>[str]</p>
           <p>The name of the utility function to perform</p>
