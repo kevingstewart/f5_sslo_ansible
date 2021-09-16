@@ -55,6 +55,13 @@ These modules depend on the following third party libraries:
 - lxml
 - deepdiff
 
+## Additional Considerations
+If deploying to a virtual (VE) environment, it will be useful to increase management plane memory provisioning on the BIG-IPs.
+  ```bash
+  tmsh modify sys db provision.extramb value 8192
+  tmsh save sys config
+  ```
+
 ## Setting up a simple lab environment
 While not expressly required, the following steps utilize Python virtualenv on an Ubuntu 20.0+ box to build a simple development environment for this collection:
 - Initial system configuration (install Python 3.8 and Virtualenv)
