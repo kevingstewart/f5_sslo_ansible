@@ -15,6 +15,7 @@
 #          - added "Server Name (TLS ClientHello)" traffic condition
 #          - added "http2" as option in "TCP L7 Protocol Lookup" traffic condition
 #          - updated version and previousVersion keys to match target SSLO version
+#          - modified code in ssloGS_global_exists() to ensure ssloGS_global lookup does not trigger an error (20210917)
 
 
 from __future__ import absolute_import, division, print_function
@@ -1079,11 +1080,10 @@ class ModuleManager(object):
         query = "?$filter=name+eq+'ssloGS_global'"
         resp = self.client.api.get(uri + query)
 
-        try:
-            ## ssloGS_global exists - do nothing
-            response = resp.json()["items"][0]["id"]
+        if len(resp.json()["items"]) > 0:
+            ## ssloGS_global exists
             return True
-        except:
+        else:
             ## ssloGS_global does not exist - attempt to create it (only if not in output mode)
             if self.want.mode != "output":
                 uri = "https://{0}:{1}/mgmt/shared/iapp/blocks/".format(
@@ -1100,9 +1100,9 @@ class ModuleManager(object):
                 ## =================================
                 ## 1.0.1 general update: modify version and previousVersion values to match target BIG-IP version
                 ## =================================
-                gs["inputProperties"][0]["value"]["version"] - self.ssloVersion
-                gs["inputProperties"][1]["value"]["version"] - self.ssloVersion
-                gs["inputProperties"][1]["value"]["previousVersion"] - self.ssloVersion
+                gs["inputProperties"][0]["value"]["version"] = self.ssloVersion
+                gs["inputProperties"][1]["value"]["version"] = self.ssloVersion
+                gs["inputProperties"][1]["value"]["previousVersion"] = self.ssloVersion
 
 
                 resp = self.client.api.post(uri, json=gs)

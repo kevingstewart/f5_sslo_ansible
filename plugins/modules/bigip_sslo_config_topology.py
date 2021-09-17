@@ -13,6 +13,7 @@
 #          - added "dnsResolver" key for outbound explicit topology
 #          - updated version and previousVersion keys to match target SSLO version
 #          - added L2 vwire inbound/outbound topology support
+#          - modified code in ssloGS_global_fetch() to ensure ssloGS_global lookup does not trigger an error (20210917)
 
 
 from __future__ import absolute_import, division, print_function
@@ -2924,10 +2925,11 @@ class ModuleManager(object):
         resp = self.client.api.get(uri + query)
 
         try:
-            ## ssloGS_global exists - send value back
-            response = resp.json()
-            response = response["items"][0]["inputProperties"][0]["value"]
-            return response
+            if len(resp.json()["items"]) > 0:
+                ## ssloGS_global exists - send value back
+                response = resp.json()
+                response = response["items"][0]["inputProperties"][0]["value"]
+                return response
         except:
             return None
         
