@@ -1605,7 +1605,7 @@ obj_attempts = 60
 min_version = 5.0
 
 ## define maximum supported tmos version - max(SSLO 8.x)
-max_version = 9.0
+max_version = 9.1
 
 json_template = {
    "name": "proxy-f5-ssl-orchestrator-topology-CREATE",
@@ -3426,8 +3426,8 @@ class ModuleManager(object):
                 self.dest = iplist[0] + "%0/" + iplist[1]
 
             ## input validation: source port must be an integer between 0 and 65535
-            if self.want.topo_outboundl3_port >= 0 and self.want.topo_outboundl3_port <= 65535:
-                self.port = self.want.topo_outboundl3_port
+            if self.want.topo_inboundl3_port >= 0 and self.want.topo_inboundl3_port <= 65535:
+                self.port = self.want.topo_inboundl3_port
             else:
                 raise F5ModuleError("A defined port must be an integer between 0 and 65535.")
 
