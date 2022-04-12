@@ -132,7 +132,7 @@ obj_attempts = 20
 min_version = 5.0
 
 ## define maximum supported tmos version - max(SSLO 8.x)
-max_version = 9.0
+max_version = 9.1
 
 json_template = {}
 
@@ -227,9 +227,16 @@ class ModuleManager(object):
 
 
         ## test for correct TMOS version
-        if self.ssloVersion < min_version or self.ssloVersion > max_version:
-            raise F5ModuleError("Unsupported SSL Orchestrator version, requires a version between min(" + str(min_version) + ") and max(" + str(max_version) + ")")
-
+        try:
+            if self.ssloVersion < min_version or self.ssloVersion > max_version:
+                raise F5ModuleError("Unsupported SSL Orchestrator version, requires a version between min(" + str(min_version) + ") and max(" + str(max_version) + ")")
+        except:
+            ## if this fails it likely means there's no installed RPM or unintialized
+            #self.want.utility = "rpm-update"
+            if self.want.package == None:
+                raise F5ModuleError("The rpm-update utility function requires a 'package' key that defines the local path of the RPM file to push to the BIG-IP")
+            else:
+                changed = self.rpmUpdate()
         
         ## use this to initiate the different utility functions
         if self.want.utility == "delete-all":
@@ -240,7 +247,6 @@ class ModuleManager(object):
                 raise F5ModuleError("The rpm-update utility function requires a 'package' key that defines the local path of the RPM file to push to the BIG-IP")
             else:
                 changed = self.rpmUpdate()
-
 
         result.update(dict(changed=changed))
         print_output.append('changed=' + str(changed))
